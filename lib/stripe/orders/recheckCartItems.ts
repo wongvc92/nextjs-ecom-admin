@@ -12,27 +12,25 @@ export interface ICheckoutCartItem extends CartItem {
   checkoutImage: string;
 }
 
-export const recheckCartItems = async (cartItems: CartItem[]) => {
+export const recheckCartItems = async (cartItems: CartItem[]): Promise<ICheckoutCartItem[] | null> => {
   let checkoutCartItems: ICheckoutCartItem[] = [];
   for (const item of cartItems as CartItem[]) {
     const product = await getProductById(item.productId);
 
-    if (!product ) {
+    if (!product) {
       return null;
     }
 
     if (item.variationType === "NESTED_VARIATION") {
       const foundVariation = findSelectedVariation(item.variationId as string, product);
-      console.log("foundVariation", foundVariation);
+
       if (!foundVariation) {
-        console.error(`variation with ID ${item.productId} not found`);
         return null;
       }
 
       const foundNestedVariation = findSelectedNestedVariation(item.variationId as string, item.nestedVariationId as string, product);
 
       if (!foundNestedVariation) {
-        console.error(`Product with ID ${item.productId} not found`);
         return null;
       }
       const cartItemData = {
@@ -79,5 +77,5 @@ export const recheckCartItems = async (cartItems: CartItem[]) => {
       checkoutCartItems.push(cartItemData);
     }
   }
-  return checkoutCartItems;
+  return checkoutCartItems || null;
 };
