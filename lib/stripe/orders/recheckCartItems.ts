@@ -17,7 +17,7 @@ export const recheckCartItems = async (cartItems: CartItem[]) => {
   for (const item of cartItems as CartItem[]) {
     const product = await getProductById(item.productId);
 
-    if (product === undefined) {
+    if (!product ) {
       return null;
     }
 
