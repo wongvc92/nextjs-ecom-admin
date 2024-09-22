@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/providers/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
+import Navbar from "@/components/dashboard/navbar";
+import Sidebar from "@/components/dashboard/sidebar";
+import { SessionProvider } from "next-auth/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +21,23 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <SessionProvider>
+            <Toaster position="bottom-right" richColors />
+            <>
+              <div className="flex w-full">
+                <Sidebar />
+
+                <div className="flex flex-col w-full">
+                  <Navbar />
+                  {children}
+                </div>
+              </div>
+            </>
+          </SessionProvider>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
