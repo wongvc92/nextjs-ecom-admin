@@ -14,27 +14,27 @@ const ProductPage = async ({ params }: { params: { productId: string } }) => {
   const distinctCategories = await getCachedDistinctCategories();
 
   const productWithId: TProductSchema = {
-    id: product.id ?? "",
-    name: product.name ?? "",
-    category: product.category!,
-    tags: product.tags ?? [],
+    id: product?.id ?? "",
+    name: product?.name ?? "",
+    category: product?.category ?? "",
+    tags: product?.tags ?? [],
     availableVariations: product?.availableVariations ?? [],
-    lowestPrice: product.lowestPriceInCents as number,
-    description: product.description!,
-    variationType: product.variationType!,
-    price: convertCentsToTwoDecimalNumber(product.priceInCents as number) ?? 0,
-    stock: product.stock ?? 0,
-    minPurchase: product.minPurchase ?? 0,
-    maxPurchase: product.maxPurchase ?? 0,
-    weight: convertGramToKilogram(product.weightInGram) ?? 0,
-    shippingFee: convertCentsToTwoDecimalNumber(product.shippingFeeInCents) ?? 0,
+    lowestPrice: product?.lowestPriceInCents as number,
+    description: product?.description!,
+    variationType: product?.variationType!,
+    price: convertCentsToTwoDecimalNumber(product?.priceInCents as number) ?? 0,
+    stock: product?.stock ?? 0,
+    minPurchase: product?.minPurchase ?? 0,
+    maxPurchase: product?.maxPurchase ?? 0,
+    weight: convertGramToKilogram(product?.weightInGram as number) ?? 0,
+    shippingFee: convertCentsToTwoDecimalNumber(product?.shippingFeeInCents as number) ?? 0,
     productImages:
       product?.productImages.map((image) => ({
         id: image.id,
         url: image.url,
       })) || [],
-    isArchived: product.isArchived ?? false,
-    isFeatured: product.isFeatured ?? false,
+    isArchived: product?.isArchived ?? false,
+    isFeatured: product?.isFeatured ?? false,
     variations:
       product && product.variations
         ? product.variations.map((v) => ({
