@@ -30,28 +30,24 @@ export const currencyFormatter = (priceInCents: number): string => {
   return `RM ${convertCentsToTwoDecimalString(priceInCents)}`;
 };
 
-export const findSelectedVariation = (variationId: string, product: Product): Variation | null => {
+export const findSelectedVariation = (variationId: string, product: Product | null): Variation | null => {
   if (!product) return null;
   let foundVariation: Variation | null = null;
-  if (product.variationType === "NESTED_VARIATION" || product.variationType === "VARIATION") {
-    foundVariation = product.variations?.find((item) => item.id === variationId) as Variation;
+  if (product?.variationType === "NESTED_VARIATION" || product?.variationType === "VARIATION") {
+    foundVariation = product?.variations?.find((item) => item.id === variationId) ?? null;
   }
-  if (!foundVariation) return null;
-  return foundVariation;
+
+  return foundVariation || null;
 };
 
-export const findSelectedNestedVariation = (variationId: string, nestedVariationId: string, product: Product): NestedVariation | null => {
+export const findSelectedNestedVariation = (variationId: string, nestedVariationId: string, product: Product | null): NestedVariation | null => {
   if (!product) return null;
   let foundNestedVariation: NestedVariation | null = null;
   if (product.variationType === "NESTED_VARIATION") {
-    foundNestedVariation = product.variations
-      ?.find((v) => v.id === variationId)
-      ?.nestedVariations?.find((nv) => nv.id === nestedVariationId) as NestedVariation;
+    foundNestedVariation = product.variations?.find((v) => v.id === variationId)?.nestedVariations?.find((nv) => nv.id === nestedVariationId) ?? null;
   }
 
-  if (!foundNestedVariation) return null;
-
-  return foundNestedVariation;
+  return foundNestedVariation || null;
 };
 
 export const findCartItemsSubTotal = (checkoutCartItems: ICheckoutCartItem[]) => {
