@@ -1,15 +1,12 @@
 "use client";
 
 import { Separator } from "@/components/ui/separator";
-import React from "react";
 import { DataTable } from "@/components/ui/data-table";
 import { columns } from "./Columns";
 import { Heading } from "@/components/ui/heading";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Order } from "@/lib/db/schema/orders";
 import { DatePickerWithRange } from "@/components/ui/date-picker-with-range";
-import TableFilterDropdown from "@/components/ui/table-filter-dropdown";
 import NameFilter from "./name-filter";
 import StatusFilter from "./status-filter";
 import Link from "next/link";
@@ -41,9 +38,6 @@ export const OrderClient: React.FC<OrderClientProps> = ({
 }) => {
   const searchParams = useSearchParams();
 
-  if (!data) {
-    return null;
-  }
   return (
     <section className="py-8 px-4 flex-col space-y-4 w-full">
       <div className="flex  items-center justify-between bg-white rounded-md p-4 shadow-sm dark:bg-inherit border">
@@ -71,6 +65,7 @@ export const OrderClient: React.FC<OrderClientProps> = ({
           </Link>
         )}
       </div>
+
       <DataTable columns={columns} data={data} totalPage={totalPage} />
     </section>
   );

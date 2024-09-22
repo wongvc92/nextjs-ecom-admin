@@ -10,19 +10,17 @@ const OrderPage = async ({ searchParams }: { searchParams: { [key: string]: stri
 
   const perPage = (searchParams.perPage as string) || "5";
   return (
-    <Suspense fallback="loading...">
-      <OrderClient
-        data={ordersData}
-        orderCount={orderCount}
-        totalPage={Math.ceil(orderCount / parseInt(perPage))}
-        allOrdersCount={allOrdersCount}
-        cancelledOrdersCount={cancelledOrdersCount}
-        completedOrdersCount={completedOrdersCount}
-        pendingOrdersCount={pendingOrdersCount}
-        shipppedOrdersCount={shipppedOrdersCount}
-        toShipOrdersCount={toShipOrdersCount}
-      />
-    </Suspense>
+    <OrderClient
+      data={ordersData}
+      orderCount={orderCount}
+      totalPage={Math.ceil(orderCount / parseInt(perPage))}
+      allOrdersCount={allOrdersCount}
+      cancelledOrdersCount={cancelledOrdersCount}
+      completedOrdersCount={completedOrdersCount}
+      pendingOrdersCount={pendingOrdersCount}
+      shipppedOrdersCount={shipppedOrdersCount}
+      toShipOrdersCount={toShipOrdersCount}
+    />
   );
 };
 
