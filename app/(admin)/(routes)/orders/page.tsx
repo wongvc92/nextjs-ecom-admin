@@ -1,26 +1,27 @@
 import React, { Suspense } from "react";
 import { OrderClient } from "./components/Client";
-import { getOrders, getOrderStatsCount } from "@/lib/db/queries/admin/orders";
-import { orderQuerySchema, TOrdersQuery } from "@/lib/validation/orderValidation";
+import OrderStats from "./components/order-stats";
+import { Heading } from "@/components/ui/heading";
+import { Separator } from "@/components/ui/separator";
+import OrderTable from "./components/order-table";
 
 const OrderPage = async ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
-  const { ordersData, orderCount } = await getOrders(searchParams as TOrdersQuery);
-  const { allOrdersCount, cancelledOrdersCount, completedOrdersCount, pendingOrdersCount, shipppedOrdersCount, toShipOrdersCount } =
-    await getOrderStatsCount();
-
-  const perPage = (searchParams.perPage as string) || "5";
   return (
-    <OrderClient
-      data={ordersData}
-      orderCount={orderCount}
-      totalPage={Math.ceil(orderCount / parseInt(perPage))}
-      allOrdersCount={allOrdersCount}
-      cancelledOrdersCount={cancelledOrdersCount}
-      completedOrdersCount={completedOrdersCount}
-      pendingOrdersCount={pendingOrdersCount}
-      shipppedOrdersCount={shipppedOrdersCount}
-      toShipOrdersCount={toShipOrdersCount}
-    />
+    <section className="py-8 px-4 flex-col space-y-4 w-full">
+      <div className="flex  items-center justify-between bg-white rounded-md p-4 shadow-sm dark:bg-inherit border">
+        <Heading title="Orders" description="Manage orders for your store" />
+      </div>
+
+      <Separator className="my-4" />
+      <Suspense fallback={"loading..."}>
+        <OrderStats />
+      </Suspense>
+      
+      <OrderClient />
+      <Suspense fallback={"loading..."}>
+        <OrderTable searchParams={searchParams} />
+      </Suspense>
+    </section>
   );
 };
 

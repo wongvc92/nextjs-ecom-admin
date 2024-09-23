@@ -1,22 +1,10 @@
+import { getOrderStatsCount } from "@/lib/db/queries/admin/orders";
 import Link from "next/link";
 import React from "react";
 
-interface OrderStatsProps {
-  allOrdersCount: number;
-  cancelledOrdersCount: number;
-  completedOrdersCount: number;
-  pendingOrdersCount: number;
-  shipppedOrdersCount: number;
-  toShipOrdersCount: number;
-}
-const OrderStats: React.FC<OrderStatsProps> = ({
-  allOrdersCount,
-  cancelledOrdersCount,
-  completedOrdersCount,
-  pendingOrdersCount,
-  shipppedOrdersCount,
-  toShipOrdersCount,
-}) => {
+const OrderStats = async () => {
+  const { allOrdersCount, cancelledOrdersCount, completedOrdersCount, pendingOrdersCount, shipppedOrdersCount, toShipOrdersCount } =
+    await getOrderStatsCount();
   const PRODUCT_STATS = [
     {
       id: 1,
