@@ -4,6 +4,7 @@ import OrderStats from "./components/order-stats";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import OrderTable from "./components/order-table";
+import TableSkeleton from "@/components/table-skeleton";
 
 const OrderPage = async ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
   return (
@@ -16,9 +17,9 @@ const OrderPage = async ({ searchParams }: { searchParams: { [key: string]: stri
       <Suspense fallback={"loading..."}>
         <OrderStats />
       </Suspense>
-      
+
       <OrderClient />
-      <Suspense fallback={"loading..."}>
+      <Suspense key={Date.now()} fallback={<TableSkeleton />}>
         <OrderTable searchParams={searchParams} />
       </Suspense>
     </section>
