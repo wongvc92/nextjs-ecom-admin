@@ -19,7 +19,7 @@ const OrderPage = async ({ searchParams }: { searchParams: { [key: string]: stri
       </Suspense>
 
       <OrderClient />
-      <Suspense key={Date.now()} fallback={<TableSkeleton />}>
+      <Suspense fallback={<TableSkeleton />}>
         <OrderTable searchParams={searchParams} />
       </Suspense>
     </section>

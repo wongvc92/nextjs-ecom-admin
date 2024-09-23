@@ -6,10 +6,6 @@ export async function POST(req: NextRequest) {
   const secret = searchParams.get("secret");
   const paths = searchParams.getAll("path");
 
-  console.log("Received secret:", secret);
-  console.log("Expected secret:", process.env.NEXT_PUBLIC_REVALIDATE_SECRET);
-  console.log("Path to revalidate:", paths);
-
   // Check for the secret to confirm this is a valid request
   if (secret !== process.env.NEXT_PUBLIC_REVALIDATE_SECRET) {
     return NextResponse.json({ message: "Invalid token" }, { status: 401 });

@@ -8,7 +8,6 @@ export const getOrders = async (searchParams: TOrdersQuery): Promise<{ ordersDat
     const parseResult = orderQuerySchema.safeParse(searchParams);
 
     if (!parseResult.success) {
-      console.log(parseResult.error);
       throw new Error("Invalid search parameters");
     }
 
