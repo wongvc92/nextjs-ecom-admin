@@ -1,7 +1,11 @@
-import { SignInButton } from "@/components/auth/sign-in-button";
 import React from "react";
-
 import SignUpForm from "../components/sign-up-form";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Sign up",
+  description: "Manage your authentication",
+};
 
 const SignUpPage = () => {
   return (

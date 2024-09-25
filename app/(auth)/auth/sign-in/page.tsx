@@ -1,6 +1,11 @@
-import { SignInButton } from "@/components/auth/sign-in-button";
 import React from "react";
 import { SignInForm } from "../components/sign-in-form";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Sign in",
+  description: "Manage your authentication",
+};
 
 const SignInPage = () => {
   return (
