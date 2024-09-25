@@ -1,8 +1,10 @@
 "use client";
 
 import { Order } from "@/lib/db/schema/orders";
+import { findOrderItemSubTotal } from "@/lib/helpers/orderItemHelpers";
+
 import { currencyFormatter } from "@/lib/utils";
-import { findOrderItemSubTotal } from "@/lib/utils/orders";
+
 import { ImageIcon, LucideBadgeDollarSign } from "lucide-react";
 import Image from "next/image";
 import React, { useMemo } from "react";

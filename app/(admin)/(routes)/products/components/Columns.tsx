@@ -4,10 +4,11 @@ import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./CellAction";
 import { Product } from "@/lib/db/schema/products";
 import { Variation } from "@/lib/db/schema/variations";
-import { convertCentsToTwoDecimalString, getDistinctNestedVariationNames } from "@/lib/utils";
+import { convertCentsToTwoDecimalString } from "@/lib/utils";
 import { format } from "date-fns";
 import { ArrowDownIcon, ArrowUpDown, ArrowUpIcon, CheckIcon, XIcon } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { getDistinctNestedVariationNames } from "@/lib/helpers/productHelpers";
 
 export const columns: ColumnDef<Product>[] = [
   {

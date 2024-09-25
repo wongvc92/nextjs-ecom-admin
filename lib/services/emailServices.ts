@@ -1,4 +1,4 @@
-import { EmailTemplate } from "@/components/mail/email-template";
+import { NewLoginVerificationTemplate } from "@/components/mail/new-login-verification-template";
 import { ResetPasswordTemplate } from "@/components/mail/reset-password-template";
 import { TwoFactorTokenTemplate } from "@/components/mail/two-factor-token-template";
 import { Resend } from "resend";
@@ -14,7 +14,7 @@ export const sendVerificationEmail = async (email: string, token: string) => {
       from: "Acme <onboarding@resend.dev>",
       to: email,
       subject: "Confirm your email",
-      react: EmailTemplate({ firstName: "John", confirmLink }),
+      react: NewLoginVerificationTemplate({ firstName: "there", confirmLink }),
     });
 
     if (error) {

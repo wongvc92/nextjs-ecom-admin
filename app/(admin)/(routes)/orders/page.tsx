@@ -1,10 +1,18 @@
 import React, { Suspense } from "react";
-import { OrderClient } from "./components/Client";
 import OrderStats from "./components/order-stats";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import OrderTable from "./components/order-table";
 import TableSkeleton from "@/components/table-skeleton";
+import { OrderFilters } from "./components/order-filters";
+import StatsLoading from "@/components/loading/stats-loading";
+import FiltersLoading from "@/components/loading/filters-loading";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Orders",
+  description: "Manage orders for your store",
+};
 
 const OrderPage = async ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
   return (
@@ -12,13 +20,13 @@ const OrderPage = async ({ searchParams }: { searchParams: { [key: string]: stri
       <div className="flex  items-center justify-between bg-white rounded-md p-4 shadow-sm dark:bg-inherit border">
         <Heading title="Orders" description="Manage orders for your store" />
       </div>
-
       <Separator className="my-4" />
-      <Suspense fallback={"loading..."}>
+      <Suspense fallback={<StatsLoading />}>
         <OrderStats />
       </Suspense>
-
-      <OrderClient />
+      <Suspense fallback={<FiltersLoading />}>
+        <OrderFilters />
+      </Suspense>
       <Suspense fallback={<TableSkeleton />}>
         <OrderTable searchParams={searchParams} />
       </Suspense>

@@ -13,8 +13,8 @@ import { toast } from "sonner";
 import { useImageCropContext } from "@/providers/image-crop-provider";
 import { readFile } from "@/lib/cropImage";
 import CropImageModal from "./crop-image-modal";
-import { urlToFile } from "@/lib/utils/image";
 import { TBannerImagesFormSchema } from "@/lib/validation/bannerImagesValidation";
+import { urlToFile } from "@/lib/utils";
 
 interface Image {
   id: string;

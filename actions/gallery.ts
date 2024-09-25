@@ -3,9 +3,9 @@
 import { db } from "@/lib/db";
 import { getGalleryImageByUrl } from "@/lib/db/queries/admin/galleries";
 import { deleteGalleryImageByUrl } from "@/lib/services/galleryServices";
-import { ensureAuthenticated } from "@/lib/utils/authHelpers";
-import { deleteImageFromS3 } from "@/lib/utils/image";
+import { ensureAuthenticated } from "@/lib/helpers/authHelpers";
 import { revalidatePath } from "next/cache";
+import { deleteImageFromS3 } from "@/lib/helpers/awsS3Helpers";
 
 export async function deleteImageFromGallery(url: string) {
   await ensureAuthenticated();
@@ -15,7 +15,7 @@ export async function deleteImageFromGallery(url: string) {
       error: "Failed delete image",
     };
   }
-  
+
   try {
     await deleteImageFromS3(url);
 

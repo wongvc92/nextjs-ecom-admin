@@ -1,23 +1,9 @@
 import { ICheckoutCartItem } from "@/app/api/checkout/guest/route";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { Variation } from "./db/schema/variations";
-import { Product } from "./db/schema/products";
-import { NestedVariation } from "./db/schema/nestedVariations";
-import { OrderItem } from "./db/schema/orderItems";
-import { arrayContains, SQL } from "drizzle-orm";
-import { AnyPgColumn, PgColumn } from "drizzle-orm/pg-core";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
-}
-
-export function capitalizeSentenceFirstChar(sentence: string): string {
-  if (!sentence) return "";
-  return sentence
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(" ");
 }
 
 export const convertCentsToTwoDecimalString = (priceInCents: number): string => {
@@ -28,57 +14,6 @@ export const convertCentsToTwoDecimalString = (priceInCents: number): string => 
 export const currencyFormatter = (priceInCents: number): string => {
   if (!priceInCents) return "0";
   return `RM ${convertCentsToTwoDecimalString(priceInCents)}`;
-};
-
-export const findSelectedVariation = (variationId: string, product: Product | null): Variation | null => {
-  if (!product) return null;
-  let foundVariation: Variation | null = null;
-  if (product?.variationType === "NESTED_VARIATION" || product?.variationType === "VARIATION") {
-    foundVariation = product?.variations?.find((item) => item.id === variationId) ?? null;
-  }
-
-  return foundVariation || null;
-};
-
-export const findSelectedNestedVariation = (variationId: string, nestedVariationId: string, product: Product | null): NestedVariation | null => {
-  if (!product) return null;
-  let foundNestedVariation: NestedVariation | null = null;
-  if (product.variationType === "NESTED_VARIATION") {
-    foundNestedVariation = product.variations?.find((v) => v.id === variationId)?.nestedVariations?.find((nv) => nv.id === nestedVariationId) ?? null;
-  }
-
-  return foundNestedVariation || null;
-};
-
-export const findCartItemsSubTotal = (checkoutCartItems: ICheckoutCartItem[]) => {
-  if (!checkoutCartItems) return 0;
-  return checkoutCartItems.reduce((acc, item) => {
-    const itemSubTotalPriceInCents = item.checkoutPriceInCents * item.quantity;
-    return acc + itemSubTotalPriceInCents;
-  }, 0);
-};
-
-export const findCartItemsShippingSubTotal = (checkoutCartItems: ICheckoutCartItem[]) => {
-  return checkoutCartItems.reduce((acc, item) => {
-    const itemTotalPriceInCents = item.checkoutShippingFeeInCents * item.quantity;
-    return acc + itemTotalPriceInCents;
-  }, 0);
-};
-
-export const findOrderItemsSubTotal = (orderItems: OrderItem[]) => {
-  if (!orderItems) return 0;
-  return orderItems.reduce((acc, item) => {
-    const itemSubTotalPriceInCents = item.priceInCents * item.quantity;
-    return acc + itemSubTotalPriceInCents;
-  }, 0);
-};
-
-export const findOrderItemsShippingSubTotal = (orderItems: OrderItem[]) => {
-  if (!orderItems) return 0;
-  return orderItems.reduce((acc, item) => {
-    const itemTotalPriceInCents = item.shippingFeeInCents * item.quantity;
-    return acc + itemTotalPriceInCents;
-  }, 0);
 };
 
 export const convertTwoDecimalNumberToCents = (priceInTwoDecimal: number): number => {
@@ -97,66 +32,56 @@ export const convertKilogramToGram = (kilogram: number): number => {
   return kilogram * 1000;
 };
 
-export const revalidateStore = async (urlPaths: string[]) => {
-  try {
-    await fetch(
-      `${process.env.NEXT_PUBLIC_STORE_URL}/api/revalidate?secret=${encodeURIComponent(process.env.NEXT_PUBLIC_REVALIDATE_SECRET!)}${urlPaths
-        .map((path) => `&path=${encodeURIComponent(path)}`)
-        .join("")}`,
-      {
-        method: "POST",
-      }
-    );
-    return {
-      success: "Store paths revalidate",
-    };
-  } catch (error) {
-    throw new Error("Failed revalidate store paths");
-  }
-};
-
-export const findSubtotalPricePerProduct = (quantity: number, Price: number): number => {
-  if (!quantity || !Price) return 0;
-  return quantity * Price;
-};
-
 /**
- * Extracts distinct names from nested variations within a list of variations
- * and joins them into a single string.
+ * Convert an image URL to a File object.
  *
- * @param variations - Array of Variation objects containing nested variations.
- * @returns A string of distinct nested variation names, joined by commas.
+ * @param {string} imageUrl - The URL of the image to be converted.
+ * @param {string} filename - The name to give the converted file.
+ * @param {string} mimeType - The MIME type of the image (e.g., 'image/jpeg', 'image/png').
+ * @returns {Promise<File>} - A promise that resolves to a File object.
  */
-export function getDistinctNestedVariationNames(variations: Variation[]): string {
-  const distinctNames = new Set<string>();
+export const urlToFile = async (imageUrl: string, filename: string, mimeType: string): Promise<File> => {
+  const response = await fetch(imageUrl);
+  const blob = await response.blob();
+  return new File([blob], filename, { type: mimeType });
+};
 
-  for (const variation of variations) {
-    if (variation.nestedVariations) {
-      for (const nestedVariation of variation.nestedVariations) {
-        distinctNames.add(nestedVariation.name ?? "");
-      }
-    }
-  }
+type PlainObject = { [key: string]: any };
+type FormDataValue = string | number | boolean | Blob | FormData | PlainObject | PlainObject[] | null | undefined;
 
-  return Array.from(distinctNames).join(", ");
+// Type guard to check if a value is a plain object
+function isPlainObject(value: any): value is PlainObject {
+  return value !== null && typeof value === "object" && !Array.isArray(value) && !(value instanceof FormData) && !(value instanceof Blob);
 }
 
-export const findSomeProductOutOfStock = (product: Product | undefined): boolean => {
-  if (!product || product === undefined) return false;
-  if (product.variationType === "NESTED_VARIATION") {
-    return product.variations?.some((variation) => variation.nestedVariations?.some((nestedVariation) => nestedVariation.stock === 0)) ?? false;
-  } else if (product.variationType === "VARIATION") {
-    return product.variations?.some((variation) => variation.stock === 0) ?? false;
-  } else {
-    return product.stock === 0;
-  }
-};
+// Type guard to check if a value is an array
+function isArray(value: any): value is any[] {
+  return Array.isArray(value);
+}
 
-export const buildQueryArrayCondition = (field: AnyPgColumn, values: string[]): SQL | undefined => {
-  return values.length > 0
-    ? arrayContains(
-        field,
-        values.map((v) => v.toLocaleLowerCase())
-      )
-    : undefined;
+// Function to append data to FormData
+export function appendFormData(formData: FormData, key: string, data: FormDataValue): void {
+  if (data === null || data === undefined) {
+    formData.append(key, "");
+  } else if (isPlainObject(data)) {
+    // Handle nested objects
+    Object.keys(data).forEach((subKey) => {
+      appendFormData(formData, `${key}[${subKey}]`, (data as PlainObject)[subKey]);
+    });
+  } else if (isArray(data)) {
+    // Handle arrays
+    data.forEach((value, index) => {
+      appendFormData(formData, `${key}[${index}]`, value);
+    });
+  } else {
+    // Handle primitive types and Blob
+    formData.append(key, data as string | Blob);
+  }
+}
+
+export const capitalizeSentenceFirstChar = (sentence: string) => {
+  if (!sentence) return "";
+  const firstChar = sentence.charAt(0).toUpperCase();
+  const restChars = sentence.slice(1).toLowerCase();
+  return firstChar + restChars;
 };

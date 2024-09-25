@@ -2,6 +2,7 @@ import { and, between, count, eq, ilike, inArray, or, sql } from "drizzle-orm";
 import { db } from "../..";
 import { Order, orders as orderTables } from "../../schema/orders";
 import { TOrdersQuery, orderQuerySchema } from "@/lib/validation/orderValidation";
+import { cache } from "react";
 
 export const getOrders = async (searchParams: TOrdersQuery): Promise<{ ordersData: Order[]; orderCount: number }> => {
   try {
@@ -52,7 +53,12 @@ export const getOrders = async (searchParams: TOrdersQuery): Promise<{ ordersDat
   }
 };
 
-export const getOrderById = async (orderId: string): Promise<Order> => {
+export const getOrderIds = cache(async () => {
+  const orderIds = await db.select({ id: orderTables.id }).from(orderTables);
+  return orderIds || [];
+});
+
+export const getOrderById = cache(async (orderId: string): Promise<Order> => {
   try {
     const order = await db.query.orders.findFirst({
       where: eq(orderTables.id, orderId),
@@ -66,7 +72,7 @@ export const getOrderById = async (orderId: string): Promise<Order> => {
   } catch (error) {
     throw new Error("Failed fetch order");
   }
-};
+});
 
 export interface ISalesReport {
   day: number;

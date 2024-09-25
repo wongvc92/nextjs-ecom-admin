@@ -7,7 +7,7 @@ import {
   findOrderItemdProductImage,
   findOrderItemdVariationLabel,
   findOrderItemdVariationName,
-} from "@/lib/utils/orders";
+} from "../helpers/orderItemHelpers";
 
 export const createOrderItem = async (trx: any, orderDetails: OrderItem[], orderId: string) => {
   try {

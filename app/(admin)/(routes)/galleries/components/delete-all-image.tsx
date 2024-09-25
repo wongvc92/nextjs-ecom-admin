@@ -32,7 +32,7 @@ const DeleteAllImage = ({ galleries }: { galleries?: IGallery[] | null }) => {
   };
   return (
     <>
-      {galleries?.some((item) => item.published === false && searchParams.get("sort") === "unpublished") && (
+      {galleries?.some((item) => item.published === false && searchParams.get("published") === "FALSE") && (
         <Button type="button" onClick={handleDeleteAllImage} className="flex items-center gap-2">
           {isPending ? (
             <>

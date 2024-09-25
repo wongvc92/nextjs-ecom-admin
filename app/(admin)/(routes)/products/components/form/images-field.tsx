@@ -3,9 +3,7 @@
 import { Crop, ImagePlusIcon, Move, RectangleHorizontal } from "lucide-react";
 import { useRef, useState, useTransition } from "react";
 import { useFormContext } from "react-hook-form";
-
 import Spinner from "@/components/spinner";
-
 import SortableImage from "./sortable-image";
 import { useImageManager } from "@/hooks/useImageManager";
 import { useDragAndDrop } from "@/hooks/useDrapAndDrop";

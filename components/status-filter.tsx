@@ -1,13 +1,15 @@
 "use client";
 
-import React from "react";
-import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { LoaderCircleIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { Button } from "./ui/button";
+import { LoaderCircleIcon } from "lucide-react";
+
 const status = [
+  { name: "cancelled", url: "cancelled" },
   { name: "pending", url: "pending" },
-  { name: "paid", url: "paid" },
+  { name: "toShip", url: "toShip" },
+  { name: "shipped", url: "shipped" },
   { name: "completed", url: "completed" },
 ];
 

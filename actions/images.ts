@@ -1,9 +1,9 @@
 "use server";
 import { z } from "zod";
-import { getSignedURLFromS3 } from "@/lib/utils/image";
 import { revalidatePath } from "next/cache";
 import { createGalleryImageDB } from "@/lib/services/galleryServices";
-import { ensureAuthenticated } from "@/lib/utils/authHelpers";
+import { ensureAuthenticated } from "@/lib/helpers/authHelpers";
+import { getSignedURLFromS3 } from "@/lib/helpers/awsS3Helpers";
 
 const allowedFileTypes = ["image/jpeg", "image/png"];
 const maxFileSize = 1048576 * 10; // 1 MB

@@ -12,9 +12,9 @@ import { toast } from "sonner";
 import { useImageCropContext } from "@/providers/image-crop-provider";
 import { readFile } from "@/lib/cropImage";
 import CropImageModal from "./crop-image-modal";
-import { urlToFile } from "@/lib/utils/image";
 import { deleteProductImage } from "@/actions/product";
 import { TProductSchema } from "@/lib/validation/productValidation";
+import { urlToFile } from "@/lib/utils";
 
 interface Image {
   id: string;

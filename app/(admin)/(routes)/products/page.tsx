@@ -1,58 +1,46 @@
 import React, { Suspense } from "react";
-import { ProductClient } from "./components/Client";
 import { Metadata } from "next";
-import { unstable_cache } from "next/cache";
-import { getProducts, getProductStatsCount } from "@/lib/db/queries/admin/products";
-import { getDistinctCategories } from "@/lib/db/queries/admin/categories";
+import { Separator } from "@/components/ui/separator";
+import ProductTable from "./components/product-table";
+import { ProductFilters } from "./components/product-filters";
+import TableSkeleton from "@/components/table-skeleton";
+import { Heading } from "@/components/ui/heading";
+import ProductStats from "./components/product-stats";
+import StatsLoading from "@/components/loading/stats-loading";
+import { Button } from "@/components/ui/button";
+import { PlusIcon } from "lucide-react";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Admin/Products",
   description: "Manage your products",
 };
 
-const getCachedDistinctCategories = unstable_cache(async () => getDistinctCategories(), ["categories"], { tags: ["categories"] });
-
-const ProductsPage = async ({
-  searchParams,
-}: {
-  searchParams: {
-    name: string;
-    perPage: string;
-    page: string;
-    dateFrom: string;
-    dateTo: string;
-    isArchived: string | string[];
-    isFeatured: string | string[];
-    category: string | string[];
-    isOutOfStock: string;
-  };
-}) => {
-  const name = searchParams.name || "";
-  const perPage = searchParams.perPage || "10";
-  const page = searchParams.page || "1";
-  const dateFrom = searchParams.dateFrom || "";
-  const dateTo = searchParams.dateTo || "";
-  const isArchived = searchParams.isArchived || "";
-  const isFeatured = searchParams.isFeatured || "";
-  const category = searchParams.category || "";
-  const isOutOfStock = searchParams.isOutOfStock || "";
-
-  const { filteredCount, products } = await getProducts(name, perPage, page, dateFrom, dateTo, isArchived, isFeatured, category, isOutOfStock);
-  const distinctCategories = await getCachedDistinctCategories();
-  const { archivedProductCount, featuredProductCount, allProductCount, outOfStockCount } = await getProductStatsCount();
-
+const ProductsPage = async ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
   return (
-    <Suspense>
-      <ProductClient
-        data={products}
-        totalPage={filteredCount / parseInt(perPage)}
-        distinctCategories={distinctCategories}
-        archivedProductCount={archivedProductCount}
-        featuredProductCount={featuredProductCount}
-        allProductCount={allProductCount}
-        outOfStockCount={outOfStockCount}
-      />
-    </Suspense>
+    <section className="py-8 px-4 flex-col space-y-4 w-full">
+      <div className="flex  items-center justify-between bg-white rounded-md p-4 shadow-sm dark:bg-inherit border">
+        <Heading title="Products" description="Manage orders for your store" />
+
+        <Link href="/products/add-new">
+          <Button type="button" className="flex items-center">
+            <PlusIcon className="h-4 w-4" />
+            <span className="hidden sm:inline ml-2">Add new</span>
+          </Button>
+        </Link>
+      </div>
+      <Separator className="my-4" />
+      <Suspense fallback={<StatsLoading />}>
+        <ProductStats />
+      </Suspense>
+      <Suspense fallback={"loading..."}>
+        <ProductFilters />
+      </Suspense>
+
+      <Suspense fallback={<TableSkeleton />}>
+        <ProductTable searchParams={searchParams} />
+      </Suspense>
+    </section>
   );
 };
 

@@ -1,12 +1,9 @@
+import { getOrderStatsCount } from "@/lib/db/queries/admin/galleries";
 import Link from "next/link";
 import React from "react";
 
-interface GalleryStatsProps {
-  allGalleryCount: number;
-  publisedGalleryCount: number;
-  unpublisedGalleryCount: number;
-}
-const GalleryStats: React.FC<GalleryStatsProps> = ({ allGalleryCount, publisedGalleryCount, unpublisedGalleryCount }) => {
+const GalleryStats = async () => {
+  const { allGalleryCount, publisedGalleryCount, unpublisedGalleryCount } = await getOrderStatsCount();
   const GALLERY_STATS = [
     {
       id: 1,

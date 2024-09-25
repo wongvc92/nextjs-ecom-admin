@@ -1,3 +1,4 @@
+import { OrderItem } from "../db/schema/orderItems";
 import { Product } from "../db/schema/products";
 
 export const findOrderItemdProductImage = (variationId: string, product: Product): string | null => {
@@ -60,4 +61,20 @@ export const findOrderItemdNestedVariationLabel = (variationId: string, nestedVa
     nestedVariationLabel = null;
   }
   return nestedVariationLabel;
+};
+
+export const findOrderItemsShippingSubTotal = (orderItems: OrderItem[]) => {
+  if (!orderItems) return 0;
+  return orderItems.reduce((acc, item) => {
+    const itemTotalPriceInCents = item.shippingFeeInCents * item.quantity;
+    return acc + itemTotalPriceInCents;
+  }, 0);
+};
+
+export const findOrderItemsSubTotal = (orderItems: OrderItem[]) => {
+  if (!orderItems) return 0;
+  return orderItems.reduce((acc, item) => {
+    const itemSubTotalPriceInCents = item.priceInCents * item.quantity;
+    return acc + itemSubTotalPriceInCents;
+  }, 0);
 };

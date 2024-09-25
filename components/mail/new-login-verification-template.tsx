@@ -5,7 +5,7 @@ interface EmailTemplateProps {
   confirmLink: string;
 }
 
-export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({ firstName, confirmLink }) => (
+export const NewLoginVerificationTemplate: React.FC<Readonly<EmailTemplateProps>> = ({ firstName, confirmLink }) => (
   <div>
     <h1>Hi, {firstName}!</h1>
     <p>

@@ -2,8 +2,7 @@
 
 import { revalidateTag } from "next/cache";
 import { db } from "@/lib/db";
-import { revalidateStore } from "@/lib/utils";
-import { deleteImageFromS3 } from "@/lib/utils/image";
+
 import {
   createNewProduct,
   createNewProductImage,
@@ -26,7 +25,9 @@ import { getProductById } from "@/lib/db/queries/admin/products";
 import { getVariationImageByUrl, getVariationsByProductId } from "@/lib/db/queries/admin/variations";
 import { deleteProductSchema, productSchema, TProductSchema } from "@/lib/validation/productValidation";
 import { getGalleryImageByUrl } from "@/lib/db/queries/admin/galleries";
-import { ensureAuthenticated } from "@/lib/utils/authHelpers";
+import { ensureAuthenticated } from "@/lib/helpers/authHelpers";
+import { revalidateStore } from "@/lib/services/storeServices";
+import { deleteImageFromS3 } from "@/lib/helpers/awsS3Helpers";
 
 const urlPaths = ["/", "/products", "/carts"];
 

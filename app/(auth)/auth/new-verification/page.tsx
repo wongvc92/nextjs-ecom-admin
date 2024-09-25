@@ -1,5 +1,11 @@
 import React from "react";
 import NewVerificationForm from "../components/new-verification-form";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "New verification",
+  description: "Manage your authentication",
+};
 
 const NewVerificationPage = () => {
   return (

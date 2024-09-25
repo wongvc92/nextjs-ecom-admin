@@ -1,6 +1,11 @@
 import { eq } from "drizzle-orm";
 import { db } from "../db";
 import { orders as ordersTable } from "../db/schema/orders";
+import Stripe from "stripe";
+import { OrderItem } from "../db/schema/orderItems";
+import { createOrderItem } from "./orderItemServices";
+import { updateStock } from "./productServices";
+import { processShippings } from "./shippingServices";
 
 export const updateTrackingNumber = async (tracking: string, orderId: string) => {
   try {
@@ -8,4 +13,41 @@ export const updateTrackingNumber = async (tracking: string, orderId: string) =>
   } catch (error) {
     throw new Error("Failed update tracking number");
   }
+};
+
+export const createNewOrder = async (customerId: string, productName: string, totalPriceInCents: number, image: string) => {
+  const [newOrder] = await db
+    .insert(ordersTable)
+    .values({
+      courierName: null,
+      trackingNumber: null,
+      customerId: customerId,
+      status: "pending",
+      productName: productName,
+      amountInCents: totalPriceInCents,
+      image: image,
+    })
+    .returning();
+
+  return newOrder;
+};
+
+export const processOrder = async (session: Stripe.Checkout.Session, eventType: string) => {
+  const orderDetails: OrderItem[] = session.metadata?.orderDetails ? JSON.parse(session.metadata.orderDetails) : [];
+  if (eventType === "expired") {
+    updateOrderStatus("cancelled", session.metadata?.orderId!);
+  }
+  if (eventType === "completed") {
+    updateOrderStatus("toShip", session.metadata?.orderId!);
+
+    await db.transaction(async (trx) => {
+      await createOrderItem(trx, orderDetails, session.metadata?.orderId!);
+      await updateStock(trx, orderDetails);
+      await processShippings(session, trx);
+    });
+  }
+};
+
+export const updateOrderStatus = async (orderStatus: string, orderId: string) => {
+  await db.update(ordersTable).set({ status: orderStatus }).where(eq(ordersTable.id, orderId!));
 };

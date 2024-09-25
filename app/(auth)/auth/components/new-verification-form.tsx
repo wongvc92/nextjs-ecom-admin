@@ -2,13 +2,13 @@
 
 import { newVerification } from "@/actions/auth";
 import Spinner from "@/components/spinner";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect } from "react";
 import { toast } from "sonner";
 
 const NewVerificationForm = () => {
   const searchParams = useSearchParams();
-
+  const router = useRouter();
   const token = searchParams.get("token");
 
   const onSubmit = useCallback(() => {
@@ -17,11 +17,12 @@ const NewVerificationForm = () => {
       .then((data) => {
         toast.error(data.error);
         toast.success(data.success);
+        router.push("/auth/sign-in");
       })
       .catch(() => {
         toast.error("Something went wrong");
       });
-  }, [token]);
+  }, [token, router]);
 
   useEffect(() => {
     onSubmit();

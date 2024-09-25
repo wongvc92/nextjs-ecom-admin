@@ -1,10 +1,10 @@
 import { OrderItem } from "@/lib/db/schema/orderItems";
-import { createNewOrder } from "@/lib/stripe/orders/createNewOrder";
-import { recheckCartItems } from "@/lib/stripe/orders/recheckCartItems";
-import { stripe } from "@/lib/stripe/stripe";
+import { findCartItemsShippingSubTotal, findCartItemsSubTotal } from "@/lib/helpers/cartItemHelpers";
+import { recheckCartItems } from "@/lib/services/cartItemServices";
+import { createNewOrder } from "@/lib/services/orderServices";
+import { stripe } from "@/lib/stripe";
 import { CartItem } from "@/lib/types";
-import { findCartItemsShippingSubTotal, findCartItemsSubTotal } from "@/lib/utils";
-import { capitalizeSentenceFirstChar } from "@/lib/utils/formaters";
+import { capitalizeSentenceFirstChar } from "@/lib/utils";
 import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 

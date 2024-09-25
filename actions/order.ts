@@ -1,7 +1,7 @@
 "use server";
 
 import { updateTrackingNumber } from "@/lib/services/orderServices";
-import { ensureAuthenticated } from "@/lib/utils/authHelpers";
+import { ensureAuthenticated } from "@/lib/helpers/authHelpers";
 import { trackingNumberSchema, TtrackingNumberSchema } from "@/lib/validation/trackingNumberValidation";
 import { revalidateTag } from "next/cache";
 

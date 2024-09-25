@@ -1,9 +1,8 @@
 import { and, asc, between, count, desc, eq, ilike } from "drizzle-orm";
-
 import { Product, products as productsTable } from "@/lib/db/schema/products";
 import { db } from "@/lib/db/index";
 import { IProductsQuery } from "@/lib/validation/productValidation";
-import { buildQueryArrayCondition } from "@/lib/utils";
+import { buildQueryArrayCondition } from "@/lib/services/queryServices";
 
 export const getProductsId = async (): Promise<{ id: string }[] | []> => {
   let productsId = await db.select({ id: productsTable.id }).from(productsTable);

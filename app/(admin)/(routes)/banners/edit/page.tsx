@@ -1,5 +1,11 @@
+import { Metadata } from "next";
 import EditForm from "./edit-form";
 import { getBannerImages } from "@/lib/db/queries/admin/banners";
+
+export const metadata: Metadata = {
+  title: "Edit Banner",
+  description: "Manage your Banners",
+};
 
 const EditBannerPage = async () => {
   const bannerImages = await getBannerImages();

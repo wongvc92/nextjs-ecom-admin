@@ -1,6 +1,6 @@
 import { getProductById } from "@/lib/db/queries/admin/products";
 import { CartItem } from "@/lib/types";
-import { findSelectedNestedVariation, findSelectedVariation } from "@/lib/utils";
+import { findSelectedNestedVariation, findSelectedVariation } from "../helpers/productHelpers";
 
 export interface ICheckoutCartItem extends CartItem {
   checkoutPriceInCents: number;

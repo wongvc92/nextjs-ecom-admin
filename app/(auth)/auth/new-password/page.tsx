@@ -1,5 +1,11 @@
 import React from "react";
 import NewPasswordForm from "../components/new-password-form";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "New password",
+  description: "Manage your authentication",
+};
 
 const NewPasswordPage = () => {
   return (

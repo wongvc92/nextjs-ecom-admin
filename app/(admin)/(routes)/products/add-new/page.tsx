@@ -1,11 +1,15 @@
 import React, { Suspense } from "react";
 import CreateForm from "./components/create-form";
-import { unstable_cache } from "next/cache";
 import { getDistinctCategories } from "@/lib/db/queries/admin/categories";
+import { Metadata } from "next";
 
-const getCachedDistinctCategories = unstable_cache(async () => getDistinctCategories(), ["categories"], { tags: ["categories"] });
+export const metadata: Metadata = {
+  title: "View order",
+  description: "Manage orders for your store",
+};
+
 const ProductPage = async () => {
-  const distinctCategories = await getCachedDistinctCategories();
+  const distinctCategories = await getDistinctCategories();
   return (
     <section className="w-full md:container">
       <Suspense>

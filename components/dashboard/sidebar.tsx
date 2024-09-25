@@ -43,12 +43,20 @@ const Sidebar = async () => {
   return (
     <>
       {session?.user.id && (
-        <aside className={"top-0 hidden min-h-screen border relative w-[50px] items-center xl:w-fit xl:flex xl:flex-col pt-10 "}>
+        <aside
+          className={
+            "top-0 hidden min-h-screen border w-[50px] items-center xl:w-fit xl:flex xl:flex-col pt-10  bg-muted sticky  h-screen  shadow-md dark:bg-transparent"
+          }
+        >
           <ul className={"flex flex-col items-start space-y-4 mt-12 px-4 py-2 w-full"}>
             {routes.map((item) => (
               <li key={item.name}>
                 <Link href={item.path}>
-                  <p className={"flex items-center gap-2 w-full h-8 group text-muted-foreground text-sm px-2 rounded-md hover:bg-muted "}>
+                  <p
+                    className={
+                      "flex items-center gap-2 w-full h-8 group text-muted-foreground text-sm px-2 rounded-md hover:bg-white hover:w-auto hover:text-black"
+                    }
+                  >
                     <item.icon className={"w-6 h-6 transition-transform duration-300 group-hover:rotate-45"} />
                     <span>{item.name}</span>
                   </p>

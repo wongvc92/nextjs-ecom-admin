@@ -8,7 +8,7 @@ import ApplyToAll from "./apply-to-all";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import NestedVariationField from "./nested-variation-field";
-import { cn } from "@/lib/utils";
+import { cn, urlToFile } from "@/lib/utils";
 import FormFieldWrapper from "./form-field-wrapper";
 import FieldLabel from "./field-label";
 import VariationCheckbox from "./variation-checkbox";
@@ -19,7 +19,6 @@ import { toast } from "sonner";
 import { deleteVariationImage } from "@/actions/product";
 import { useImageManager } from "@/hooks/useImageManager";
 import { useImageCropContext } from "@/providers/image-crop-provider";
-import { urlToFile } from "@/lib/utils/image";
 import { readFile } from "@/lib/cropImage";
 import { TProductSchema } from "@/lib/validation/productValidation";
 

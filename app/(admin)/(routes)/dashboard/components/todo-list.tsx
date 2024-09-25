@@ -45,23 +45,20 @@ const TodoList = async () => {
   ] as const;
 
   return (
-    <>
-      <h4 className="py-4">To do list</h4>
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 ">
-        {TODOLIST.map((item) => (
-          <Link
-            href={item.url}
-            key={item.id}
-            className={`border p-2 rounded-md flex flex-col justify-center items-center text-muted-foreground text-xs md:text-base break-words aspect-square ${
-              item.count === 0 && "pointer-events-none"
-            }`}
-          >
-            <p className="text-sky-500 text-center text-2xl">{item.count}</p>
-            <p className="text-center font-light">{item.label}</p>
-          </Link>
-        ))}
-      </div>
-    </>
+    <div className="grid grid-cols-3 gap-2 md:flex md:flex-wrap">
+      {TODOLIST.map((item) => (
+        <Link
+          href={item.url}
+          key={item.id}
+          className={`border p-2 rounded-md flex flex-col justify-center text-muted-foreground items-center text-xs md:text-base break-words aspect-square max-h-32 flex-1 ${
+            item.count === 0 && "pointer-events-none"
+          }`}
+        >
+          <p className="text-muted-foreground text-center text-xl font-bold">{item.count}</p>
+          <p className="text-center font-light">{item.label}</p>
+        </Link>
+      ))}
+    </div>
   );
 };
 

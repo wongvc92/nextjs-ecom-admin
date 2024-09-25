@@ -1,13 +1,9 @@
+import { getProductStatsCount } from "@/lib/db/queries/admin/products";
 import Link from "next/link";
-import React from "react";
 
-interface ProductStatsProps {
-  archivedProductCount: number;
-  featuredProductCount: number;
-  allProductCount: number;
-  outOfStockCount: number;
-}
-const ProductStats: React.FC<ProductStatsProps> = ({ archivedProductCount, featuredProductCount, allProductCount, outOfStockCount }) => {
+const ProductStats = async () => {
+  const { archivedProductCount, featuredProductCount, allProductCount, outOfStockCount } = await getProductStatsCount();
+
   const PRODUCT_STATS = [
     {
       id: 1,

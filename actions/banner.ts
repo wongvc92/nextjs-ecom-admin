@@ -2,14 +2,15 @@
 
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
-import { revalidateStore } from "@/lib/utils";
-import { deleteImageFromS3 } from "@/lib/utils/image";
+
 import { createNewBannerImage, deleteExistingBannerImage, updateGalleryImagePublishedStatusBybannerImageId } from "@/lib/services/bannerServices";
 import { getBannerImageByUrl, getBannerImages } from "@/lib/db/queries/admin/banners";
 import { getGalleryImageByUrl } from "@/lib/db/queries/admin/galleries";
 import { deleteGalleryImageByUrl } from "@/lib/services/galleryServices";
 import { bannerImagesSchema, TBannerImagesFormSchema } from "@/lib/validation/bannerImagesValidation";
-import { ensureAuthenticated } from "@/lib/utils/authHelpers";
+import { ensureAuthenticated } from "@/lib/helpers/authHelpers";
+import { revalidateStore } from "@/lib/services/storeServices";
+import { deleteImageFromS3 } from "@/lib/helpers/awsS3Helpers";
 
 const urlPaths = ["/"];
 

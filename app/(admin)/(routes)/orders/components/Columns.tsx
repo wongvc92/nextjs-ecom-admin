@@ -2,11 +2,10 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./CellAction";
-import { cn, convertCentsToTwoDecimalNumber, convertCentsToTwoDecimalString } from "@/lib/utils";
+import { cn, convertCentsToTwoDecimalString } from "@/lib/utils";
 import { Order } from "@/lib/db/schema/orders";
 import { format } from "date-fns";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useEffect, useRef } from "react";
 import { ArrowDownIcon, ArrowUpDown, ArrowUpIcon } from "lucide-react";
 
 export const columns: ColumnDef<Order>[] = [

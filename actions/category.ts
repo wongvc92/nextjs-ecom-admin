@@ -5,7 +5,7 @@ import { z } from "zod";
 import { createCategoryDB, deleteCategoryDB, updateCategoryDB } from "@/lib/services/categoryServices";
 import { getProductsWithCategory } from "@/lib/db/queries/admin/products";
 import { getCategoryById } from "@/lib/db/queries/admin/categories";
-import { ensureAuthenticated } from "@/lib/utils/authHelpers";
+import { ensureAuthenticated } from "@/lib/helpers/authHelpers";
 import { categorySchema } from "@/lib/validation/categoryValidation";
 
 export const createCategory = async (formData: FormData) => {

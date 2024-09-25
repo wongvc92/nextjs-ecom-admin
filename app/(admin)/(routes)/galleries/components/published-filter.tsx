@@ -1,7 +1,6 @@
 "use client";
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { capitalizeFirstChar } from "@/lib/utils/formaters";
 import { ArrowUpDown } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
@@ -36,9 +35,7 @@ const PublishedFilter = () => {
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center gap-2 rounded-md border px-4 py-2 text-sm ">
             <span className="">Published</span>
-            <span className="text-muted-foreground hidden md:block">
-              {capitalizeFirstChar(searchParams.get("published") === "TRUE" ? "YES" : "NO")}
-            </span>
+            <span className="uppercase text-muted-foreground hidden md:block">{searchParams.get("published") === "TRUE" ? "YES" : "NO"}</span>
             <ArrowUpDown className="h-4 w-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
