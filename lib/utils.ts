@@ -1,4 +1,3 @@
-import { ICheckoutCartItem } from "@/app/api/checkout/guest/route";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
