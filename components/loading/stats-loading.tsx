@@ -1,6 +1,5 @@
 import React from "react";
 import { Skeleton } from "../ui/skeleton";
-import { Divide } from "lucide-react";
 
 const StatsLoading = () => {
   const rows = Array.from({ length: 6 });

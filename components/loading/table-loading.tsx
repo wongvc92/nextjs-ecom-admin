@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-const TableSkeleton = () => {
+const TableLoading = () => {
   const rows = Array.from({ length: 5 }); // Creates 5 rows as placeholders
   return (
     <div className="w-full overflow-hidden border border-gray-200 shadow rounded-lg">
@@ -50,4 +50,4 @@ const TableSkeleton = () => {
   );
 };
 
-export default TableSkeleton;
+export default TableLoading;

@@ -121,7 +121,7 @@ export const getProductStatsCount = cache(async () => {
   }
 });
 
-export const getProductsWithCategory = async () => {
+export const getProductsWithCategory = cache(async () => {
   const existingProductWithCategory = await db.select({ categoryName: productsTable.category }).from(productsTable);
   return existingProductWithCategory || [];
-};
+});

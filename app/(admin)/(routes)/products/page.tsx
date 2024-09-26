@@ -3,13 +3,13 @@ import { Metadata } from "next";
 import { Separator } from "@/components/ui/separator";
 import ProductTable from "./components/product-table";
 import { ProductFilters } from "./components/product-filters";
-import TableSkeleton from "@/components/table-skeleton";
 import { Heading } from "@/components/ui/heading";
 import ProductStats from "./components/product-stats";
 import StatsLoading from "@/components/loading/stats-loading";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
+import TableLoading from "@/components/loading/table-loading";
 
 export const metadata: Metadata = {
   title: "Admin/Products",
@@ -37,7 +37,7 @@ const ProductsPage = async ({ searchParams }: { searchParams: { [key: string]: s
         <ProductFilters />
       </Suspense>
 
-      <Suspense fallback={<TableSkeleton />}>
+      <Suspense fallback={<TableLoading />}>
         <ProductTable searchParams={searchParams} />
       </Suspense>
     </section>

@@ -4,7 +4,7 @@ import { Order, orders as orderTables } from "../../schema/orders";
 import { TOrdersQuery, orderQuerySchema } from "@/lib/validation/orderValidation";
 import { cache } from "react";
 
-export const getOrders = async (searchParams: TOrdersQuery): Promise<{ ordersData: Order[]; orderCount: number }> => {
+export const getOrders = cache(async (searchParams: TOrdersQuery): Promise<{ ordersData: Order[]; orderCount: number }> => {
   try {
     const parseResult = orderQuerySchema.safeParse(searchParams);
 
@@ -51,7 +51,7 @@ export const getOrders = async (searchParams: TOrdersQuery): Promise<{ ordersDat
     console.log(error);
     throw new Error("Failed fetch orders");
   }
-};
+});
 
 export const getOrderIds = cache(async () => {
   const orderIds = await db.select({ id: orderTables.id }).from(orderTables);
@@ -79,7 +79,7 @@ export interface ISalesReport {
   totalAmountSum: number;
 }
 
-export const getSalesReport = async (salesDateFrom: string, salesDateTo: string, salesStatus: string): Promise<ISalesReport[]> => {
+export const getSalesReport = cache(async (salesDateFrom: string, salesDateTo: string, salesStatus: string): Promise<ISalesReport[]> => {
   try {
     const whereCondition = [];
     if (salesDateFrom && salesDateTo) {
@@ -100,19 +100,18 @@ export const getSalesReport = async (salesDateFrom: string, salesDateTo: string,
       .groupBy(sql`EXTRACT(DAY FROM ${orderTables.updatedAt})`)
       .orderBy(sql`EXTRACT(DAY FROM ${orderTables.updatedAt})`);
 
-    console.log("completedOrdersByMonth", salesReport);
     return salesReport;
   } catch (error) {
     throw new Error("Failed fetch complete dOrders By Month");
   }
-};
+});
 
 export interface IOrdersReport {
   day: number;
   ordersCount: number;
 }
 
-export const getOrdersReport = async (ordersDateFrom: string, ordersDateTo: string, ordersStatus: string): Promise<IOrdersReport[]> => {
+export const getOrdersReport = cache(async (ordersDateFrom: string, ordersDateTo: string, ordersStatus: string): Promise<IOrdersReport[]> => {
   try {
     const whereCondition = [];
     if (ordersDateFrom && ordersDateTo) {
@@ -137,9 +136,9 @@ export const getOrdersReport = async (ordersDateFrom: string, ordersDateTo: stri
   } catch (error) {
     throw new Error("Failed fetch orders report");
   }
-};
+});
 
-export const getOrderStatsCount = async () => {
+export const getOrderStatsCount = cache(async () => {
   try {
     const [allOrders] = await db.select({ count: count() }).from(orderTables);
     const [cancelledOrders] = await db.select({ count: count() }).from(orderTables).where(eq(orderTables.status, "cancelled"));
@@ -160,4 +159,4 @@ export const getOrderStatsCount = async () => {
     console.error("Error fetching product stats:", error);
     throw new Error("Failed fetch product stats");
   }
-};
+});

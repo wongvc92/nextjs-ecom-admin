@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import CategoryTable from "./components/category-table";
 import CategoryFilters from "./components/category-filters";
 import FiltersLoading from "@/components/loading/filters-loading";
+import TableLoading from "@/components/loading/table-loading";
 
 export const metadata: Metadata = {
   title: "Categories",
@@ -40,7 +41,9 @@ const CategoriesPage = async ({
       <Suspense fallback={<FiltersLoading />}>
         <CategoryFilters />
       </Suspense>
-      <CategoryTable perPage={perPage} name={name} page={page} dateFrom={dateFrom} dateTo={dateTo} />
+      <Suspense fallback={<TableLoading />}>
+        <CategoryTable perPage={perPage} name={name} page={page} dateFrom={dateFrom} dateTo={dateTo} />
+      </Suspense>
     </section>
   );
 };

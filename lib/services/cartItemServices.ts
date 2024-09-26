@@ -77,5 +77,5 @@ export const recheckCartItems = async (cartItems: CartItem[]): Promise<ICheckout
       checkoutCartItems.push(cartItemData);
     }
   }
-  return checkoutCartItems || null;
+  return checkoutCartItems;
 };

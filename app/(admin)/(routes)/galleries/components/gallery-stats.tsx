@@ -1,9 +1,9 @@
-import { getOrderStatsCount } from "@/lib/db/queries/admin/galleries";
+import { getGalleryStatsCount } from "@/lib/db/queries/admin/galleries";
 import Link from "next/link";
 import React from "react";
 
 const GalleryStats = async () => {
-  const { allGalleryCount, publisedGalleryCount, unpublisedGalleryCount } = await getOrderStatsCount();
+  const { allGalleryCount, publisedGalleryCount, unpublisedGalleryCount } = await getGalleryStatsCount();
   const GALLERY_STATS = [
     {
       id: 1,

@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 import { createCategoryDB, deleteCategoryDB, updateCategoryDB } from "@/lib/services/categoryServices";
 import { getProductsWithCategory } from "@/lib/db/queries/admin/products";
@@ -18,7 +18,7 @@ export const createCategory = async (formData: FormData) => {
   }
   try {
     const category = await createCategoryDB(parsed.data.name);
-    revalidateTag("categories");
+    revalidatePath("/categories");
     return { success: `Category "${category.name}" created 🎉` };
   } catch (error) {
     return {
@@ -38,7 +38,7 @@ export const editCategory = async (formData: FormData) => {
   const { id, name } = parsed.data;
   try {
     await updateCategoryDB(name, id!);
-    revalidateTag("categories");
+    revalidatePath("/categories");
     return { success: `Category changed to "${name}" 🎉` };
   } catch (error) {
     return {
@@ -70,7 +70,7 @@ export const deleteCategory = async (formData: FormData) => {
     }
 
     await deleteCategoryDB(parsed.data.id);
-    revalidateTag("categories");
+    revalidatePath("/categories");
     return { success: `Category deleted` };
   } catch (error) {
     return {

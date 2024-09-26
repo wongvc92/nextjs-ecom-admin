@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 
 import {
@@ -29,7 +29,7 @@ import { ensureAuthenticated } from "@/lib/helpers/authHelpers";
 import { revalidateStore } from "@/lib/services/storeServices";
 import { deleteImageFromS3 } from "@/lib/helpers/awsS3Helpers";
 
-const urlPaths = ["/", "/products", "/carts"];
+const urlPaths = ["/", "/products"];
 
 export const editProduct = async (values: TProductSchema) => {
   await ensureAuthenticated();
@@ -106,7 +106,7 @@ export const editProduct = async (values: TProductSchema) => {
       }
     });
     await revalidateStore(urlPaths);
-    revalidateTag("products");
+    revalidatePath("/products");
     return { success: "Product updated" };
   } catch (error) {
     return { error: "Failed update product" };
@@ -152,7 +152,7 @@ export const deleteProduct = async (formData: FormData) => {
 
     await deleteProductFromDB(parsed.data.id);
     await revalidateStore(urlPaths);
-    revalidateTag("products");
+    revalidatePath("/products");
     return { success: `Product deleted` };
   } catch (error) {
     console.log(error);
@@ -209,7 +209,7 @@ export const createProduct = async (values: TProductSchema) => {
       }
     });
     await revalidateStore(urlPaths);
-    revalidateTag("products");
+    revalidatePath("/products");
     return { success: `Product created 🎉` };
   } catch (error) {
     console.error("Failed create product", error);
@@ -239,7 +239,7 @@ export const deleteProductImage = async (url: string) => {
         await deleteGalleryImageByUrl(url, tx);
       }
     });
-    revalidateTag("products");
+    revalidatePath("/products");
     return {
       success: "Image deleted",
     };
@@ -272,7 +272,7 @@ export async function deleteVariationImage(url: string) {
         await deleteGalleryImageByUrl(url, tx);
       }
     });
-    revalidateTag("products");
+    revalidatePath("/products");
     return {
       success: "Image deleted",
     };
