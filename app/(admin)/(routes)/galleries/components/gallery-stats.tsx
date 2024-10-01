@@ -1,9 +1,13 @@
 import { getGalleryStatsCount } from "@/lib/db/queries/admin/galleries";
 import Link from "next/link";
-import React from "react";
+import React, { cache } from "react";
+
+const getCachedGalleryStatsCount = cache(async () => {
+  return await getGalleryStatsCount();
+});
 
 const GalleryStats = async () => {
-  const { allGalleryCount, publisedGalleryCount, unpublisedGalleryCount } = await getGalleryStatsCount();
+  const { allGalleryCount, publisedGalleryCount, unpublisedGalleryCount } = await getCachedGalleryStatsCount();
   const GALLERY_STATS = [
     {
       id: 1,

@@ -2,9 +2,8 @@ import { count, eq } from "drizzle-orm";
 import { db } from "../..";
 import { orders as ordersTable } from "../../schema/orders";
 import { products as productsTable } from "../../schema/products";
-import { cache } from "react";
 
-export const getTodoListCount = cache(async () => {
+export const getTodoListCount = async () => {
   try {
     const [toShipCount] = await db.select({ count: count() }).from(ordersTable).where(eq(ordersTable.status, "toShip"));
 
@@ -14,4 +13,4 @@ export const getTodoListCount = cache(async () => {
   } catch (error) {
     throw new Error("Something went wrong");
   }
-});
+};

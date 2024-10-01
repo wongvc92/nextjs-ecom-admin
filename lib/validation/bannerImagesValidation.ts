@@ -20,9 +20,4 @@ export const bannerImageSchema = z.object({
     ),
 });
 
-// Define the schema for an object containing bannerImages as an array
-export const bannerImagesSchema = z.object({
-  bannerImages: z.array(bannerImageSchema),
-});
-
-export type TBannerImagesFormSchema = z.infer<typeof bannerImagesSchema>;
+export type TBannerImageFormSchema = z.infer<typeof bannerImageSchema>;

@@ -8,19 +8,20 @@ import { Heading } from "@/components/ui/heading";
 import SubmitButton from "@/components/submit-button";
 import { editBanner } from "@/actions/banner";
 import { toast } from "sonner";
+import { BannerImage } from "@/lib/db/schema/bannerImages";
+import { bannerImageSchema, TBannerImageFormSchema } from "@/lib/validation/bannerImagesValidation";
 import { useRouter } from "next/navigation";
-import { bannerImagesSchema, TBannerImagesFormSchema } from "@/lib/validation/bannerImagesValidation";
 
 interface EditFormProps {
-  data: { id: string; url: string }[];
+  data: BannerImage;
 }
 const EditForm: React.FC<EditFormProps> = ({ data }) => {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
-  const methods = useForm<TBannerImagesFormSchema>({
-    defaultValues: { bannerImages: data || [] },
+  const methods = useForm<TBannerImageFormSchema>({
+    defaultValues: data ? { id: data.id, url: data.url } : { id: "", url: "" },
     mode: "all",
-    resolver: zodResolver(bannerImagesSchema),
+    resolver: zodResolver(bannerImageSchema),
   });
 
   const onSubmit = async () => {
@@ -33,7 +34,6 @@ const EditForm: React.FC<EditFormProps> = ({ data }) => {
       } else if (res.success) {
         toast.success(res.success);
         router.push("/banners");
-        router.refresh();
       }
     });
   };

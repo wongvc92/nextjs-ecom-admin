@@ -1,16 +1,37 @@
-import React from "react";
-import Banner from "./components/Banner";
-import { getBannerImages } from "@/lib/db/queries/admin/banners";
 import { Metadata } from "next";
+import { Heading } from "@/components/ui/heading";
+import Link from "next/link";
+import { Plus } from "lucide-react";
+
+import BannerTable from "./components/banner-table";
 
 export const metadata: Metadata = {
   title: "Banners",
   description: "Manage your Banners",
 };
 
-const BannerPage = async () => {
-  const data = await getBannerImages();
-  return <Banner data={data} />;
+const BannerPage = async ({ searchParams }: { searchParams: { name: string; perPage: string; page: string; dateFrom: string; dateTo: string } }) => {
+  const name = searchParams.name || "";
+  const perPage = searchParams.perPage || "5";
+  const page = searchParams.page || "1";
+  const dateFrom = searchParams.dateFrom || "";
+  const dateTo = searchParams.dateTo || "";
+
+  return (
+    <section className="w-full md:container">
+      <div className="py-8 px-4 flex-col space-y-8 w-full min-h-screen">
+        <div className="flex  items-center justify-between bg-white rounded-md p-4 shadow-sm dark:bg-inherit border">
+          <Heading title={`Banner `} description="Manage banner for your store" />
+
+          <Link href={`banners/add-new`} type="button" className="flex items-center bg-black text-white px-4 py-3 rounded-md text-sm">
+            <Plus className="h-4 w-4" />
+            <span className="hidden sm:inline ml-2">Add new</span>
+          </Link>
+        </div>
+        <BannerTable perPage={perPage} name={name} page={page} dateFrom={dateFrom} dateTo={dateTo} />
+      </div>
+    </section>
+  );
 };
 
 export default BannerPage;

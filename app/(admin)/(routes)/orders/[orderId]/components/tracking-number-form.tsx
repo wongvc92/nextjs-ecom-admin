@@ -12,7 +12,11 @@ import { toast } from "sonner";
 import Spinner from "@/components/spinner";
 import { trackingNumberSchema } from "@/lib/validation/trackingNumberValidation";
 
-export function TrackingNumberForm({ orderId }: { orderId: string }) {
+interface TrackingNumberFormProps {
+  orderId: string;
+  hideForm: () => void;
+}
+const TrackingNumberForm = ({ orderId, hideForm }: TrackingNumberFormProps) => {
   const [isPending, startTransition] = useTransition();
   const form = useForm<z.infer<typeof trackingNumberSchema>>({
     resolver: zodResolver(trackingNumberSchema),
@@ -30,6 +34,7 @@ export function TrackingNumberForm({ orderId }: { orderId: string }) {
       } else if (res.error) {
         toast.error(res.error);
       }
+      hideForm();
     });
   }
 
@@ -54,4 +59,6 @@ export function TrackingNumberForm({ orderId }: { orderId: string }) {
       </form>
     </Form>
   );
-}
+};
+
+export default TrackingNumberForm;

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React from "react";
+import React, { cache } from "react";
 import DeleteSingleImage from "./delete-single-image";
 import DeleteAllImage from "./delete-all-image";
 import { getGalleries } from "@/lib/db/queries/admin/galleries";
@@ -8,6 +8,7 @@ interface GalleriesProps {
   page: string;
   published: string;
 }
+
 const GalleriesList = async ({ page, published }: GalleriesProps) => {
   const { galleries } = await getGalleries(parseInt(page), published);
 

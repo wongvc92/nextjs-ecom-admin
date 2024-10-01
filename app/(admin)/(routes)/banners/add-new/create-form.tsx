@@ -9,24 +9,32 @@ import SubmitButton from "@/components/submit-button";
 import { createBanner } from "@/actions/banner";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { bannerImagesSchema, TBannerImagesFormSchema } from "@/lib/validation/bannerImagesValidation";
+import { bannerImageSchema, TBannerImageFormSchema } from "@/lib/validation/bannerImagesValidation";
 
-const CreateForm = () => {
+const CreateForm = ({ bannerImagesCount }: { bannerImagesCount: number | null }) => {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
-  const methods = useForm<TBannerImagesFormSchema>({
+  const methods = useForm<TBannerImageFormSchema>({
     defaultValues: {
-      bannerImages: [],
+      id: "",
+      url: "",
     },
     mode: "all",
-    resolver: zodResolver(bannerImagesSchema),
+    resolver: zodResolver(bannerImageSchema),
   });
 
   const onSubmit = async () => {
     startTransition(async () => {
-      if (!methods.getValues()) return;
+      if (!methods.getValues() || bannerImagesCount === null || bannerImagesCount === undefined) return;
+      console.log("bannerImagesCount", bannerImagesCount);
+      let orderNumber = 0;
+      if (bannerImagesCount > 0) {
+        orderNumber = bannerImagesCount + 1;
+      } else {
+        orderNumber = 0;
+      }
 
-      const res = await createBanner(methods.getValues());
+      const res = await createBanner(methods.getValues(), orderNumber);
       if (res.error) {
         toast.error(res.error);
       } else if (res.success) {
@@ -40,7 +48,7 @@ const CreateForm = () => {
   return (
     <div className="px-4 space-y-4 py-8 w-full min-h-screen">
       <div className="flex items-center justify-between w-full ">
-        <Heading title="Create category" description="Add a new category" />
+        <Heading title="Create banner" description="Add a new banner" />
         {/* 
     show the delete button if initialData is exist */}
       </div>

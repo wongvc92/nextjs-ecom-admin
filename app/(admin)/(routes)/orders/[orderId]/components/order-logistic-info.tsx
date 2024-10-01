@@ -1,25 +1,45 @@
-import { Circle, MapPin } from "lucide-react";
-import React from "react";
-import { TrackingNumberForm } from "./tracking-number-form";
+"use client";
+
+import { Circle, EditIcon, MapPin } from "lucide-react";
+import React, { useCallback, useState } from "react";
+import TrackingNumberForm from "./tracking-number-form";
+import { Order } from "@/lib/db/schema/orders";
+import { Button } from "@/components/ui/button";
 
 interface OrderLogisticInfoProps {
-  status: string;
-  orderId: string;
+  order: Order;
 }
 
-const OrderLogisticInfo = ({ status, orderId }: OrderLogisticInfoProps) => {
+const OrderLogisticInfo = ({ order }: OrderLogisticInfoProps) => {
+  const [showForm, setShowForm] = useState(false);
+
+  const hideForm = useCallback(() => {
+    setShowForm(false);
+  }, []);
+
   return (
     <div className="flex">
-      <div className="flex flex-col">
+      <div className="flex flex-col space-y-2">
         <p className="flex items-center gap-2  font-semibold text-sm">
           <MapPin className="h-4 w-4" />
           Logistic Information
         </p>
         <div className="pl-6">
-          {status === "toShip" ? (
-            <TrackingNumberForm orderId={orderId} />
-          ) : (
-            <div className="my-4 bg-muted p-4 dark:border rounded-md shadow-sm">
+          {(order.status === "toShip" || showForm) && <TrackingNumberForm orderId={order.id} hideForm={hideForm} />}
+
+          <div className={`${order.status !== "shipped" ? "hidden" : "block"}`}>
+            <div className={`text-sm my-2", ${showForm ? "hidden" : "block"}`}>
+              <p className="flex items-center gap-2">
+                Tracking no: <span className="text-muted-foreground font-light">{order.trackingNumber}</span>
+                <Button type="button" size="icon" variant="none" onClick={() => setShowForm(true)}>
+                  <EditIcon />
+                </Button>
+              </p>
+              <p>
+                Courier: <span className="text-muted-foreground font-light">J&T express</span>
+              </p>
+            </div>
+            <div className="bg-muted p-4 dark:border rounded-md shadow-sm my-2">
               <ul>
                 <li className="relative flex gap-6 pb-5 items-baseline">
                   <div className="before:absolute before:left-[16px]  before:h-full before:w-[1px] before:bg-muted-foreground">
@@ -67,7 +87,7 @@ const OrderLogisticInfo = ({ status, orderId }: OrderLogisticInfoProps) => {
                 </li>
               </ul>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>

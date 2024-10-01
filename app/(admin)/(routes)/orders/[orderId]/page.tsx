@@ -65,7 +65,7 @@ const OrderPageById = async ({ params }: { params: { orderId: string } }) => {
             </div>
 
             {/* Logistic Information */}
-            <OrderLogisticInfo status={order.status} orderId={order.id} />
+            <OrderLogisticInfo order={order} />
           </div>
 
           {/* Payment Information */}

@@ -14,6 +14,8 @@ export const metadata: Metadata = {
   description: "Manage galleries for your store",
 };
 
+export const dynamic = "force-dynamic";
+
 const GalleriesPage = async ({ searchParams }: { searchParams: { page: string; published: string } }) => {
   const page = searchParams.page || "1";
   const published = searchParams.published;

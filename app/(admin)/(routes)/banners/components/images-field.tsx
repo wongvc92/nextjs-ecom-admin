@@ -5,18 +5,13 @@ import { useRef, useState, useTransition } from "react";
 import { useFormContext } from "react-hook-form";
 import FormFieldWrapper from "../../products/components/form/form-field-wrapper";
 import Spinner from "@/components/spinner";
-import FieldError from "../../products/components/form/field-error";
-import SortableImage from "./sortable-image";
 import { useImageManager } from "@/hooks/useImageManager";
-import { useDragAndDrop } from "@/hooks/useDrapAndDrop";
 import { ImageCropProvider } from "@/providers/image-crop-provider";
-import { DragEndEvent } from "@dnd-kit/core";
-import { TBannerImagesFormSchema } from "@/lib/validation/bannerImagesValidation";
-
-interface Image {
-  id: string;
-  url: string;
-}
+import { TBannerImageFormSchema } from "@/lib/validation/bannerImagesValidation";
+import { toast } from "sonner";
+import ImagePlaceholder from "./image-placeholder";
+import { v4 as uuidv4 } from "uuid";
+import FieldError from "../../products/components/form/field-error";
 
 const ImagesField = () => {
   const {
@@ -25,16 +20,12 @@ const ImagesField = () => {
     getValues,
     watch,
     formState: { errors },
-  } = useFormContext<TBannerImagesFormSchema>();
+  } = useFormContext<TBannerImageFormSchema>();
 
-  const [previewImages, setPreviewImages] = useState<Image[]>(watch("bannerImages") ?? []);
+  const [previewImage, setPreviewImage] = useState({ id: getValues("id"), url: getValues("url") });
   const [isPending, startTransition] = useTransition();
   const hiddenFileRef = useRef<HTMLInputElement | null>(null);
-  const { uploadMultipleImages } = useImageManager();
-  const { SortableContext, closestCenter, handleDragEnd, horizontalListSortingStrategy, sensors, DndContext } = useDragAndDrop(
-    previewImages,
-    setPreviewImages
-  );
+  const { uploadSingleImage } = useImageManager();
 
   const toggleAddImage = () => {
     if (hiddenFileRef.current) {
@@ -46,10 +37,13 @@ const ImagesField = () => {
     e.preventDefault();
     startTransition(async () => {
       if (e.target.files) {
-        const filesToUpload = Array.from(e.target.files);
-        const uploadedImages = await uploadMultipleImages(filesToUpload, getValues("bannerImages"));
-        setValue("bannerImages", uploadedImages as Image[]);
-        setPreviewImages(uploadedImages as Image[]);
+        const filesToUpload = e.target.files[0];
+        const uploadedImage = await uploadSingleImage(filesToUpload);
+        if (!uploadedImage) {
+          toast.error("Something went wrong, please try again later");
+        }
+        setValue("url", uploadedImage);
+        setPreviewImage({ id: uuidv4(), url: uploadedImage });
         if (hiddenFileRef.current) {
           hiddenFileRef.current.value = "";
         }
@@ -57,24 +51,9 @@ const ImagesField = () => {
     });
   };
 
-  const onDragEnd = (e: DragEndEvent) => {
-    if (!e) return;
-    const sortedImages = handleDragEnd(e);
-    setValue("bannerImages", sortedImages as Image[]);
-  };
-
   return (
     <FormFieldWrapper>
-      <input
-        hidden
-        {...register("bannerImages" as const)}
-        ref={hiddenFileRef}
-        multiple
-        type="file"
-        id="banner"
-        className="w-full"
-        onChange={handleAddImages}
-      />
+      <input hidden {...register("url" as const)} ref={hiddenFileRef} multiple type="file" id="url" className="w-full" onChange={handleAddImages} />
       <div className="flex flex-col w-full gap-2 space-y-8">
         <ul className="text-xs text-muted-foreground space-y-2">
           <li className="flex items-center gap-2">
@@ -88,31 +67,22 @@ const ImagesField = () => {
             <Crop className="text-red-500 w-4 h-4" /> Please use crop image function to resize your banner image
           </li>
         </ul>
-        <div className="grid grid-cols-2 md:grid-cols-3   gap-4 w-full ">
-          <ImageCropProvider>
-            <DndContext onDragEnd={onDragEnd} collisionDetection={closestCenter} sensors={sensors}>
-              <SortableContext items={previewImages} strategy={horizontalListSortingStrategy}>
-                {previewImages.map((image) => (
-                  <SortableImage key={image.id} id={image.id} url={image.url} setPreviewImages={setPreviewImages} />
-                ))}
-              </SortableContext>
-            </DndContext>
-          </ImageCropProvider>
-          {previewImages.length < 9 ? (
-            <div
-              onClick={toggleAddImage}
-              className="flex flex-col items-center justify-center border border-dashed p-2 rounded-md cursor-pointer max-h-[400px] w-full aspect-video "
-            >
-              {isPending ? <Spinner /> : <ImagePlusIcon className=" text-orange-500" />}
-              <span className="text-sm  text-orange-500">Add Image</span>
-              <span className="text-sm  text-orange-500">({previewImages.length}/9)</span>
-            </div>
-          ) : (
-            ""
-          )}
+
+        <ImageCropProvider>
+          <ImagePlaceholder id={previewImage.id} url={previewImage.url} setPreviewImage={setPreviewImage} />
+        </ImageCropProvider>
+
+        <div
+          onClick={toggleAddImage}
+          className={`flex flex-col items-center justify-center border border-dashed p-2 rounded-md cursor-pointer max-h-[400px] w-full aspect-video ${
+            previewImage.url ? "hidden" : "block"
+          }`}
+        >
+          {isPending ? <Spinner /> : <ImagePlusIcon className=" text-orange-500" />}
+          <span className="text-sm  text-orange-500">Add Image</span>
         </div>
 
-        {errors?.bannerImages && <FieldError error={errors.bannerImages.message} />}
+        {errors?.url && <FieldError error={errors.url.message} />}
       </div>
     </FormFieldWrapper>
   );

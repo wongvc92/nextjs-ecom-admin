@@ -10,8 +10,8 @@ import { useFormContext } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import Cropper from "./cropper";
 import { useImageCropContext } from "@/providers/image-crop-provider";
-import { deleteBanner } from "@/actions/banner";
 import { TProductSchema } from "@/lib/validation/productValidation";
+import { deleteProductImage } from "@/actions/product";
 
 interface Image {
   id: string;
@@ -35,7 +35,7 @@ const CropImageModal: React.FC<CropImageProps> = ({ setIsOpen, isOpen, setPrevie
       const file = await getProcessedImage();
       if (!file) return;
       const fileToUrl = (await uploadSingleImage(file)) as string;
-      await deleteBanner(imageToDelete as string);
+      await deleteProductImage(imageToDelete as string);
       const newImages = getValues("productImages").filter((item) => item.url !== imageToDelete);
       const updatedImages = [...newImages, { id: uuidv4(), url: fileToUrl }];
       setValue("productImages", updatedImages);
@@ -65,10 +65,10 @@ const CropImageModal: React.FC<CropImageProps> = ({ setIsOpen, isOpen, setPrevie
           </Button>
           <Button type="button" onClick={handleCropImage} className="flex items-center gap-2" disabled={isPending}>
             {isPending ? (
-              <>
+              <div>
                 <Spinner className="w-4 h-4" />
                 Cropping...
-              </>
+              </div>
             ) : (
               "Crop"
             )}

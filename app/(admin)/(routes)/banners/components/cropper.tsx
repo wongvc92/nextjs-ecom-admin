@@ -16,12 +16,12 @@ const Cropper = () => {
       onCropComplete={onCropComplete}
       onRotationChange={setRotation}
       onZoomChange={setZoom}
-      showGrid={false}
-      cropSize={{ width: 185, height: 185 }}
+      showGrid={true}
+      cropSize={{ width: 400, height: 200 }}
       style={{
         containerStyle: {
-          height: 220,
-          width: 220,
+          height: 400,
+          width: 200,
           top: 8,
           bottom: 8,
           left: 8,

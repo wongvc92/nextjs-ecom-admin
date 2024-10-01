@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   title: "Categories",
   description: "Manage your categories",
 };
-
+export const dynamic = "force-dynamic";
 const CategoriesPage = async ({
   searchParams,
 }: {

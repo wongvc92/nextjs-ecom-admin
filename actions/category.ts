@@ -19,6 +19,7 @@ export const createCategory = async (formData: FormData) => {
   try {
     const category = await createCategoryDB(parsed.data.name);
     revalidatePath("/categories");
+    revalidateTag("categories");
     return { success: `Category "${category.name}" created 🎉` };
   } catch (error) {
     return {
@@ -39,6 +40,7 @@ export const editCategory = async (formData: FormData) => {
   try {
     await updateCategoryDB(name, id!);
     revalidatePath("/categories");
+    revalidateTag("categories");
     return { success: `Category changed to "${name}" 🎉` };
   } catch (error) {
     return {
@@ -70,7 +72,9 @@ export const deleteCategory = async (formData: FormData) => {
     }
 
     await deleteCategoryDB(parsed.data.id);
+
     revalidatePath("/categories");
+    revalidateTag("categories");
     return { success: `Category deleted` };
   } catch (error) {
     return {

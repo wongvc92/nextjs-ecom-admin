@@ -7,6 +7,7 @@ END $$;
 CREATE TABLE IF NOT EXISTS "bannerImage" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"url" varchar NOT NULL,
+	"order" integer DEFAULT 0 NOT NULL,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now()
 );

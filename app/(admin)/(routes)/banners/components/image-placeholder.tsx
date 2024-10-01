@@ -1,8 +1,6 @@
 "use client";
 
 import React, { Dispatch, SetStateAction, useState, useTransition } from "react";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import { CropIcon, Move, X } from "lucide-react";
 import Image from "next/image";
 import Spinner from "@/components/spinner";
@@ -13,8 +11,9 @@ import { toast } from "sonner";
 import { useImageCropContext } from "@/providers/image-crop-provider";
 import { readFile } from "@/lib/cropImage";
 import CropImageModal from "./crop-image-modal";
-import { TBannerImagesFormSchema } from "@/lib/validation/bannerImagesValidation";
+import { TBannerImageFormSchema } from "@/lib/validation/bannerImagesValidation";
 import { urlToFile } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 interface Image {
   id: string;
@@ -24,61 +23,40 @@ interface Image {
 interface SortableItemProps {
   url: string;
   id: string;
-  setPreviewImages: Dispatch<SetStateAction<Image[]>>;
+  setPreviewImage: Dispatch<SetStateAction<Image>>;
 }
 
-const SortableImage: React.FC<SortableItemProps> = ({ url, id, setPreviewImages }) => {
+const ImagePlaceholder: React.FC<SortableItemProps> = ({ url, id, setPreviewImage }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [cropId, setCropId] = useState("");
-
-  const { setValue, getValues } = useFormContext<TBannerImagesFormSchema>(); // retrieve all hook method
+  const router = useRouter();
+  const { setValue, getValues } = useFormContext<TBannerImageFormSchema>();
   const [isPending, startTransition] = useTransition();
-  // Initialize the sortable hook
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
-  const { getProcessedImage, setImage, resetStates, setImageToDelete } = useImageCropContext();
-  // Apply CSS transformations and transitions
-  const style = {
-    transform: CSS.Transform.toString(transform), // Transform must be converted to a string
-    transition, // Ensure transition property is applied for animations
-  };
+
+  const { setImage, setImageToDelete } = useImageCropContext();
 
   const handleDeleteImage = () => {
     startTransition(async () => {
-      const existingImage = getValues("bannerImages");
-      if (existingImage.length === 1) {
-        toast.error("at least 1 banner is required");
-        return;
-      }
       const res = await deleteBanner(url);
 
       if (res.error) {
         toast.error(res.error);
       } else if (res.success) {
         toast.success(res.success);
-        const newImages = getValues("bannerImages").filter((image) => image.url !== url);
-        setPreviewImages(newImages);
-        setValue("bannerImages", newImages);
+        router.push("/banners");
       }
     });
   };
 
-  const handleOpenModal = async (id: string) => {
+  const handleOpenModal = async () => {
     setIsOpen(true);
     const fileToCrop = await urlToFile(url, "image-file.png", "image/png");
     const imageDataUrl = (await readFile(fileToCrop)) as string;
     setImage(imageDataUrl);
     setImageToDelete(url);
-    setCropId(id);
   };
   return (
-    <div
-      ref={setNodeRef} // Attach sortable node reference
-      {...listeners} // Apply event listeners for dragging
-      {...attributes} // Apply draggable attributes
-      style={style} // Apply the calculated styles
-      className="relative rounded-md overflow-hidden w-full max-h-[400px] aspect-video group touch-none "
-    >
-      <CropImageModal isOpen={isOpen} setIsOpen={setIsOpen} setPreviewImages={setPreviewImages} />
+    <div className={`relative rounded-md overflow-hidden max-w-lg aspect-video ${url ? "block" : "hidden"}`}>
+      <CropImageModal isOpen={isOpen} setIsOpen={setIsOpen} setPreviewImage={setPreviewImage} />
       <Image
         src={url}
         alt="image"
@@ -105,9 +83,7 @@ const SortableImage: React.FC<SortableItemProps> = ({ url, id, setPreviewImages 
         variant="ghost"
         type="button"
         className="absolute p-1 rounded-sm opacity-90 bg-white bottom-1 right-1 z-20"
-        onClick={() => {
-          handleOpenModal(id);
-        }}
+        onClick={handleOpenModal}
       >
         <CropIcon className="text-red-500 w-4 h-4" />
       </Button>
@@ -115,4 +91,4 @@ const SortableImage: React.FC<SortableItemProps> = ({ url, id, setPreviewImages 
   );
 };
 
-export default SortableImage;
+export default ImagePlaceholder;

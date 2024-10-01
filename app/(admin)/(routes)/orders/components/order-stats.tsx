@@ -1,10 +1,13 @@
 import { getOrderStatsCount } from "@/lib/db/queries/admin/orders";
 import Link from "next/link";
-import React from "react";
+import React, { cache } from "react";
 
+const getCachedOrderStatsCount = cache(async () => {
+  return await getOrderStatsCount();
+});
 const OrderStats = async () => {
   const { allOrdersCount, cancelledOrdersCount, completedOrdersCount, pendingOrdersCount, shipppedOrdersCount, toShipOrdersCount } =
-    await getOrderStatsCount();
+    await getCachedOrderStatsCount();
   const PRODUCT_STATS = [
     {
       id: 1,

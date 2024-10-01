@@ -1,8 +1,12 @@
 import { getProductStatsCount } from "@/lib/db/queries/admin/products";
 import Link from "next/link";
+import { cache } from "react";
 
+const getCachedProductStatsCount = cache(async () => {
+  return await getProductStatsCount();
+});
 const ProductStats = async () => {
-  const { archivedProductCount, featuredProductCount, allProductCount, outOfStockCount } = await getProductStatsCount();
+  const { archivedProductCount, featuredProductCount, allProductCount, outOfStockCount } = await getCachedProductStatsCount();
 
   const PRODUCT_STATS = [
     {

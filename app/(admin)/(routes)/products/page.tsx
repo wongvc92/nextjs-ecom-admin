@@ -16,6 +16,8 @@ export const metadata: Metadata = {
   description: "Manage your products",
 };
 
+export const dynamic = "force-dynamic";
+
 const ProductsPage = async ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
   return (
     <section className="py-8 px-4 flex-col space-y-4 w-full">

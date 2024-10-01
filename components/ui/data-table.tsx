@@ -15,17 +15,14 @@ import {
 } from "@tanstack/react-table";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Input } from "./input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "./dropdown-menu";
 import { downloadToExcel } from "@/lib/xlxs";
 import { IContent } from "json-as-xlsx";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Label } from "./label";
 import { useDebounce } from "@/hooks/usebounce";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
-import { DatePickerWithRange } from "./date-picker-with-range";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 
@@ -83,46 +80,8 @@ export function DataTable<TData, TValue>({ columns, data, totalPage }: DataTable
     },
   });
 
-  // const updateURLWithFilters = React.useCallback(() => {
-  //   const params = new URLSearchParams();
-  //   debouncedColumnFilters.forEach((filter) => {
-  //     if (filter.value) {
-  //       params.set(filter.id, filter.value as string);
-  //     }
-  //   });
-  //   params.set("page", currentPage.toString());
-  //   router.replace(`?${params.toString()}`, { scroll: false });
-  // }, [currentPage, debouncedColumnFilters, router]);
-
-  // React.useEffect(() => {
-  //   updateURLWithFilters();
-  // }, [debouncedColumnFilters, currentPage, router, updateURLWithFilters]);
-
   return (
     <>
-      {/* <div className="border rounded-md p-4">
-        <h1 className="py-2">Filters</h1>
-        <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(240px,1fr))]">
-          {table.getHeaderGroups()[0].headers.map(
-            (header) =>
-              !header.isPlaceholder &&
-              header.column.getCanFilter() && (
-                <div key={header.id} className="space-y-2">
-                  <Label>{`${flexRender(header.column.columnDef.header, header.getContext())}`}</Label>
-                  <Input
-                    className="w-full"
-                    placeholder={`Filter ${flexRender(header.column.columnDef.header, header.getContext())} ...`}
-                    value={(header.column.getFilterValue() as string) || ""}
-                    onChange={(e) => {
-                      header.column?.setFilterValue(e.target.value);
-                    }}
-                  />
-                </div>
-              )
-          )}
-        </div>
-      </div> */}
-
       <div className="flex flex-wrap items-center gap-2 ">
         <DropdownMenu open={toggleOpen} onOpenChange={() => setToggleOpen(!toggleOpen)}>
           <DropdownMenuTrigger asChild>

@@ -5,9 +5,13 @@ import IsFeaturedFilter from "./isFeatured-filter";
 import CategoryFilter from "./category-filter";
 import { getDistinctCategories } from "@/lib/db/queries/admin/categories";
 import ClearFilters from "./clear-filters";
+import { cache } from "react";
 
+const getCachedDistinctCategories = cache(async () => {
+  return await getDistinctCategories();
+});
 export const ProductFilters = async () => {
-  const distinctCategories = await getDistinctCategories();
+  const distinctCategories = await getCachedDistinctCategories();
 
   return (
     <div className="flex flex-wrap gap-2 items-center">

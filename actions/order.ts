@@ -3,7 +3,10 @@
 import { updateTrackingNumber } from "@/lib/services/orderServices";
 import { ensureAuthenticated } from "@/lib/helpers/authHelpers";
 import { trackingNumberSchema, TtrackingNumberSchema } from "@/lib/validation/trackingNumberValidation";
-import { revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
+import { revalidateStore } from "@/lib/services/storeServices";
+
+const urlPaths = ["/orders"];
 
 export const updateTrackingNumberByOrderId = async (formData: TtrackingNumberSchema) => {
   await ensureAuthenticated();
@@ -16,7 +19,8 @@ export const updateTrackingNumberByOrderId = async (formData: TtrackingNumberSch
   const { tracking, orderId } = parsed.data;
   try {
     await updateTrackingNumber(tracking, orderId);
-    revalidateTag("orders");
+    revalidatePath(`/orders/${orderId}`);
+    await revalidateStore(urlPaths);
     return { success: "tracking number updated" };
   } catch (error) {
     return {

@@ -67,7 +67,7 @@ export const useImageManager = () => {
     const checksum = await computeSHA256(file);
     if (!allowedFileTypes.includes(file.type)) {
       toast.error(`Failed to upload image, make sure upload ${allowedFileTypes} format`);
-      return;
+      return "";
     }
 
     const formData = new FormData();
@@ -78,7 +78,7 @@ export const useImageManager = () => {
 
     if (res.error || !res.success) {
       toast.error(res.error);
-      return;
+      return "";
     }
     const signedUrl = res.success.url;
     await fetch(signedUrl, {

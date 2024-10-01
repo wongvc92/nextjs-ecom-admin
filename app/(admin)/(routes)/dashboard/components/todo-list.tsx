@@ -1,9 +1,12 @@
 import { getTodoListCount } from "@/lib/db/queries/admin/dashboard";
 import Link from "next/link";
-import React from "react";
+import React, { cache } from "react";
 
+const getCachedTodoListCount = cache(async () => {
+  return await getTodoListCount();
+});
 const TodoList = async () => {
-  const { shippedCount, toShipCount, outofStockCount } = await getTodoListCount();
+  const { shippedCount, toShipCount, outofStockCount } = await getCachedTodoListCount();
 
   const TODOLIST = [
     {

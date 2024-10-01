@@ -1,25 +1,43 @@
-import { bannerImages as bannerImagesTable } from "@/lib/db/schema/bannerImages";
+import { BannerImage, bannerImages as bannerImagesTable } from "@/lib/db/schema/bannerImages";
 import { galleries as galleriesTable } from "@/lib/db/schema/galleries";
 import { eq } from "drizzle-orm";
+import { PgTransaction } from "drizzle-orm/pg-core";
 
-export const createNewBannerImage = async (url: string, tx: any) => {
+export const createNewBannerImage = async (url: string, orderNumber: number, tx: PgTransaction<any, any, any>): Promise<BannerImage> => {
   try {
-    await tx.insert(bannerImagesTable).values({
-      url,
-    });
+    const [newBanner] = await tx
+      .insert(bannerImagesTable)
+      .values({
+        url,
+        order: orderNumber,
+      })
+      .returning();
+    return newBanner;
   } catch (error) {
     throw new Error("Failed create new banner image");
   }
 };
 
-export const deleteExistingBannerImage = async (url: string, tx: any) => {
+export const deleteExistingBannerImageByUrl = async (url: string, tx: PgTransaction<any, any, any>) => {
+  return await tx.delete(bannerImagesTable).where(eq(bannerImagesTable.url, url));
+};
+
+export const EditExistingBannerImage = async (id: string, url: string, tx: PgTransaction<any, any, any>): Promise<BannerImage> => {
   try {
-    await tx.delete(bannerImagesTable).where(eq(bannerImagesTable.id, url));
+    const [newBanner] = await tx
+      .update(bannerImagesTable)
+      .set({
+        url,
+      })
+      .where(eq(bannerImagesTable.id, id))
+      .returning();
+    return newBanner;
   } catch (error) {
-    throw new Error("Failed delete banner image");
+    throw new Error("Failed create new banner image");
   }
 };
-export const updateGalleryImagePublishedStatusBybannerImageId = async (url: string, bannerImageId: string, tx: any) => {
+
+export const updateGalleryImagePublishedStatusBybannerImageId = async (url: string, bannerImageId: string, tx: PgTransaction<any, any, any>) => {
   try {
     const [matchedUrl] = await tx.select({ id: galleriesTable.id }).from(galleriesTable).where(eq(galleriesTable.url, url));
 

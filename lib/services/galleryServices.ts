@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../db";
 import { galleries as galleriesTable } from "@/lib/db/schema/galleries";
+import { PgTransaction } from "drizzle-orm/pg-core";
 
 export const createGalleryImageDB = async (url: string) => {
   try {
@@ -19,9 +20,9 @@ export const deleteGalleryImage = async (url: string) => {
   }
 };
 
-export const deleteGalleryImageByUrl = async (url: string, tx: any) => {
+export const deleteGalleryImageByUrl = async (url: string, tx: PgTransaction<any, any, any>) => {
   try {
-    await tx.delete(galleriesTable).where(eq(galleriesTable.url, url));
+    return await tx.delete(galleriesTable).where(eq(galleriesTable.url, url));
   } catch (error) {
     throw new Error("Failed update gallery status");
   }

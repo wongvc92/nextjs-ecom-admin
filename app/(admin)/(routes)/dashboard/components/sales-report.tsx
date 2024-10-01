@@ -4,6 +4,7 @@ import { getSalesReport } from "@/lib/db/queries/admin/orders";
 import DateFilter from "./date-filter";
 import StatusFilter from "@/components/status-filter";
 import SalesChart from "./sales-chart";
+import { cache } from "react";
 
 interface SalesChartProps {
   salesDateFrom: string;
@@ -11,8 +12,11 @@ interface SalesChartProps {
   salesStatus: string;
 }
 
+const getCachedSalesReport = cache(async (salesDateFrom: string, salesDateTo: string, salesStatus: string) => {
+  return await getSalesReport(salesDateFrom, salesDateTo, salesStatus);
+});
 const SalesReport = async ({ salesDateFrom, salesDateTo, salesStatus }: SalesChartProps) => {
-  const salesReportData = await getSalesReport(salesDateFrom, salesDateTo, salesStatus);
+  const salesReportData = await getCachedSalesReport(salesDateFrom, salesDateTo, salesStatus);
 
   return (
     <Card>
