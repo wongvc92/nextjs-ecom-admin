@@ -9,6 +9,7 @@ import { BannerImage } from "@/lib/db/schema/bannerImages";
 import Image from "next/image";
 import { updateBannerOrderById } from "@/actions/banner";
 import { Button } from "@/components/ui/button";
+import TableSortButton from "@/components/ui/table-sort-button";
 
 export const columns: ColumnDef<BannerImage>[] = [
   {
@@ -41,16 +42,7 @@ export const columns: ColumnDef<BannerImage>[] = [
   {
     accessorKey: "url",
     header: ({ column }) => {
-      const sorted = column.getIsSorted();
-
-      return (
-        <div onClick={column.getToggleSortingHandler()} className="flex items-center cursor-pointer">
-          Banner
-          {sorted === "asc" && <ArrowUpIcon className="ml-2 w-4 h-4" />}
-          {sorted === "desc" && <ArrowDownIcon className="ml-2 w-4 h-4" />}
-          {sorted === false && <ArrowUpDown className="ml-2 w-4 h-4" />}
-        </div>
-      );
+      return <TableSortButton title="banner" column={column} />;
     },
     cell: ({ row }) => {
       const url = row.getValue("url") as string;
@@ -127,19 +119,7 @@ export const columns: ColumnDef<BannerImage>[] = [
   {
     accessorKey: "createdAt",
     header: ({ column }) => {
-      const sorted = column.getIsSorted();
-
-      return (
-        <div
-          onClick={column.getToggleSortingHandler()} // Attach the sorting toggle handler
-          className="flex items-center cursor-pointer"
-        >
-          Created
-          {sorted === "asc" && <ArrowUpIcon className="ml-2 w-4 h-4" />}
-          {sorted === "desc" && <ArrowDownIcon className="ml-2 w-4 h-4" />}
-          {sorted === false && <ArrowUpDown className="ml-2 w-4 h-4" />}
-        </div>
-      );
+      return <TableSortButton title="created" column={column} />;
     },
     cell: ({ row }) => {
       const date = row.getValue("createdAt") as Date;

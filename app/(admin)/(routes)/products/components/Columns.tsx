@@ -6,9 +6,10 @@ import { Product } from "@/lib/db/schema/products";
 import { Variation } from "@/lib/db/schema/variations";
 import { convertCentsToTwoDecimalString } from "@/lib/utils";
 import { format } from "date-fns";
-import { ArrowDownIcon, ArrowUpDown, ArrowUpIcon, CheckIcon, XIcon } from "lucide-react";
+import { CheckIcon, XIcon } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { getDistinctNestedVariationNames } from "@/lib/helpers/productHelpers";
+import TableSortButton from "@/components/ui/table-sort-button";
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -42,17 +43,7 @@ export const columns: ColumnDef<Product>[] = [
     header: ({ column }) => {
       const sorted = column.getIsSorted();
 
-      return (
-        <div
-          onClick={column.getToggleSortingHandler()} // Attach the sorting toggle handler
-          className="flex items-center cursor-pointer"
-        >
-          Name
-          {sorted === "asc" && <ArrowUpIcon className="ml-2 w-4 h-4" />}
-          {sorted === "desc" && <ArrowDownIcon className="ml-2 w-4 h-4" />}
-          {sorted === false && <ArrowUpDown className="ml-2 w-4 h-4" />}
-        </div>
-      );
+      return <TableSortButton title="Name" column={column} />;
     },
     cell: ({ row }) => {
       const name = row.getValue("name") as string;
@@ -64,17 +55,7 @@ export const columns: ColumnDef<Product>[] = [
     header: ({ column }) => {
       const sorted = column.getIsSorted();
 
-      return (
-        <div
-          onClick={column.getToggleSortingHandler()} // Attach the sorting toggle handler
-          className="flex items-center cursor-pointer"
-        >
-          Price
-          {sorted === "asc" && <ArrowUpIcon className="ml-2 w-4 h-4" />}
-          {sorted === "desc" && <ArrowDownIcon className="ml-2 w-4 h-4" />}
-          {sorted === false && <ArrowUpDown className="ml-2 w-4 h-4" />}
-        </div>
-      );
+      return <TableSortButton title="Price" column={column} />;
     },
     cell: ({ row }) => {
       const priceInCents = row.getValue("lowestPriceInCents") as number;
@@ -87,17 +68,7 @@ export const columns: ColumnDef<Product>[] = [
     header: ({ column }) => {
       const sorted = column.getIsSorted();
 
-      return (
-        <div
-          onClick={column.getToggleSortingHandler()} // Attach the sorting toggle handler
-          className="flex items-center cursor-pointer"
-        >
-          Featured
-          {sorted === "asc" && <ArrowUpIcon className="ml-2 w-4 h-4" />}
-          {sorted === "desc" && <ArrowDownIcon className="ml-2 w-4 h-4" />}
-          {sorted === false && <ArrowUpDown className="ml-2 w-4 h-4" />}
-        </div>
-      );
+      return <TableSortButton title="Featured" column={column} />;
     },
     cell: ({ row }) => {
       const isFeatured = row.getValue("isFeatured") as boolean;
@@ -119,17 +90,7 @@ export const columns: ColumnDef<Product>[] = [
     header: ({ column }) => {
       const sorted = column.getIsSorted();
 
-      return (
-        <div
-          onClick={column.getToggleSortingHandler()} // Attach the sorting toggle handler
-          className="flex items-center cursor-pointer"
-        >
-          Archived
-          {sorted === "asc" && <ArrowUpIcon className="ml-2 w-4 h-4" />}
-          {sorted === "desc" && <ArrowDownIcon className="ml-2 w-4 h-4" />}
-          {sorted === false && <ArrowUpDown className="ml-2 w-4 h-4" />}
-        </div>
-      );
+      return <TableSortButton title="Archived" column={column} />;
     },
 
     cell: ({ row }) => {
@@ -143,17 +104,7 @@ export const columns: ColumnDef<Product>[] = [
     header: ({ column }) => {
       const sorted = column.getIsSorted();
 
-      return (
-        <div
-          onClick={column.getToggleSortingHandler()} // Attach the sorting toggle handler
-          className="flex items-center cursor-pointer"
-        >
-          Category
-          {sorted === "asc" && <ArrowUpIcon className="ml-2 w-4 h-4" />}
-          {sorted === "desc" && <ArrowDownIcon className="ml-2 w-4 h-4" />}
-          {sorted === false && <ArrowUpDown className="ml-2 w-4 h-4" />}
-        </div>
-      );
+      return <TableSortButton title="Category" column={column} />;
     },
 
     enableColumnFilter: false,
@@ -187,17 +138,7 @@ export const columns: ColumnDef<Product>[] = [
     header: ({ column }) => {
       const sorted = column.getIsSorted();
 
-      return (
-        <div
-          onClick={column.getToggleSortingHandler()} // Attach the sorting toggle handler
-          className="flex items-center cursor-pointer"
-        >
-          Created
-          {sorted === "asc" && <ArrowUpIcon className="ml-2 w-4 h-4" />}
-          {sorted === "desc" && <ArrowDownIcon className="ml-2 w-4 h-4" />}
-          {sorted === false && <ArrowUpDown className="ml-2 w-4 h-4" />}
-        </div>
-      );
+      return <TableSortButton title="Created" column={column} />;
     },
     cell: ({ row }) => {
       const date = row.getValue("createdAt") as string;

@@ -7,6 +7,7 @@ import { Order } from "@/lib/db/schema/orders";
 import { format } from "date-fns";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowDownIcon, ArrowUpDown, ArrowUpIcon } from "lucide-react";
+import TableSortButton from "@/components/ui/table-sort-button";
 
 export const columns: ColumnDef<Order>[] = [
   {
@@ -44,17 +45,7 @@ export const columns: ColumnDef<Order>[] = [
     header: ({ column }) => {
       const sorted = column.getIsSorted();
 
-      return (
-        <div
-          onClick={column.getToggleSortingHandler()} // Attach the sorting toggle handler
-          className="flex items-center cursor-pointer"
-        >
-          Name
-          {sorted === "asc" && <ArrowUpIcon className="ml-2 w-4 h-4" />}
-          {sorted === "desc" && <ArrowDownIcon className="ml-2 w-4 h-4" />}
-          {sorted === false && <ArrowUpDown className="ml-2 w-4 h-4" />}
-        </div>
-      );
+      return <TableSortButton title="Name" column={column} />;
     },
   },
   {
@@ -62,17 +53,7 @@ export const columns: ColumnDef<Order>[] = [
     header: ({ column }) => {
       const sorted = column.getIsSorted();
 
-      return (
-        <div
-          onClick={column.getToggleSortingHandler()} // Attach the sorting toggle handler
-          className="flex items-center cursor-pointer"
-        >
-          Amount
-          {sorted === "asc" && <ArrowUpIcon className="ml-2 w-4 h-4" />}
-          {sorted === "desc" && <ArrowDownIcon className="ml-2 w-4 h-4" />}
-          {sorted === false && <ArrowUpDown className="ml-2 w-4 h-4" />}
-        </div>
-      );
+      return <TableSortButton title="Amount" column={column} />;
     },
     cell: ({ row }) => {
       const amount = row.getValue("amountInCents") as number;
@@ -85,17 +66,7 @@ export const columns: ColumnDef<Order>[] = [
     header: ({ column }) => {
       const sorted = column.getIsSorted();
 
-      return (
-        <div
-          onClick={column.getToggleSortingHandler()} // Attach the sorting toggle handler
-          className="flex items-center cursor-pointer"
-        >
-          Status
-          {sorted === "asc" && <ArrowUpIcon className="ml-2 w-4 h-4" />}
-          {sorted === "desc" && <ArrowDownIcon className="ml-2 w-4 h-4" />}
-          {sorted === false && <ArrowUpDown className="ml-2 w-4 h-4" />}
-        </div>
-      );
+      return <TableSortButton title="Status" column={column} />;
     },
     cell: ({ row }) => {
       const status = row.getValue("status") as string;
@@ -120,17 +91,7 @@ export const columns: ColumnDef<Order>[] = [
     header: ({ column }) => {
       const sorted = column.getIsSorted();
 
-      return (
-        <div
-          onClick={column.getToggleSortingHandler()} // Attach the sorting toggle handler
-          className="flex items-center cursor-pointer"
-        >
-          Created
-          {sorted === "asc" && <ArrowUpIcon className="ml-2 w-4 h-4" />}
-          {sorted === "desc" && <ArrowDownIcon className="ml-2 w-4 h-4" />}
-          {sorted === false && <ArrowUpDown className="ml-2 w-4 h-4" />}
-        </div>
-      );
+      return <TableSortButton title="Created" column={column} />;
     },
     cell: ({ row }) => {
       const date = row.getValue("createdAt") as Date;
