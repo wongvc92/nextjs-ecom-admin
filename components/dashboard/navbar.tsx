@@ -6,7 +6,7 @@ import { auth } from "@/auth";
 const Navbar = async () => {
   const session = await auth();
   return (
-    <>
+    <div>
       {session?.user.id && (
         <header className="flex h-12 items-center justify-between border-b p-4 w-full">
           <MobileNav />
@@ -16,7 +16,7 @@ const Navbar = async () => {
           </div>
         </header>
       )}
-    </>
+    </div>
   );
 };
 export default Navbar;

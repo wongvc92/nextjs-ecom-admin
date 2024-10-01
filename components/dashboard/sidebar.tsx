@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, ChevronLeft, GalleryHorizontal, Image, LayoutDashboard, ShoppingCart, StretchHorizontal } from "lucide-react";
+import { Box, ChevronLeft, GalleryHorizontal, Image, LayoutDashboard, ShoppingCart, StretchHorizontal, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
@@ -35,6 +35,11 @@ export const routes = [
     name: "Galleries",
     path: "/galleries",
     icon: Image,
+  },
+  {
+    name: "Users",
+    path: "/users",
+    icon: UsersRound,
   },
 ];
 

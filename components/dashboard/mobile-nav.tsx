@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Box, GalleryHorizontal, ImageIcon, LayoutDashboard, Menu, ShoppingCart, StretchHorizontal } from "lucide-react";
+import { Box, GalleryHorizontal, ImageIcon, LayoutDashboard, Menu, ShoppingCart, StretchHorizontal, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -37,6 +37,11 @@ export const routes = [
     name: "Galleries",
     path: "/galleries",
     icon: ImageIcon,
+  },
+  {
+    name: "Users",
+    path: "/users",
+    icon: UsersRound,
   },
 ];
 
