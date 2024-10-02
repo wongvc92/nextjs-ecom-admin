@@ -1,4 +1,5 @@
 import { NewLoginVerificationTemplate } from "@/components/mail/new-login-verification-template";
+import { NewUserInviteTemplate } from "@/components/mail/new-user-invite-template";
 import { ResetPasswordTemplate } from "@/components/mail/reset-password-template";
 import { TwoFactorTokenTemplate } from "@/components/mail/two-factor-token-template";
 import { Resend } from "resend";
@@ -65,6 +66,25 @@ export const sendTwoFactorTokenEmail = async (email: string, token: string) => {
       success: "Email send",
     };
   } catch (error) {
-    return { error: "Failed send verification email" };
+    return { error: "Failed send Reset email" };
+  }
+};
+
+export const sendNewUserInviteEmail = async (email: string) => {
+  const signUpLink = `${DOMAIN}/auth/sign-up`;
+
+  try {
+    await resend.emails.send({
+      from: "Acme <onboarding@resend.dev>",
+      to: email,
+      subject: "Welcome onboard",
+      react: NewUserInviteTemplate({ signUpLink }),
+    });
+
+    return {
+      success: "Email send",
+    };
+  } catch (error) {
+    return { error: "Failed send invite email" };
   }
 };

@@ -5,11 +5,12 @@ import { passwordResetTokens, twoFactorConfirmations, twoFactorTokens, users, ve
 import {
   newPasswordSchema,
   resetSignInSchema,
+  settingsFormSchema,
   signInSchema,
   signUpSchema,
   TNewPasswordSchema,
   TResetSignInSchema,
-  TSettingsSchema,
+  TSettingsFormSchema,
   TSignInSchema,
   TSignUpFormSchema,
 } from "@/lib/validation/auth-validation";
@@ -18,12 +19,13 @@ import bcrypt from "bcrypt";
 import { auth, signIn, signOut } from "@/auth";
 import { AuthError } from "next-auth";
 import { DEFAULT_REDIRECT_LOGIN } from "@/routes";
-import { getUserByEmail, getUserById } from "@/lib/db/queries/admin/users";
+import { getUserByEmail, getUserById, getUserByName } from "@/lib/db/queries/admin/users";
 import { sendPasswordResetEmail, sendTwoFactorTokenEmail, sendVerificationEmail } from "@/lib/services/emailServices";
 import { getPasswordResetTokenByToken, getTwoFactorTokenByEmail, getVerificationTokenByToken } from "@/lib/db/queries/admin/auth";
 import { getTwoFactorConfirmationByUserId } from "@/lib/db/queries/admin/auth";
 import { UserRoleEnum } from "@/@types/next-auth";
 import { generatePasswordResetToken, generateTwoFactorToken, generateVerificationToken } from "@/lib/services/authServices";
+import { revalidatePath } from "next/cache";
 
 export const registerUser = async (formData: TSignUpFormSchema): Promise<{ error?: string; success?: string }> => {
   try {
@@ -270,11 +272,25 @@ export const signOutUser = async () => {
   await signOut();
 };
 
-export const settings = async (formData: TSettingsSchema) => {
+export const settings = async (formData: TSettingsFormSchema) => {
   const session = await auth();
   if (!session?.user) {
     return {
       error: "Unauthorized",
+    };
+  }
+  const parseResult = settingsFormSchema.safeParse(formData);
+
+  if (!parseResult.success) {
+    const errorMessage = parseResult.error.issues.map((issue) => issue.message).join(", ");
+    console.error("errorMessage", errorMessage);
+    return { error: errorMessage };
+  }
+
+  const sameNameUser = await getUserByName(formData.name as string);
+  if (sameNameUser) {
+    return {
+      error: `"${formData.name}" already exist, please choose other name.`,
     };
   }
 
@@ -329,6 +345,6 @@ export const settings = async (formData: TSettingsSchema) => {
       role: formData.role as UserRoleEnum,
     })
     .where(eq(users.id, dbUser.id));
-
+  revalidatePath("/settings");
   return { success: "Settings updated" };
 };

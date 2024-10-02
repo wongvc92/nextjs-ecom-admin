@@ -8,7 +8,7 @@ const getCachedOrderStatsCount = cache(async () => {
 const OrderStats = async () => {
   const { allOrdersCount, cancelledOrdersCount, completedOrdersCount, pendingOrdersCount, shipppedOrdersCount, toShipOrdersCount } =
     await getCachedOrderStatsCount();
-  const PRODUCT_STATS = [
+  const ORDER_STATS = [
     {
       id: 1,
       label: "Total",
@@ -50,7 +50,7 @@ const OrderStats = async () => {
   return (
     <>
       <div className="grid grid-cols-3 gap-2 md:flex md:flex-wrap">
-        {PRODUCT_STATS.map((item) => (
+        {ORDER_STATS.map((item) => (
           <Link
             href={item.url}
             key={item.id}

@@ -7,12 +7,13 @@ import { UserRoleEnum } from "./@types/next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "@auth/core/providers/credentials";
 import bcrypt from "bcrypt";
-import { accounts, twoFactorConfirmations, users } from "./lib/db/schema/users";
-import { and, eq } from "drizzle-orm";
-
+import { twoFactorConfirmations, users } from "./lib/db/schema/users";
+import { eq } from "drizzle-orm";
 import { getAccoutByUserId, getTwoFactorConfirmationByUserId } from "./lib/db/queries/admin/auth";
 import { signInSchema } from "./lib/validation/auth-validation";
-import { getUserById, getUserFromDb } from "./lib/db/queries/admin/users";
+import { getUserByEmail, getUserById } from "./lib/db/queries/admin/users";
+import { deletePendingUserDB } from "./lib/services/pendingNewUserServices";
+import { getPendingNewUserByEmail } from "./lib/db/queries/admin/pendingNewUsers";
 
 export const { handlers, auth, signOut, signIn } = NextAuth({
   ...authConfig,
@@ -33,7 +34,7 @@ export const { handlers, auth, signOut, signIn } = NextAuth({
       async authorize(credentials) {
         const parsedCredentials = signInSchema.safeParse(credentials);
         if (parsedCredentials.success) {
-          const user = await getUserFromDb(parsedCredentials.data.email);
+          const user = await getUserByEmail(parsedCredentials.data.email);
           if (!user || !user.password) return null;
           const passwordMatched = await bcrypt.compare(parsedCredentials.data.password, user.password);
           if (passwordMatched) {
@@ -59,6 +60,7 @@ export const { handlers, auth, signOut, signIn } = NextAuth({
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
       token.name = existingUser.name;
       token.email = existingUser.email;
+      token.isBlocked = existingUser.isBlocked;
       return token;
     },
 
@@ -86,29 +88,30 @@ export const { handlers, auth, signOut, signIn } = NextAuth({
 
   events: {
     async signIn({ user, account }) {
-      // Allow OAuth without email verification
       if (account?.provider !== "credentials") {
-        return; // Allow sign-in
+        return;
       }
 
       const existingUser = await getUserById(user.id as string);
 
-      // Prevent sign-in without email verification
       if (!existingUser?.emailVerified) {
-        throw new AuthError("Email not verified"); // Prevent sign-in
+        throw new AuthError("Email not verified");
+      }
+
+      const pendingNewUser = await getPendingNewUserByEmail(user.email as string);
+      if (pendingNewUser) {
+        await deletePendingUserDB(existingUser.email as string);
       }
 
       if (existingUser.isTwoFactorEnabled) {
         const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(existingUser.id);
         if (!twoFactorConfirmation) {
-          throw new AuthError("Someting went wrong"); // Prevent sign-in
-
-          //delete two factor confirmation for next sign in
+          throw new AuthError("Someting went wrong");
         }
         await db.delete(twoFactorConfirmations).where(eq(twoFactorConfirmations.id, twoFactorConfirmation.id));
       }
 
-      return; // Allow sign-in
+      return;
     },
 
     async linkAccount({ user }) {

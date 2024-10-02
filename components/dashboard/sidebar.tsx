@@ -1,8 +1,6 @@
-import React, { useState } from "react";
-import { Box, ChevronLeft, GalleryHorizontal, Image, LayoutDashboard, ShoppingCart, StretchHorizontal, UsersRound } from "lucide-react";
+import { Box, GalleryHorizontal, Image, LayoutDashboard, ShoppingCart, StretchHorizontal, UsersRound } from "lucide-react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { useSession } from "next-auth/react";
+
 import { auth } from "@/auth";
 
 export const routes = [
@@ -45,8 +43,15 @@ export const routes = [
 
 const Sidebar = async () => {
   const session = await auth();
+  const roleBasedRoute =
+    session?.user.role === "USER"
+      ? routes.filter((route) => {
+          return route.name !== "Users";
+        })
+      : routes;
+
   return (
-    <>
+    <div>
       {session?.user.id && (
         <aside
           className={
@@ -54,7 +59,7 @@ const Sidebar = async () => {
           }
         >
           <ul className={"flex flex-col items-start space-y-4 mt-12 px-4 py-2 w-full"}>
-            {routes.map((item) => (
+            {roleBasedRoute.map((item) => (
               <li key={item.name}>
                 <Link href={item.path}>
                   <p
@@ -71,7 +76,7 @@ const Sidebar = async () => {
           </ul>
         </aside>
       )}
-    </>
+    </div>
   );
 };
 

@@ -16,6 +16,7 @@ export const users = pgTable("user", {
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
   isTwoFactorEnabled: boolean("isTwoFactorEnabled").default(false),
+  isBlocked: boolean("isBlocked").default(false),
 });
 
 export const accounts = pgTable(
@@ -78,6 +79,13 @@ export const authenticators = pgTable(
   })
 );
 
+export const pendingNewUsers = pgTable("pendingNewUser", {
+  id: text("id").primaryKey().$defaultFn(uuidv4),
+  email: text("email").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const passwordResetTokens = pgTable("passwordResetToken", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull(),
@@ -118,3 +126,7 @@ export type VerificationToken = typeof verificationTokens.$inferSelect;
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
 
 export type User = typeof users.$inferSelect;
+
+export type PendingNewUser = typeof pendingNewUsers.$inferSelect;
+
+export type UserWithoutPassword = Omit<User, "password">;

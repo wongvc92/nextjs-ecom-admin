@@ -5,19 +5,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { settingsSchema, TSettingsSchema } from "@/lib/validation/auth-validation";
+import { settingsFormSchema, TSettingsFormSchema } from "@/lib/validation/auth-validation";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { settings } from "@/actions/auth";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Session } from "next-auth";
+import { useTransition } from "react";
+import Spinner from "@/components/spinner";
 
 export const SettingsForm = ({ session }: { session: Session }) => {
   const { update } = useSession();
-
-  const form = useForm<TSettingsSchema>({
-    resolver: zodResolver(settingsSchema),
+  const [isPending, startTransition] = useTransition();
+  const form = useForm<TSettingsFormSchema>({
+    resolver: zodResolver(settingsFormSchema),
     defaultValues: session && {
       name: session.user.name || undefined,
       email: session.user.email || undefined,
@@ -28,19 +29,22 @@ export const SettingsForm = ({ session }: { session: Session }) => {
     },
   });
 
-  const onSubmit = async (formData: TSettingsSchema) => {
-    const res = await settings(formData);
-    if (res.error) {
-      toast.error(res.error);
-    }
-    if (res.success) {
-      update();
-      toast.success(res.success);
-    }
+  const onSubmit = async (formData: TSettingsFormSchema) => {
+    startTransition(async () => {
+      const res = await settings(formData);
+
+      if (res.error) {
+        toast.error(res.error);
+      }
+      if (res.success) {
+        update();
+        toast.success(res.success);
+      }
+    });
   };
 
   return (
-    <div className="flex flex-col space-y-4 ">
+    <div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
@@ -49,21 +53,21 @@ export const SettingsForm = ({ session }: { session: Session }) => {
               <FormItem>
                 <FormLabel className="text-muted-foreground">Name</FormLabel>
                 <FormControl>
-                  <Input type="code" {...field} defaultValue={field.value} />
+                  <Input type="code" {...field} defaultValue={field.value} disabled={isPending} />
                 </FormControl>
                 {form.formState.errors.name && <FormMessage>{form.formState.errors.name.message}</FormMessage>}
               </FormItem>
             )}
           />
           {session?.user?.isOAuth === false && (
-            <>
+            <div>
               <FormField
                 name="email"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-muted-foreground">Email</FormLabel>
                     <FormControl>
-                      <Input type="email" {...field} />
+                      <Input type="email" {...field} disabled={isPending} />
                     </FormControl>
                     {form.formState.errors.email && <FormMessage>{form.formState.errors.email.message}</FormMessage>}
                   </FormItem>
@@ -75,7 +79,7 @@ export const SettingsForm = ({ session }: { session: Session }) => {
                   <FormItem>
                     <FormLabel className="text-muted-foreground">Password</FormLabel>
                     <FormControl>
-                      <Input type="password" {...field} />
+                      <Input type="password" {...field} disabled={isPending} />
                     </FormControl>
 
                     {form.formState.errors.password && <FormMessage>{form.formState.errors.password.message}</FormMessage>}
@@ -88,37 +92,21 @@ export const SettingsForm = ({ session }: { session: Session }) => {
                   <FormItem>
                     <FormLabel className="text-muted-foreground">New Password</FormLabel>
                     <FormControl>
-                      <Input type="password" {...field} />
+                      <Input type="password" {...field} disabled={isPending} />
                     </FormControl>
 
                     {form.formState.errors.password && <FormMessage>{form.formState.errors.password.message}</FormMessage>}
                   </FormItem>
                 )}
               />
-            </>
+            </div>
           )}
 
-          <FormField
-            name="role"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-muted-foreground">Role</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a role"></SelectValue>
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="ADMIN">ADMIN</SelectItem>
-                    <SelectItem value="USER">USER</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                {form.formState.errors.password && <FormMessage>{form.formState.errors.password.message}</FormMessage>}
-              </FormItem>
-            )}
-          />
+          <div>
+            <p className="text-muted-foreground">
+              Role: <span className="rounded-md text-sm bg-muted p-1 text-black">{session?.user.role}</span>
+            </p>
+          </div>
           <FormField
             name="isTwoFactorEnabled"
             render={({ field }) => (
@@ -128,7 +116,7 @@ export const SettingsForm = ({ session }: { session: Session }) => {
                   <FormDescription>Enable two factor authentication for your account</FormDescription>
                 </div>
                 <FormControl>
-                  <Switch checked={field.value} onCheckedChange={field.onChange} />
+                  <Switch checked={field.value} onCheckedChange={field.onChange} disabled={isPending} />
                 </FormControl>
 
                 {form.formState.errors.password && <FormMessage>{form.formState.errors.password.message}</FormMessage>}
@@ -136,8 +124,14 @@ export const SettingsForm = ({ session }: { session: Session }) => {
             )}
           />
 
-          <Button type="submit" className="w-full">
-            update info
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? (
+              <span className="flex items-center gap-2">
+                <Spinner className="w-4 h-4" /> Updating info...
+              </span>
+            ) : (
+              "Update info"
+            )}
           </Button>
         </form>
       </Form>

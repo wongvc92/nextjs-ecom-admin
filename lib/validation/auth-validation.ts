@@ -13,7 +13,7 @@ export const signUpSchema = z
 
 export type TSignUpFormSchema = z.infer<typeof signUpSchema>;
 
-export const settingsSchema = z
+export const settingsFormSchema = z
   .object({
     name: z.optional(z.string()),
     email: z.optional(z.string().email("Invalid email address")),
@@ -38,7 +38,7 @@ export const settingsSchema = z
     }
   );
 
-export type TSettingsSchema = z.infer<typeof settingsSchema>;
+export type TSettingsFormSchema = z.infer<typeof settingsFormSchema>;
 
 export const signInSchema = z.object({
   email: z.string().email("Invalid email address"),

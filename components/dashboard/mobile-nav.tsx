@@ -6,6 +6,7 @@ import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger 
 import { Box, GalleryHorizontal, ImageIcon, LayoutDashboard, Menu, ShoppingCart, StretchHorizontal, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useSession } from "next-auth/react";
 
 export const routes = [
   {
@@ -47,8 +48,16 @@ export const routes = [
 
 const MobileNav = () => {
   const [open, setOpen] = useState(false);
-
+  const { data } = useSession();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+  const roleBasedRoute =
+    data?.user.role === "USER"
+      ? routes.filter((route) => {
+          return route.name !== "Users";
+        })
+      : routes;
+
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
@@ -62,7 +71,7 @@ const MobileNav = () => {
             <SheetClose>
               <div className="flex flex-col space-y-10 mt-10 items-start" onClick={() => setOpen(false)}>
                 <ul className={cn("flex flex-col items-start space-y-12 mt-12 px-2 py-2 w-full")}>
-                  {routes.map((item, i) => (
+                  {roleBasedRoute.map((item, i) => (
                     <li key={item.name} onMouseEnter={() => setActiveIndex(i)} onMouseLeave={() => setActiveIndex(null)}>
                       <Link
                         href={item.path}

@@ -2,7 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
-
 import {
   createNewProduct,
   createNewProductImage,
@@ -114,7 +113,13 @@ export const editProduct = async (values: TProductSchema) => {
 };
 
 export const deleteProduct = async (formData: FormData) => {
-  await ensureAuthenticated();
+  const session = await ensureAuthenticated();
+
+  if (session.user.role !== "ADMIN") {
+    return {
+      error: "You are not allowed to perform this action",
+    };
+  }
   const parsed = deleteProductSchema.safeParse({ id: formData.get("id") });
   if (!parsed.success) {
     const errorMessage = parsed.error.issues.map((issue) => issue.message).join(", ");
@@ -221,6 +226,7 @@ export const createProduct = async (values: TProductSchema) => {
 
 export const deleteProductImage = async (url: string) => {
   await ensureAuthenticated();
+
   if (!url || typeof url !== "string") {
     return {
       error: "Failed to delete product Image",
@@ -252,6 +258,7 @@ export const deleteProductImage = async (url: string) => {
 
 export async function deleteVariationImage(url: string) {
   await ensureAuthenticated();
+
   if (!url || typeof url !== "string") {
     return {
       error: "Failed to delete product Image",

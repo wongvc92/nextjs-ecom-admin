@@ -154,7 +154,7 @@ export const getOrderStatsCount = async () => {
       completedOrdersCount: completedOrders.count,
     };
   } catch (error) {
-    console.error("Error fetching product stats:", error);
-    throw new Error("Failed fetch product stats");
+    console.error("Error fetching order stats:", error);
+    throw new Error("Failed fetch order stats");
   }
 };

@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useCallback } from "react";
-import { newPassword, resetSignIn } from "@/actions/auth";
+import { newPassword } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";

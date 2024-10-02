@@ -7,15 +7,12 @@ const ClearFilters = () => {
   const router = useRouter();
   return (
     <div>
-      {(searchParams.get("productName") ||
-        searchParams.getAll("status").length > 0 ||
-        searchParams.get("dateFrom") ||
-        searchParams.get("dateTo")) && (
+      {(searchParams.get("email") || searchParams.get("dateFrom") || searchParams.get("dateTo")) && (
         <Button
           type="button"
           variant="link"
           onClick={() => {
-            router.push("/orders?page=1&perPage=5", { scroll: false });
+            router.push("/users/pending-users?page=1&perPage=5", { scroll: false });
           }}
           className="text-xs underline text-muted-foreground"
         >
