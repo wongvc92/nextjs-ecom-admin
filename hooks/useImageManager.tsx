@@ -1,7 +1,7 @@
 "use client";
 
 import { getSignedURL } from "@/actions/images";
-import { allowedFileTypes } from "@/lib/constant";
+import { allowedFileSize } from "@/lib/constant";
 import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
 
@@ -17,24 +17,50 @@ interface Image {
   id: string;
   url: string;
 }
+
+export const validateMultipleImages = (filesToUpload: File[], existingImages: Image[]) => {
+  if (!Array.isArray(filesToUpload) || !Array.isArray(existingImages)) return;
+
+  const totalFiles = existingImages.length + filesToUpload.length;
+  // Check if the total number of files exceeds 9
+  if (totalFiles > 9) {
+    toast.error("Maximum 9 files allowed");
+    return;
+  }
+  const remainingSlots = 9 - existingImages.length;
+  const filesToAppend = filesToUpload.slice(0, remainingSlots);
+
+  if (!filesToAppend.every((file) => file.type.startsWith("image"))) {
+    toast.error(`Failed to upload image, make sure upload image only`);
+    return;
+  } else if (!filesToAppend.every((file) => file.size <= allowedFileSize)) {
+    toast.error(`Failed to upload image, max size 1Mb only`);
+    return;
+  }
+  return filesToAppend;
+};
+
+export const validateSingleImage = (fileToUpload: File) => {
+  if (!fileToUpload.type.startsWith("image")) {
+    toast.error(`Failed to upload image, make sure upload image only`);
+    return;
+  } else if (fileToUpload.size <= allowedFileSize) {
+    toast.error(`Failed to upload image, max size 1Mb only`);
+    return;
+  }
+  return fileToUpload;
+};
+
 export const useImageManager = () => {
   const uploadMultipleImages = async (filesToUpload: File[], existingImages: Image[]) => {
-    const totalFiles = existingImages.length + filesToUpload.length;
-    // Check if the total number of files exceeds 9
-    if (totalFiles > 9) {
-      toast.error("Maximum 9 files allowed");
-      return;
-    }
-    const remainingSlots = 9 - existingImages.length;
-    const filesToAppend = filesToUpload.slice(0, remainingSlots);
+    const filesToAppend = validateMultipleImages(filesToUpload, existingImages);
+
+    if (!filesToAppend) return;
 
     const uploadedImages: Image[] = [];
+
     for (const file of filesToAppend) {
       const checksum = await computeSHA256(file);
-      if (!allowedFileTypes.includes(file.type)) {
-        toast.error(`Failed to upload image, make sure upload ${allowedFileTypes} format`);
-        return;
-      }
 
       const formData = new FormData();
       formData.append("size", file.size.toString());
@@ -65,11 +91,7 @@ export const useImageManager = () => {
 
   const uploadSingleImage = async (file: File) => {
     const checksum = await computeSHA256(file);
-    if (!allowedFileTypes.includes(file.type)) {
-      toast.error(`Failed to upload image, make sure upload ${allowedFileTypes} format`);
-      return "";
-    }
-
+    validateSingleImage(file);
     const formData = new FormData();
     formData.append("size", file.size.toString());
     formData.append("type", file.type);

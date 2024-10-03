@@ -1,12 +1,11 @@
 "use server";
+
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { createGalleryImageDB } from "@/lib/services/galleryServices";
 import { ensureAuthenticated } from "@/lib/helpers/authHelpers";
 import { getSignedURLFromS3 } from "@/lib/helpers/awsS3Helpers";
-import { allowedFileTypes } from "@/lib/constant";
-
-const maxFileSize = 1048576 * 10; // 1 MB
+import { allowedFileSize } from "@/lib/constant";
 
 const getSignedURLSchema = z.object({
   size: z.coerce.number(),
@@ -25,13 +24,13 @@ export async function getSignedURL(formData: FormData) {
   }
   const { checksum, size, type } = parsed.data;
   //check allowed content
-  if (!allowedFileTypes.includes(type)) {
-    return { error: `Only ${allowedFileTypes} allowed` };
+  if (!type.startsWith("image")) {
+    return { error: "Only image allowed" };
   }
 
   //check allowed size
-  if (size > maxFileSize) {
-    return { error: "File too large" };
+  if (size > allowedFileSize) {
+    return { error: "Failed to upload image, max size 1Mb only" };
   }
 
   try {

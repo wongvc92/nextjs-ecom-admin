@@ -49,8 +49,9 @@ const ImagesField = () => {
       if (e.target.files) {
         const filesToUpload = Array.from(e.target.files);
         const uploadedImages = await uploadMultipleImages(filesToUpload, getValues("productImages"));
-        setValue("productImages", uploadedImages as Image[]);
-        setPreviewImages(uploadedImages as Image[]);
+        if (!uploadedImages) return;
+        setValue("productImages", uploadedImages);
+        setPreviewImages(uploadedImages);
         if (hiddenFileRef.current) {
           hiddenFileRef.current.value = "";
         }
