@@ -11,8 +11,7 @@ const Navbar = async () => {
         <header className="flex h-12 items-center justify-between border-b p-4 w-full">
           <MobileNav />
           <div className="flex items-center gap-4">
-            <ModeToggle />
-            <UserButton />
+            <UserButton session={session} />
           </div>
         </header>
       )}

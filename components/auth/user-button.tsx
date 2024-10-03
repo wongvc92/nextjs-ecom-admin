@@ -15,15 +15,19 @@ import { ModeToggle } from "../ui/mode-toggle";
 import SignOutButton from "./sign-out-button";
 import { SignInButton } from "./sign-in-button";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 
-const UserButton = () => {
-  const { data } = useSession();
+import { Session } from "next-auth";
+
+const UserButton = ({ session }: { session: Session }) => {
   const router = useRouter();
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="hidden md:block">
-        {data?.user.image ? <Image src={data.user.image} alt="user Image" height={40} width={40} className="rounded-full" /> : <CircleUserRound />}
+      <DropdownMenuTrigger>
+        {session?.user.image ? (
+          <Image src={session.user.image} alt="user Image" height={40} width={40} className="rounded-full" />
+        ) : (
+          <CircleUserRound />
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
@@ -36,7 +40,7 @@ const UserButton = () => {
           <ModeToggle />
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>{data?.user ? <SignOutButton /> : <SignInButton />}</DropdownMenuItem>
+        <DropdownMenuItem>{session?.user.id ? <SignOutButton /> : <SignInButton />}</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
