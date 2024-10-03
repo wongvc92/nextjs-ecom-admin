@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema, TSignUpFormSchema } from "@/lib/validation/auth-validation";
@@ -12,25 +12,29 @@ import { toast } from "sonner";
 import { FaFacebookF, FaGoogle } from "react-icons/fa";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import Spinner from "@/components/spinner";
 
 const SignUpForm = () => {
+  const [isPending, startTransition] = useTransition();
   const form = useForm<TSignUpFormSchema>({
     resolver: zodResolver(signUpSchema),
   });
 
   const onSubmit = async (data: TSignUpFormSchema) => {
-    const res = await registerUser(data);
-    if (res?.error) {
-      toast.error(res.error);
-    } else if (res?.success) {
-      toast.success(res.success);
-    }
-    // Handle form submission
+    startTransition(async () => {
+      const res = await registerUser(data);
+      if (res?.error) {
+        toast.error(res.error);
+      } else if (res?.success) {
+        toast.success(res.success);
+      }
+    });
   };
 
   return (
     <div className="flex flex-col space-y-4 ">
       <Button
+        disabled={isPending}
         type="button"
         variant="outline"
         className="flex items-center gap-2 w-fit self-center font-light text-muted-foreground"
@@ -40,6 +44,7 @@ const SignUpForm = () => {
       </Button>
       <Button
         type="button"
+        disabled={isPending}
         variant="outline"
         className="flex items-center gap-2 w-fit self-center font-light text-muted-foreground"
         onClick={async () => await signIn("facebook")}
@@ -59,7 +64,7 @@ const SignUpForm = () => {
               <FormItem>
                 <FormLabel className="text-muted-foreground">Email</FormLabel>
                 <FormControl>
-                  <Input type="email" {...field} />
+                  <Input type="email" {...field} disabled={isPending} />
                 </FormControl>
                 {form.formState.errors.email && <FormMessage>{form.formState.errors.email.message}</FormMessage>}
               </FormItem>
@@ -72,7 +77,7 @@ const SignUpForm = () => {
               <FormItem>
                 <FormLabel className="text-muted-foreground">Password</FormLabel>
                 <FormControl>
-                  <Input type="password" {...field} />
+                  <Input type="password" {...field} disabled={isPending} />
                 </FormControl>
                 {form.formState.errors.password && <FormMessage>{form.formState.errors.password.message}</FormMessage>}
               </FormItem>
@@ -85,15 +90,22 @@ const SignUpForm = () => {
               <FormItem>
                 <FormLabel className="text-muted-foreground">Confirm Password</FormLabel>
                 <FormControl>
-                  <Input type="password" {...field} />
+                  <Input type="password" {...field} disabled={isPending} />
                 </FormControl>
                 {form.formState.errors.confirmPassword && <FormMessage>{form.formState.errors.confirmPassword.message}</FormMessage>}
               </FormItem>
             )}
           />
 
-          <Button type="submit" className="w-full">
-            Sign up
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? (
+              <span className="flex items-center gap-2">
+                <Spinner className="w-4 h-4" />
+                Signing up...
+              </span>
+            ) : (
+              "Sign up"
+            )}
           </Button>
         </form>
       </Form>

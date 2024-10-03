@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useTransition } from "react";
 import { resetSignIn } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -9,19 +9,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { resetSignInSchema, TResetSignInSchema } from "@/lib/validation/auth-validation";
+import Spinner from "@/components/spinner";
 
 const ResetForm = () => {
+  const [isPending, startTransition] = useTransition();
   const form = useForm<TResetSignInSchema>({
     resolver: zodResolver(resetSignInSchema),
   });
 
   const onSubmit = async (formData: TResetSignInSchema) => {
-    const res = await resetSignIn(formData);
-    if (res.error) {
-      toast.error(res.error);
-    } else if (res.success) {
-      toast.success(res.success);
-    }
+    startTransition(async () => {
+      const res = await resetSignIn(formData);
+      if (res.error) {
+        toast.error(res.error);
+      } else if (res.success) {
+        toast.success(res.success);
+      }
+    });
   };
 
   return (
@@ -35,15 +39,22 @@ const ResetForm = () => {
               <FormItem>
                 <FormLabel className="text-muted-foreground">Email</FormLabel>
                 <FormControl>
-                  <Input type="email" {...field} />
+                  <Input type="email" {...field} disabled={isPending} />
                 </FormControl>
                 {form.formState.errors.email && <FormMessage>{form.formState.errors.email.message}</FormMessage>}
               </FormItem>
             )}
           />
 
-          <Button type="submit" className="w-full">
-            Reset password
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? (
+              <span className="flex items-center gap-2">
+                <Spinner className="w-4 h-4" />
+                Resetting password...
+              </span>
+            ) : (
+              "Reset password"
+            )}
           </Button>
         </form>
       </Form>

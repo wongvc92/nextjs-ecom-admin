@@ -9,25 +9,29 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
 import { newPasswordSchema, TNewPasswordSchema } from "@/lib/validation/auth-validation";
+import { useTransition } from "react";
+import Spinner from "@/components/spinner";
 
 const NewPasswordForm = () => {
   const searchParams = useSearchParams();
-
+  const [isPending, startTransition] = useTransition();
   const token = searchParams.get("token");
   const form = useForm<TNewPasswordSchema>({
     resolver: zodResolver(newPasswordSchema),
   });
 
   const onSubmit = (formData: TNewPasswordSchema) => {
-    if (!token) return;
-    newPassword(formData, token)
-      .then((data) => {
-        toast.error(data.error);
-        toast.success(data.success);
-      })
-      .catch(() => {
-        toast.error("Something went wrong");
-      });
+    startTransition(() => {
+      if (!token) return;
+      newPassword(formData, token)
+        .then((data) => {
+          toast.error(data.error);
+          toast.success(data.success);
+        })
+        .catch(() => {
+          toast.error("Something went wrong");
+        });
+    });
   };
 
   return (
@@ -41,7 +45,7 @@ const NewPasswordForm = () => {
               <FormItem>
                 <FormLabel className="text-muted-foreground">Password</FormLabel>
                 <FormControl>
-                  <Input type="password" {...field} />
+                  <Input type="password" {...field} disabled={isPending} />
                 </FormControl>
 
                 {form.formState.errors.password && <FormMessage>{form.formState.errors.password.message}</FormMessage>}
@@ -49,8 +53,15 @@ const NewPasswordForm = () => {
             )}
           />
 
-          <Button type="submit" className="w-full">
-            Send reset email
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? (
+              <span className="flex items-center gap-2">
+                <Spinner className="w-4 h-4" />
+                Sending reset email...
+              </span>
+            ) : (
+              "Send reset email"
+            )}
           </Button>
         </form>
       </Form>

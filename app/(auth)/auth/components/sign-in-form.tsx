@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
@@ -14,37 +14,42 @@ import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { signInUser } from "@/actions/auth";
 import { DEFAULT_REDIRECT_LOGIN } from "@/routes";
+import Spinner from "@/components/spinner";
 
 export const SignInForm = () => {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
   const [showTwoFactor, setShowTwoFactor] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const form = useForm<TSignInSchema>({
     resolver: zodResolver(signInSchema),
   });
 
   const onSubmit = async (formData: TSignInSchema) => {
-    const res = await signInUser(formData, callbackUrl);
-    if (!res) {
-      return;
-    }
-    if (res.error) {
-      form.reset();
-      toast.error(res.error);
-    }
-    if (res.success) {
-      form.reset();
-      toast.success(res.success);
-    }
-    if (res?.twoFactor) {
-      setShowTwoFactor(true);
-    }
+    startTransition(async () => {
+      const res = await signInUser(formData, callbackUrl);
+      if (!res) {
+        return;
+      }
+      if (res.error) {
+        form.reset();
+        toast.error(res.error);
+      }
+      if (res.success) {
+        form.reset();
+        toast.success(res.success);
+      }
+      if (res?.twoFactor) {
+        setShowTwoFactor(true);
+      }
+    });
   };
 
   return (
     <div className="flex flex-col space-y-4 ">
       <Button
+        disabled={isPending}
         type="button"
         variant="outline"
         className="flex items-center gap-2 w-fit self-center font-light text-muted-foreground"
@@ -57,6 +62,7 @@ export const SignInForm = () => {
         <FaGoogle /> Sign in with Google
       </Button>
       <Button
+        disabled={isPending}
         type="button"
         variant="outline"
         className="flex items-center gap-2 w-fit self-center font-light text-muted-foreground"
@@ -82,7 +88,7 @@ export const SignInForm = () => {
                 <FormItem>
                   <FormLabel className="text-muted-foreground">Two Factor Code</FormLabel>
                   <FormControl>
-                    <Input type="code" {...field} placeholder="123456" />
+                    <Input type="code" {...field} placeholder="123456" disabled={isPending} />
                   </FormControl>
                   {form.formState.errors.email && <FormMessage>{form.formState.errors.email.message}</FormMessage>}
                 </FormItem>
@@ -97,7 +103,7 @@ export const SignInForm = () => {
                   <FormItem>
                     <FormLabel className="text-muted-foreground">Email</FormLabel>
                     <FormControl>
-                      <Input type="email" {...field} />
+                      <Input type="email" {...field} disabled={isPending} />
                     </FormControl>
                     {form.formState.errors.email && <FormMessage>{form.formState.errors.email.message}</FormMessage>}
                   </FormItem>
@@ -109,9 +115,9 @@ export const SignInForm = () => {
                   <FormItem>
                     <FormLabel className="text-muted-foreground">Password</FormLabel>
                     <FormControl>
-                      <Input type="password" {...field} />
+                      <Input type="password" {...field} disabled={isPending} />
                     </FormControl>
-                    <Button variant="link" size="sm" asChild className="px-0" type="button">
+                    <Button variant="link" size="sm" asChild className="px-0" type="button" disabled={isPending}>
                       <Link href="/auth/reset" className="mt-10">
                         Forgot password?
                       </Link>
@@ -123,8 +129,17 @@ export const SignInForm = () => {
             </>
           )}
 
-          <Button type="submit" className="w-full">
-            {showTwoFactor ? "Confirm" : "Sign in"}
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {showTwoFactor ? (
+              "Confirm"
+            ) : isPending ? (
+              <span className="flex items-center gap-2">
+                <Spinner className="w-4 h-4" />
+                Signing in...
+              </span>
+            ) : (
+              "Sign in"
+            )}
           </Button>
         </form>
       </Form>
