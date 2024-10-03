@@ -4,8 +4,8 @@ import { revalidatePath } from "next/cache";
 import { createGalleryImageDB } from "@/lib/services/galleryServices";
 import { ensureAuthenticated } from "@/lib/helpers/authHelpers";
 import { getSignedURLFromS3 } from "@/lib/helpers/awsS3Helpers";
+import { allowedFileTypes } from "@/lib/constant";
 
-const allowedFileTypes = ["image/jpeg", "image/png"];
 const maxFileSize = 1048576 * 10; // 1 MB
 
 const getSignedURLSchema = z.object({

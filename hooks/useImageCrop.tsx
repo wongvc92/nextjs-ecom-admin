@@ -5,18 +5,12 @@ import { useImageManager } from "./useImageManager";
 import getCroppedImg from "@/lib/cropImage";
 import { toast } from "sonner";
 import { deleteCropBanner } from "@/actions/banner";
-import { v4 as uuidv4 } from "uuid";
 import Cropper, { Area } from "react-easy-crop";
 interface CropResult {
   file: File; // Adjust the type as per your actual Blob type
   url: string;
 }
 
-const allowedFileTypes = ["image/jpeg", "image/png"];
-interface Image {
-  id: string;
-  url: string;
-}
 export const useImageCrop = () => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);

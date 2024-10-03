@@ -1,9 +1,9 @@
 "use client";
 
 import { getSignedURL } from "@/actions/images";
+import { allowedFileTypes } from "@/lib/constant";
 import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
-const allowedFileTypes = ["image/jpeg", "image/png"];
 
 export const computeSHA256 = async (file: File) => {
   const buffer = await file.arrayBuffer();
