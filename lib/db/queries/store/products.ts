@@ -12,11 +12,9 @@ export const getProductsId = async (): Promise<{ id: string }[] | []> => {
 };
 export const getProducts = async (validatedParams: IProductsQuery) => {
   const { category, color, maxPrice, minPrice, page, query, size, sort, tags } = validatedParams;
+
   const PRODUCT_PER_PAGE = 6;
-  const productConditions = [
-    eq(productsTable.isArchived, false),
-    between(productsTable.lowestPriceInCents, parseInt(minPrice) * 100, parseInt(maxPrice) * 100),
-  ];
+  const productConditions = [eq(productsTable.isArchived, false), between(productsTable.lowestPriceInCents, 0, 1000000)];
 
   let orderBy;
   if (sort === "price-desc") {
@@ -34,6 +32,10 @@ export const getProducts = async (validatedParams: IProductsQuery) => {
   }
   if (category !== "") {
     productConditions.push(ilike(productsTable.category, `%${category}%`));
+  }
+
+  if (minPrice && maxPrice) {
+    between(productsTable.lowestPriceInCents, parseInt(minPrice) * 100, parseInt(maxPrice) * 100);
   }
 
   const variationsCondition = buildQueryArrayCondition(productsTable.availableVariations, [...color, ...size]);

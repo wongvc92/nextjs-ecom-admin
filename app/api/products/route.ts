@@ -6,7 +6,6 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = request.nextUrl;
     const params = Object.fromEntries(searchParams);
-    console.log("product params", params);
 
     const validatedParams = productsQuerySchema.parse(params);
     const { productCounts, perPage, products } = await getProducts(validatedParams);

@@ -207,7 +207,7 @@ export const productsQuerySchema = z.object({
       },
       { message: "page must be a non-negative number" }
     )
-    .default("1"),
+    .default(""),
   minPrice: z
     .string()
     .optional()
@@ -231,7 +231,7 @@ export const productsQuerySchema = z.object({
       },
       { message: "maxPrice must be a non-negative number" }
     )
-    .default("10000000"),
+    .default("100000"),
   sort: z.string().max(20).optional().default(""),
 });
 
