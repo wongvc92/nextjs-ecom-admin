@@ -19,7 +19,7 @@ const Modal: React.FC<ModalProps> = ({ title, description, isOpen, children, onC
 
   return (
     <Dialog open={isOpen} onOpenChange={onChange}>
-      <DialogContent className="max-h-[80vh]">
+      <DialogContent className="max-h-[80vh] max-w-[90vw] md:max-w-[50vw] rounded-md">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>

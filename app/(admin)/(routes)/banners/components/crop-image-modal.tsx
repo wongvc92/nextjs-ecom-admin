@@ -45,9 +45,9 @@ const CropImageModal: React.FC<CropImageProps> = ({ setIsOpen, isOpen, setPrevie
 
   return (
     <Modal title="Edit image" description="Edit Image" isOpen={isOpen} onClose={() => setIsOpen(false)}>
-      <div>
-        <div className="aspect-square relative flex flex-col">
-          <Cropper />
+      <div className="space-y-4">
+        <div className="h-[300px] w-full">
+          <Cropper aspect={3 / 1} />
         </div>
         <div className="space-y-2">
           <p>Zoom: {zoom}</p>
