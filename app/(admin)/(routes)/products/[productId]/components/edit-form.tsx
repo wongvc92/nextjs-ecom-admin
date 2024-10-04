@@ -136,7 +136,6 @@ const EditForm: React.FC<ProductFormProps> = ({ productsData, distinctCategories
     };
   }, [sectionRefs]);
 
-  console.log(methods.getValues("tags"));
   const handleClick = (id: SectionId) => {
     const ref = sectionRefs[id];
     if (ref.current) {
@@ -195,7 +194,6 @@ const EditForm: React.FC<ProductFormProps> = ({ productsData, distinctCategories
     }
 
     lowestPrice = lowestPrice === Infinity ? 0 : lowestPrice;
-    console.log("Lowest Price:", lowestPrice);
 
     methods.setValue("lowestPrice", lowestPrice);
   };
@@ -233,8 +231,6 @@ const EditForm: React.FC<ProductFormProps> = ({ productsData, distinctCategories
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [methods]);
-
-  console.log(methods.watch());
 
   return (
     <div>

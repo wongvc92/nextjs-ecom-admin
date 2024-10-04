@@ -10,9 +10,7 @@ export async function GET(req: Request) {
 
     const colorNames = [...distinctColorVariationsNames, ...distinctColorNestedVariationsNames];
 
-    console.log("colorNames", colorNames);
-
-    return NextResponse.json({ colorNames: colorNames || null }, { status: 200 });
+    return NextResponse.json({ colorNames }, { status: 200 });
   } catch (error) {
     console.error("[Failed fetch variations]:", error);
     return NextResponse.json("[Failed fetch variations]", { status: 500 });

@@ -7,11 +7,10 @@ import { convertCentsToTwoDecimalNumber, convertGramToKilogram } from "@/lib/uti
 import { TProductSchema } from "@/lib/validation/productValidation";
 
 const getCachedProductById = unstable_cache(async (id: string) => getProductById(id), ["products"], { tags: ["products"] });
-const getCachedDistinctCategories = unstable_cache(async () => getDistinctCategories(), ["categories"], { tags: ["categories"] });
 
 const ProductPage = async ({ params }: { params: { productId: string } }) => {
   const product = await getCachedProductById(params.productId);
-  const distinctCategories = await getCachedDistinctCategories();
+  const distinctCategories = await getDistinctCategories();
 
   const productWithId: TProductSchema = {
     id: product?.id ?? "",

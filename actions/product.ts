@@ -215,6 +215,7 @@ export const createProduct = async (values: TProductSchema) => {
     });
     await revalidateStore(urlPaths);
     revalidatePath("/products");
+
     return { success: `Product created 🎉` };
   } catch (error) {
     console.error("Failed create product", error);

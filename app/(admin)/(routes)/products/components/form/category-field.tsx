@@ -8,6 +8,7 @@ import { X } from "lucide-react";
 import Link from "next/link";
 import { TCategorySchema } from "@/lib/validation/categoryValidation";
 import { TProductSchema } from "@/lib/validation/productValidation";
+import { useEffect } from "react";
 
 interface CategoryFieldProps {
   distinctCategories?: TCategorySchema[];
@@ -17,11 +18,12 @@ const CategoryField: React.FC<CategoryFieldProps> = ({ distinctCategories }) => 
   const {
     watch,
     register,
-    setValue: setCategoryValue,
+    setValue,
+    getValues,
     formState: { errors, isSubmitting },
   } = useFormContext<TProductSchema>(); // retrieve all hook methods
-
-  const selectedCategory = watch("category");
+  // Simulating a selected category fetched from API or external source
+  const selectedCategory = getValues("category"); // Example value
 
   return (
     <FormFieldWrapper>
@@ -35,7 +37,7 @@ const CategoryField: React.FC<CategoryFieldProps> = ({ distinctCategories }) => 
               <div
                 className="absolute -top-1 right-0 bg-red-500  flex text-center items-center justify-center  rounded-full  text-[12px] cursor-pointer"
                 onClick={() => {
-                  setCategoryValue("category", "");
+                  setValue("category", "");
                 }}
               >
                 <X className=" text-white w-3 h-3" />
@@ -49,7 +51,7 @@ const CategoryField: React.FC<CategoryFieldProps> = ({ distinctCategories }) => 
           <select className="border p-2 rounded-md  text-sm" {...register("category")} id="category" required>
             <option value="">Choose a category</option>
             {distinctCategories?.map((item) => (
-              <option value={item.name} key={item.id} disabled={isSubmitting}>
+              <option value={item.name} key={item.id} disabled={isSubmitting} selected={item.name === selectedCategory}>
                 {item.name}
               </option>
             ))}
