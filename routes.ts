@@ -3,3 +3,5 @@ export const publicRoutes = ["/auth/sign-in", "/auth/sign-up", "/auth/new-verifi
 export const apiAuthRoutesPrefix = "/api/auth";
 
 export const DEFAULT_REDIRECT_LOGIN = "/dashboard";
+
+export const publicApiRoutes = "/api";

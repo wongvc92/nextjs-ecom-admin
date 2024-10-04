@@ -1,6 +1,6 @@
 import type { NextAuthConfig } from "next-auth";
 
-import { apiAuthRoutesPrefix, DEFAULT_REDIRECT_LOGIN, publicRoutes } from "./routes";
+import { apiAuthRoutesPrefix, DEFAULT_REDIRECT_LOGIN, publicApiRoutes, publicRoutes } from "./routes";
 import { getUserById } from "./lib/db/queries/admin/users";
 import { getAccoutByUserId } from "./lib/db/queries/admin/auth";
 import { UserRoleEnum } from "./@types/next-auth";
@@ -37,6 +37,7 @@ export const authConfig = {
       const isAdmin = auth?.user.role === "ADMIN";
       const isBlocked = auth?.user.isBlocked;
       const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthRoutesPrefix);
+      const isPublicApiRoute = nextUrl.pathname.startsWith(publicApiRoutes);
       const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
       const isAuthRoute = nextUrl.pathname.startsWith("/");
 
@@ -44,7 +45,7 @@ export const authConfig = {
         return Response.redirect(new URL(DEFAULT_REDIRECT_LOGIN, nextUrl));
       }
 
-      if (isApiAuthRoute || isPublicRoute) {
+      if (isApiAuthRoute || isPublicRoute || isPublicApiRoute) {
         return true; // Allow access to API auth routes and public routes
       }
 
