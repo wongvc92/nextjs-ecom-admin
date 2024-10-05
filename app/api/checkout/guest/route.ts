@@ -71,7 +71,6 @@ export async function POST(req: NextRequest) {
         ),
       },
 
-      payment_method_types: ["card", "fpx", "grabpay"],
       line_items: checkoutCartItems.map((item) => ({
         price_data: {
           currency: "myr",
