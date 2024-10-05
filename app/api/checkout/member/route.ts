@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
       },
 
       client_reference_id: `${newOrder.id}`,
-      success_url: `${STORE_URL}?success=1"`,
+      success_url: `${STORE_URL}?success=1`,
       cancel_url: `${STORE_URL}?error=1`,
     });
     revalidateTag("orders");

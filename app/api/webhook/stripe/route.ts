@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
     }
 
     revalidatePath("/orders");
+    
     return new NextResponse("Updated successfully", { status: 200 });
   } catch (error) {
     console.error("Error updating order or shipping information:", error);

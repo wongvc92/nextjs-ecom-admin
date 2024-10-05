@@ -34,20 +34,18 @@ export const createNewOrder = async (customerId: string, productName: string, to
 
 export const processOrder = async (session: Stripe.Checkout.Session, eventType: string) => {
   const orderDetails: OrderItem[] = session.metadata?.orderDetails ? JSON.parse(session.metadata.orderDetails) : [];
+
   if (eventType === "expired") {
-    updateOrderStatus("cancelled", session.metadata?.orderId!);
+    await updateOrderStatus("cancelled", session.metadata?.orderId!);
   }
   if (eventType === "completed") {
-    updateOrderStatus("toShip", session.metadata?.orderId!);
-
-    await db.transaction(async (trx) => {
-      await createOrderItem(trx, orderDetails, session.metadata?.orderId!);
-      await updateStock(trx, orderDetails);
-      await processShippings(session, trx);
-    });
+    await updateOrderStatus("toShip", session.metadata?.orderId!);
+    await createOrderItem(orderDetails, session.metadata?.orderId!);
+    await updateStock(orderDetails);
+    await processShippings(session);
   }
 };
 
 export const updateOrderStatus = async (orderStatus: string, orderId: string) => {
-  await db.update(ordersTable).set({ status: orderStatus }).where(eq(ordersTable.id, orderId!));
+  return await db.update(ordersTable).set({ status: orderStatus }).where(eq(ordersTable.id, orderId!));
 };

@@ -8,8 +8,9 @@ import {
   findOrderItemdVariationLabel,
   findOrderItemdVariationName,
 } from "../helpers/orderItemHelpers";
+import { db } from "../db";
 
-export const createOrderItem = async (trx: any, orderDetails: OrderItem[], orderId: string) => {
+export const createOrderItem = async (orderDetails: OrderItem[], orderId: string) => {
   try {
     for (const item of orderDetails) {
       const product = await getProductById(item.productId);
@@ -27,7 +28,7 @@ export const createOrderItem = async (trx: any, orderDetails: OrderItem[], order
       if (!product) {
         throw new Error(`Product not found for ID: ${item.productId}`);
       }
-      await trx.insert(orderItemsTable).values({
+      await db.insert(orderItemsTable).values({
         orderId: orderId,
         productId: item.productId,
         productName: productName ?? "",

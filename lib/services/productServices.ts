@@ -1,4 +1,4 @@
-import { products as productsTable } from "@/lib/db/schema/products";
+import { Product, products as productsTable } from "@/lib/db/schema/products";
 import { convertKilogramToGram, convertTwoDecimalNumberToCents } from "../utils";
 import { productImages as productImagesTable } from "@/lib/db/schema/productImages";
 import { galleries as galleriesTable } from "@/lib/db/schema/galleries";
@@ -9,6 +9,9 @@ import { OrderItem } from "../db/schema/orderItems";
 import { nestedVariations as nestedVariationsTable } from "@/lib/db/schema/nestedVariations";
 import { variations as variationsTable } from "@/lib/db/schema/variations";
 import { findSomeProductOutOfStock } from "../helpers/productHelpers";
+import { PgTransaction } from "drizzle-orm/pg-core";
+import { revalidatePath } from "next/cache";
+import { revalidateStore } from "./storeServices";
 
 export const createNewProduct = async (productData: TProductSchema, tx: any): Promise<{ id: string }> => {
   try {
@@ -100,10 +103,10 @@ export const deleteProductImageByUrl = async (url: string, tx: any) => {
   }
 };
 
-export const updateStock = async (trx: any, orderDetails: OrderItem[]) => {
+export const updateStock = async (orderDetails: OrderItem[]) => {
   try {
     for (const item of orderDetails) {
-      const productData = await trx.query.products.findFirst({
+      const productData = await db.query.products.findFirst({
         where: eq(productsTable.id, item.productId),
         with: {
           variations: {
@@ -116,7 +119,7 @@ export const updateStock = async (trx: any, orderDetails: OrderItem[]) => {
       });
 
       if (productData?.variationType === "NESTED_VARIATION") {
-        await trx
+        await db
           .update(nestedVariationsTable)
           .set({
             stock: sql`
@@ -129,7 +132,7 @@ export const updateStock = async (trx: any, orderDetails: OrderItem[]) => {
           })
           .where(eq(nestedVariationsTable.id, item.nestedVariationId!));
       } else if (productData?.variationType === "VARIATION") {
-        await trx
+        await db
           .update(variationsTable)
           .set({
             stock: sql`
@@ -142,7 +145,7 @@ export const updateStock = async (trx: any, orderDetails: OrderItem[]) => {
           })
           .where(eq(variationsTable.id, item.variationId!));
       } else {
-        await trx
+        await db
           .update(productsTable)
           .set({
             stock: sql`
@@ -155,10 +158,11 @@ export const updateStock = async (trx: any, orderDetails: OrderItem[]) => {
           })
           .where(eq(productsTable.id, item.productId!));
       }
+      revalidatePath(`products/${productData?.id}`);
     }
 
     for (const item of orderDetails) {
-      const productData = await trx.query.products.findFirst({
+      const productData = await db.query.products.findFirst({
         where: eq(productsTable.id, item.productId),
         with: {
           variations: {
@@ -169,16 +173,17 @@ export const updateStock = async (trx: any, orderDetails: OrderItem[]) => {
           productImages: true,
         },
       });
-      const isSomeProductOutOfStock = findSomeProductOutOfStock(productData);
+      const isSomeProductOutOfStock = findSomeProductOutOfStock(productData as Product);
 
       if (isSomeProductOutOfStock) {
-        await trx
+        await db
           .update(productsTable)
           .set({
-            outOfStock: true,
+            isOutOfStock: true,
           })
           .where(eq(productsTable.id, item.productId!));
       }
+      revalidatePath(`products/${productData?.id}`);
     }
   } catch (error) {
     console.log("updateStock", error);
