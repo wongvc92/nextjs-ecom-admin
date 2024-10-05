@@ -8,6 +8,7 @@ import { capitalizeSentenceFirstChar } from "@/lib/utils";
 import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
+const STORE_URL = process.env.NEXT_PUBLIC_STORE_URL!;
 export interface ICheckoutCartItem extends CartItem {
   checkoutPriceInCents: number;
   checkoutShippingFeeInCents: number;
@@ -71,7 +72,7 @@ export async function POST(req: NextRequest) {
         ),
       },
 
-      payment_method_types: ["card"],
+      payment_method_types: ["card", "fpx", "grabpay"],
       line_items: checkoutCartItems.map((item) => ({
         price_data: {
           currency: "myr",
@@ -104,8 +105,8 @@ export async function POST(req: NextRequest) {
       },
 
       client_reference_id: `${newOrder.id}`,
-      success_url: "http://localhost:3000?success=1",
-      cancel_url: "http://localhost:3000?error=1",
+      success_url: `${STORE_URL}?success=1"`,
+      cancel_url: `${STORE_URL}?error=1`,
     });
     revalidateTag("orders");
     return NextResponse.json(session, { headers: corsHeaders });

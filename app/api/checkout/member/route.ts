@@ -26,6 +26,9 @@ const corsHeaders = {
 export async function OPTIONS() {
   return NextResponse.json({}, { headers: corsHeaders });
 }
+
+const STORE_URL = process.env.NEXT_PUBLIC_STORE_URL!;
+
 export async function POST(req: NextRequest) {
   try {
     const { cartItems, customer } = await req.json();
@@ -103,8 +106,8 @@ export async function POST(req: NextRequest) {
       },
 
       client_reference_id: `${newOrder.id}`,
-      success_url: "http://localhost:3000?success=1",
-      cancel_url: "http://localhost:3000?error=1",
+      success_url: `${STORE_URL}?success=1"`,
+      cancel_url: `${STORE_URL}?error=1`,
     });
     revalidateTag("orders");
     return NextResponse.json(session, { headers: corsHeaders });
