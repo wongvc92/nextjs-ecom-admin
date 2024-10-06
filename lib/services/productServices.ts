@@ -176,17 +176,26 @@ export const updateStock = async (orderDetails: OrderItem[]) => {
       const isSomeProductOutOfStock = findSomeProductOutOfStock(productData as Product);
 
       if (isSomeProductOutOfStock) {
-        await db
-          .update(productsTable)
-          .set({
-            isOutOfStock: true,
-          })
-          .where(eq(productsTable.id, item.productId!));
+        await updateOutOfStock(item.productId, true);
       }
       revalidatePath(`products/${productData?.id}`);
     }
   } catch (error) {
     console.log("updateStock", error);
     throw new Error("Failed update");
+  }
+};
+
+export const updateOutOfStock = async (productId: string, isOutOfStock: boolean) => {
+  try {
+    return await db
+      .update(productsTable)
+      .set({
+        isOutOfStock,
+      })
+      .where(eq(productsTable.id, productId));
+  } catch (error) {
+    console.log("Failed update Out Of Stock: ", error);
+    throw new Error("Failed update Out Of Stock");
   }
 };
