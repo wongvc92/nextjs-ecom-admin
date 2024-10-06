@@ -10,6 +10,7 @@ import {
   deleteProductImages,
   updateExistingProduct,
   updateGalleryImagePublishedStatusByProductId,
+  updateOutOfStock,
 } from "@/lib/services/productServices";
 import {
   createNewVariation,
@@ -25,7 +26,7 @@ import { getVariationImageByUrl, getVariationsByProductId } from "@/lib/db/queri
 import { deleteProductSchema, productSchema, TProductSchema } from "@/lib/validation/productValidation";
 import { getGalleryImageByUrl } from "@/lib/db/queries/admin/galleries";
 import { ensureAuthenticated } from "@/lib/helpers/authHelpers";
-import { revalidateStore } from "@/lib/services/storeServices";
+import { revalidateStore, revalidateTagStore } from "@/lib/services/storeServices";
 import { deleteImageFromS3 } from "@/lib/helpers/awsS3Helpers";
 
 const urlPaths = ["/", "/products"];
@@ -104,8 +105,9 @@ export const editProduct = async (values: TProductSchema) => {
         }
       }
     });
-    await revalidateStore(urlPaths);
-    revalidatePath("/products");
+    await updateOutOfStock(productData.id!, false);
+
+    await revalidateTagStore([`/products/${productData.id!}`, "featuredProducts"]);
     return { success: "Product updated" };
   } catch (error) {
     return { error: "Failed update product" };
@@ -156,8 +158,8 @@ export const deleteProduct = async (formData: FormData) => {
     }
 
     await deleteProductFromDB(parsed.data.id);
-    await revalidateStore(urlPaths);
-    revalidatePath("/products");
+
+    await revalidateTagStore(["featuredProducts", "products"]);
     return { success: `Product deleted` };
   } catch (error) {
     console.log(error);
@@ -214,8 +216,8 @@ export const createProduct = async (values: TProductSchema) => {
       }
     });
     await revalidateStore(urlPaths);
-    revalidatePath("/products");
 
+    await revalidateTagStore(["featuredProducts"]);
     return { success: `Product created 🎉` };
   } catch (error) {
     console.error("Failed create product", error);

@@ -17,3 +17,23 @@ export const revalidateStore = async (urlPaths: string[]) => {
     throw new Error("Failed revalidate store paths");
   }
 };
+
+export const revalidateTagStore = async (tags: string[]) => {
+  const url = new URL(
+    `${process.env.NEXT_PUBLIC_STORE_URL}/api/revalidateTagStore?secret=${encodeURIComponent(process.env.NEXT_PUBLIC_REVALIDATE_SECRET!)}${tags
+      .map((tag) => `&tag=${encodeURIComponent(tag)}`)
+      .join("")}`
+  );
+
+  try {
+    await fetch(url.toString(), {
+      method: "POST",
+    });
+
+    return {
+      success: "Store paths revalidate",
+    };
+  } catch (error) {
+    throw new Error("Failed revalidate store paths");
+  }
+};
