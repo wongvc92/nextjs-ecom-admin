@@ -20,9 +20,9 @@ export const variationsSchema = z.object({
     })
     .url()
     .optional()
-    .or(z.literal(""))
     .refine(
       (url) => {
+        if (!url) return true;
         try {
           const parsedUrl = new URL(url!);
           return allowedImageDomains.includes(parsedUrl.hostname);
