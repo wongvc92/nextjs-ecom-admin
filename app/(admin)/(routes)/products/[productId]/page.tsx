@@ -1,16 +1,13 @@
-import React, { Suspense } from "react";
 import EditForm from "./components/edit-form";
-import { unstable_cache } from "next/cache";
 import { getProductById } from "@/lib/db/queries/admin/products";
 import { getDistinctCategories } from "@/lib/db/queries/admin/categories";
 import { convertCentsToTwoDecimalNumber, convertGramToKilogram } from "@/lib/utils";
 import { TProductSchema } from "@/lib/validation/productValidation";
 
-const getCachedProductById = unstable_cache(async (id: string) => getProductById(id), ["products"], { tags: ["products"] });
-
 const ProductPage = async ({ params }: { params: { productId: string } }) => {
-  const product = await getCachedProductById(params.productId);
-  const distinctCategories = await getDistinctCategories();
+  const productData = await getProductById(params.productId);
+  const distinctCategoriesData = await getDistinctCategories();
+  const [product, distinctCategories] = await Promise.all([productData, distinctCategoriesData]);
 
   const productWithId: TProductSchema = {
     id: product?.id ?? "",
@@ -60,10 +57,8 @@ const ProductPage = async ({ params }: { params: { productId: string } }) => {
   };
 
   return (
-    <section className="md:container w-full ">
-      <Suspense>
-        <EditForm productsData={productWithId} productId={params.productId} distinctCategories={distinctCategories} />
-      </Suspense>
+    <section className="md:container w-full">
+      <EditForm productsData={productWithId} productId={params.productId} distinctCategories={distinctCategories} />
     </section>
   );
 };
