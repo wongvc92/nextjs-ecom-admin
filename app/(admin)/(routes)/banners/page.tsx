@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 
 import BannerTable from "./components/banner-table";
+import { Suspense } from "react";
+import TableLoading from "@/components/loading/table-loading";
 
 export const metadata: Metadata = {
   title: "Banners",
@@ -28,7 +30,9 @@ const BannerPage = async ({ searchParams }: { searchParams: { name: string; perP
             <span className="hidden sm:inline ml-2">Add new</span>
           </Link>
         </div>
-        <BannerTable perPage={perPage} name={name} page={page} dateFrom={dateFrom} dateTo={dateTo} />
+        <Suspense fallback={<TableLoading />}>
+          <BannerTable perPage={perPage} name={name} page={page} dateFrom={dateFrom} dateTo={dateTo} />
+        </Suspense>
       </div>
     </section>
   );

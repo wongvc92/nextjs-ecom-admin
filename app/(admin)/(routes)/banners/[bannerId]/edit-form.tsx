@@ -42,9 +42,6 @@ const EditForm: React.FC<EditFormProps> = ({ data }) => {
     <div className="px-4 space-y-8 py-8 w-full min-h-screen">
       <div className="flex flex-col space-y-4">
         <Heading title="Edit Banner" description="Banner will be shown in the home page of the store" />
-
-        {/* 
-    show the delete button if initialData is exist */}
       </div>
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)} className="w-full flex flex-col gap-4">
