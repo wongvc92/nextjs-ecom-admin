@@ -16,9 +16,7 @@ const CategoryPage = async ({ params }: { params: { categoryId: string } }) => {
 
   return (
     <section className="w-full md:container">
-      <Suspense>
-        <EditForm initialData={result} />
-      </Suspense>
+      <EditForm initialData={result} />
     </section>
   );
 };
