@@ -106,7 +106,7 @@ export const editProduct = async (values: TProductSchema) => {
       }
     });
     await updateOutOfStock(productData.id!, false);
-
+    revalidatePath(`/products/${productData.id!}`);
     await revalidateTagStore([`/products/${productData.id!}`, "featuredProducts"]);
     return { success: "Product updated" };
   } catch (error) {
@@ -158,7 +158,7 @@ export const deleteProduct = async (formData: FormData) => {
     }
 
     await deleteProductFromDB(parsed.data.id);
-
+    revalidatePath("/products");
     await revalidateTagStore(["featuredProducts", "products"]);
     return { success: `Product deleted` };
   } catch (error) {
@@ -216,7 +216,7 @@ export const createProduct = async (values: TProductSchema) => {
       }
     });
     await revalidateStore(urlPaths);
-
+    revalidatePath("/products");
     await revalidateTagStore(["featuredProducts"]);
     return { success: `Product created 🎉` };
   } catch (error) {
@@ -248,6 +248,7 @@ export const deleteProductImage = async (url: string) => {
         await deleteGalleryImageByUrl(url, tx);
       }
     });
+    await revalidateTagStore(["featuredProducts", "products"]);
     revalidatePath("/products");
     return {
       success: "Image deleted",
@@ -282,6 +283,7 @@ export async function deleteVariationImage(url: string) {
         await deleteGalleryImageByUrl(url, tx);
       }
     });
+    await revalidateTagStore(["featuredProducts", "products"]);
     revalidatePath("/products");
     return {
       success: "Image deleted",
