@@ -26,15 +26,8 @@ const CreateForm = ({ bannerImagesCount }: { bannerImagesCount: number | null })
   const onSubmit = async () => {
     startTransition(async () => {
       if (!methods.getValues() || bannerImagesCount === null || bannerImagesCount === undefined) return;
-      console.log("bannerImagesCount", bannerImagesCount);
-      let orderNumber = 0;
-      if (bannerImagesCount > 0) {
-        orderNumber = bannerImagesCount + 1;
-      } else {
-        orderNumber = 0;
-      }
 
-      const res = await createBanner(methods.getValues(), orderNumber);
+      const res = await createBanner(methods.getValues());
       if (res.error) {
         toast.error(res.error);
       } else if (res.success) {

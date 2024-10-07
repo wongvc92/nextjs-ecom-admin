@@ -3,11 +3,11 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./CellAction";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowDownIcon, ArrowUpDown, ArrowUpIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import { format } from "date-fns";
 import { BannerImage } from "@/lib/db/schema/bannerImages";
 import Image from "next/image";
-import { updateBannerOrderById } from "@/actions/banner";
+import { moveBannerDown, moveBannerUp } from "@/actions/banner";
 import { Button } from "@/components/ui/button";
 import TableSortButton from "@/components/ui/table-sort-button";
 
@@ -61,33 +61,13 @@ export const columns: ColumnDef<BannerImage>[] = [
       const index = row.index;
 
       const moveUp = async () => {
-        if (index > 0) {
-          const currentItem = data[index];
-          const itemAbove = data[index - 1];
-
-          // Swap the order values
-          const currentOrder = currentItem.order;
-          const aboveOrder = itemAbove.order;
-
-          // Update in the database using server actions
-          await updateBannerOrderById(currentItem.id, aboveOrder);
-          await updateBannerOrderById(itemAbove.id, currentOrder);
-        }
+        const currentItem = data[index];
+        await moveBannerUp(currentItem.id);
       };
 
       const moveDown = async () => {
-        if (index < data.length - 1) {
-          const currentItem = data[index];
-          const itemBelow = data[index + 1];
-
-          // Swap the order values
-          const currentOrder = currentItem.order;
-          const belowOrder = itemBelow.order;
-
-          // Update in the database using server actions
-          await updateBannerOrderById(currentItem.id, belowOrder);
-          await updateBannerOrderById(itemBelow.id, currentOrder);
-        }
+        const currentItem = data[index];
+        await moveBannerDown(currentItem.id);
       };
 
       return (
