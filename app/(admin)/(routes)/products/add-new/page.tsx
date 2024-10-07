@@ -12,9 +12,7 @@ const ProductPage = async () => {
   const distinctCategories = await getDistinctCategories();
   return (
     <section className="w-full md:container">
-      <Suspense>
-        <CreateForm distinctCategories={distinctCategories} />
-      </Suspense>
+      <CreateForm distinctCategories={distinctCategories} />
     </section>
   );
 };
