@@ -44,6 +44,7 @@ export const createBanner = async (values: TBannerImageFormSchema) => {
     });
 
     revalidatePath("/banners");
+    await revalidateTagStore(["banners"]);
     return {
       success: "Banners created",
     };
