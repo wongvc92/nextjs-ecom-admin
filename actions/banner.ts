@@ -14,7 +14,7 @@ import { getGalleryImageByUrl } from "@/lib/db/queries/admin/galleries";
 import { deleteGalleryImageByUrl } from "@/lib/services/galleryServices";
 import { bannerImageSchema, TBannerImageFormSchema } from "@/lib/validation/bannerImagesValidation";
 import { ensureAuthenticated } from "@/lib/helpers/authHelpers";
-import { revalidateTagStore } from "@/lib/services/storeServices";
+import { revalidateStore, revalidateTagStore } from "@/lib/services/storeServices";
 import { deleteImageFromS3 } from "@/lib/helpers/awsS3Helpers";
 import { allowedImageDomains } from "@/lib/constant";
 import { bannerImages as bannerImagesTable } from "@/lib/db/schema/bannerImages";
@@ -44,7 +44,7 @@ export const createBanner = async (values: TBannerImageFormSchema) => {
     });
 
     revalidatePath("/banners");
-    await revalidateTagStore(["banners"]);
+    await revalidateStore(["/"]);
     return {
       success: "Banners created",
     };

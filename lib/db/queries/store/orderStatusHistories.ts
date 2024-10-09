@@ -3,7 +3,6 @@ import { orderStatusHistories as orderStatusHistoriesTable, OrderStatusHistory }
 import { asc, eq } from "drizzle-orm";
 
 export const getOrderStatusHistoriesByOrderId = async (orderId: string): Promise<OrderStatusHistory[] | null> => {
-  console.log(orderId);
   const orderStatusHistories = await db
     .select()
     .from(orderStatusHistoriesTable)
@@ -11,6 +10,6 @@ export const getOrderStatusHistoriesByOrderId = async (orderId: string): Promise
     .orderBy(asc(orderStatusHistoriesTable.createdAt));
 
   if (!orderStatusHistories) return null;
-  console.log("orderStatusHistories", orderStatusHistories);
+
   return orderStatusHistories;
 };
