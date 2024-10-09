@@ -19,16 +19,20 @@ export const revalidateStore = async (urlPaths: string[]) => {
 };
 
 export const revalidateTagStore = async (tags: string[]) => {
-  const url = new URL(
-    `${process.env.NEXT_PUBLIC_STORE_URL}/api/revalidateTagStore?secret=${encodeURIComponent(process.env.NEXT_PUBLIC_REVALIDATE_SECRET!)}${tags
-      .map((tag) => `&tag=${encodeURIComponent(tag)}`)
-      .join("")}`
-  );
+  const baseUrl = process.env.NEXT_PUBLIC_STORE_URL!;
+  const secret = process.env.NEXT_PUBLIC_REVALIDATE_SECRET!;
+  const url = new URL(`${baseUrl}/api/revalidateTagStore`);
+  url.searchParams.set("secret", secret);
+  tags.forEach((tag) => url.searchParams.append("tag", tag));
 
   try {
-    await fetch(url.toString(), {
+    const res = await fetch(url.toString(), {
       method: "POST",
     });
+
+    if (!res.ok) {
+      console.error("Failed to revalidate store:", await res.text());
+    }
 
     return {
       success: "Store paths revalidate",
