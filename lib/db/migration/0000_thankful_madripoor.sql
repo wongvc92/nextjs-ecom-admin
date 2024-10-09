@@ -1,4 +1,10 @@
 DO $$ BEGIN
+ CREATE TYPE "public"."order_status" AS ENUM('pending', 'toShip', 'shipped', 'completed', 'released');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  CREATE TYPE "public"."userRole" AS ENUM('USER', 'ADMIN');
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -75,9 +81,17 @@ CREATE TABLE IF NOT EXISTS "order" (
 	"amount_in_cents" integer NOT NULL,
 	"product_name" varchar NOT NULL,
 	"image" varchar,
-	"status" varchar NOT NULL,
+	"status" "order_status" DEFAULT 'pending' NOT NULL,
 	"tracking_number" varchar,
 	"courier_name" varchar,
+	"created_at" timestamp DEFAULT now(),
+	"updated_at" timestamp DEFAULT now()
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "orderStatusHistory" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"order_id" uuid NOT NULL,
+	"status" "order_status" DEFAULT 'pending' NOT NULL,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now()
 );
@@ -165,6 +179,13 @@ CREATE TABLE IF NOT EXISTS "passwordResetToken" (
 	CONSTRAINT "passwordResetToken_token_unique" UNIQUE("token")
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "pendingNewUser" (
+	"id" text PRIMARY KEY NOT NULL,
+	"email" text NOT NULL,
+	"created_at" timestamp DEFAULT now(),
+	"updated_at" timestamp DEFAULT now()
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "session" (
 	"sessionToken" text PRIMARY KEY NOT NULL,
 	"userId" text NOT NULL,
@@ -194,6 +215,7 @@ CREATE TABLE IF NOT EXISTS "user" (
 	"emailVerified" timestamp,
 	"image" text,
 	"isTwoFactorEnabled" boolean DEFAULT false,
+	"isBlocked" boolean DEFAULT false,
 	CONSTRAINT "user_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
@@ -226,6 +248,12 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "orderItem" ADD CONSTRAINT "orderItem_order_id_order_id_fk" FOREIGN KEY ("order_id") REFERENCES "public"."order"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "orderStatusHistory" ADD CONSTRAINT "orderStatusHistory_order_id_order_id_fk" FOREIGN KEY ("order_id") REFERENCES "public"."order"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

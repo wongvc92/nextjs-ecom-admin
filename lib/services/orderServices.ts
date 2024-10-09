@@ -6,6 +6,7 @@ import { OrderItem } from "../db/schema/orderItems";
 import { createOrderItem } from "./orderItemServices";
 import { updateStock } from "./productServices";
 import { processShippings } from "./shippingServices";
+import { createOrderStatusHistory } from "./orderHistoryStatusServices";
 
 export const updateTrackingNumber = async (tracking: string, orderId: string) => {
   try {
@@ -28,7 +29,7 @@ export const createNewOrder = async (customerId: string, productName: string, to
       image: image,
     })
     .returning();
-
+  await createOrderStatusHistory(newOrder.status, newOrder.id);
   return newOrder;
 };
 
@@ -40,7 +41,9 @@ export const processOrder = async (session: Stripe.Checkout.Session, eventType: 
   }
   if (eventType === "completed") {
     await updateOrderStatus("toShip", session.metadata?.orderId!);
+    await createOrderStatusHistory("toShip", session.metadata?.orderId!);
     await createOrderItem(orderDetails, session.metadata?.orderId!);
+
     await updateStock(orderDetails);
     await processShippings(session);
   }

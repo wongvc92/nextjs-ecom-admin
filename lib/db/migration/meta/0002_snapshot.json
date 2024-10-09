@@ -1,6 +1,6 @@
 {
-  "id": "2174940b-6a63-4a7e-ae1c-a643666c33e2",
-  "prevId": "7af5c12f-1f14-4ec4-8474-7228b378d854",
+  "id": "a82237e0-8d1d-4a7f-ae68-752b590763bc",
+  "prevId": "0496cbe8-52a9-41a4-8220-2ed86945ee61",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -463,6 +463,63 @@
       },
       "indexes": {},
       "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.orderStatusHistory": {
+      "name": "orderStatusHistory",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "order_id": {
+          "name": "order_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "orderStatusHistory_order_id_order_id_fk": {
+          "name": "orderStatusHistory_order_id_order_id_fk",
+          "tableFrom": "orderStatusHistory",
+          "tableTo": "order",
+          "columnsFrom": [
+            "order_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },

@@ -1,4 +1,4 @@
-import { and, between, count, eq, ilike, inArray } from "drizzle-orm";
+import { and, asc, between, count, desc, eq, ilike, inArray } from "drizzle-orm";
 import { db } from "../..";
 import { Order, orders as orderTables } from "../../schema/orders";
 import { TOrdersQuery } from "@/lib/validation/orderValidation";
@@ -31,6 +31,7 @@ export const getOrdersByCustomerId = async (searchParams: TOrdersQuery, customer
     },
     limit: parseInt(perPage),
     offset: (parseInt(page) - 1) * parseInt(perPage),
+    orderBy: desc(orderTables.updatedAt),
   });
 
   const [orderCount] = await db
@@ -38,7 +39,6 @@ export const getOrdersByCustomerId = async (searchParams: TOrdersQuery, customer
     .from(orderTables)
     .where(whereCondition.length > 0 ? and(...whereCondition) : undefined);
 
-  console.log(ordersData);
   return { ordersData: ordersData || [], orderCount: orderCount.count };
 };
 

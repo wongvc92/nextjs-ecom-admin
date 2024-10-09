@@ -1,6 +1,7 @@
 import { OrderItem } from "@/lib/db/schema/orderItems";
 import { findCartItemsShippingSubTotal, findCartItemsSubTotal } from "@/lib/helpers/cartItemHelpers";
 import { recheckCartItems } from "@/lib/services/cartItemServices";
+import { createOrderStatusHistory } from "@/lib/services/orderHistoryStatusServices";
 import { createNewOrder } from "@/lib/services/orderServices";
 import { stripe } from "@/lib/stripe";
 import { CartItem } from "@/lib/types";
@@ -54,6 +55,8 @@ export async function POST(req: NextRequest) {
     if (!newOrder) {
       return NextResponse.json({ error: "Failed to create a new order" }, { status: 400 });
     }
+
+    await createOrderStatusHistory("pending", newOrder.id);
     const session = await stripe.checkout.sessions.create({
       metadata: {
         userId: customer.id,

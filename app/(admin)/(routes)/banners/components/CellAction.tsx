@@ -23,7 +23,6 @@ export const CellAction = ({ data }: { data: BannerImage }) => {
   const onConfirm = useCallback(async () => {
     startTransition(async () => {
       if (!data || !data.id) return;
-      console.log(data.url);
       const res = await deleteBanner(data.url);
       if (res.error) {
         toast.error(res.error);

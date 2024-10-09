@@ -5,6 +5,8 @@ import OrderPaymentInfo from "./components/order-payment-info";
 import OrderHistory from "./components/order-history";
 import OrderAmount from "./components/order-amount";
 import { Metadata } from "next";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const metadata: Metadata = {
   title: "View order",
@@ -75,7 +77,9 @@ const OrderPageById = async ({ params }: { params: { orderId: string } }) => {
         </div>
 
         {/* order history */}
-        <OrderHistory />
+        <Suspense fallback={<Skeleton className="xl:w-1/3 rounded-md h-[500px]" />}>
+          <OrderHistory orderId={order.id} />
+        </Suspense>
       </div>
     </section>
   );

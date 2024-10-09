@@ -1,4 +1,4 @@
-import { and, between, count, eq, ilike, inArray, or, sql } from "drizzle-orm";
+import { and, between, count, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
 import { db } from "../..";
 import { Order, orders as orderTables } from "../../schema/orders";
 import { TOrdersQuery, orderQuerySchema } from "@/lib/validation/orderValidation";
@@ -38,6 +38,7 @@ export const getOrders = async (searchParams: TOrdersQuery): Promise<{ ordersDat
       },
       limit: parseInt(perPage),
       offset: (parseInt(page) - 1) * parseInt(perPage),
+      orderBy: desc(orderTables.updatedAt),
     });
 
     const [orderCount] = await db
