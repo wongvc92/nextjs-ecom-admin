@@ -1,9 +1,7 @@
+import "server-only";
+
 export const revalidateStore = async (urlPaths: string[]) => {
-  const url = new URL(
-    `${process.env.NEXT_PUBLIC_STORE_URL}/api/revalidate?secret=${encodeURIComponent(process.env.NEXT_PUBLIC_REVALIDATE_SECRET!)}${urlPaths
-      .map((path) => `&path=${encodeURIComponent(path)}`)
-      .join("")}`
-  );
+  const url = new URL(`${process.env.NEXT_PUBLIC_STORE_URL}/api/revalidate`);
 
   try {
     await fetch(url.toString(), {
@@ -20,14 +18,19 @@ export const revalidateStore = async (urlPaths: string[]) => {
 
 export const revalidateTagStore = async (tags: string[]) => {
   const baseUrl = process.env.NEXT_PUBLIC_STORE_URL!;
-  const secret = process.env.NEXT_PUBLIC_REVALIDATE_SECRET!;
+  const secret = process.env.REVALIDATE_SECRET!;
   const url = new URL(`${baseUrl}/api/revalidateTagStore`);
-  url.searchParams.set("secret", secret);
-  tags.forEach((tag) => url.searchParams.append("tag", tag));
 
   try {
     const res = await fetch(url.toString(), {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        secret: secret,
+        tags: tags,
+      }),
     });
 
     if (!res.ok) {
