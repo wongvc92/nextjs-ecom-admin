@@ -44,7 +44,8 @@ export const createBanner = async (values: TBannerImageFormSchema) => {
     });
 
     revalidatePath("/banners");
-    await revalidateTagStore(["banners"]);
+    await revalidateStore(["/"]);
+    // await revalidateTagStore(["banners"]);
     return {
       success: "Banners created",
     };
@@ -73,7 +74,8 @@ export const editBanner = async (values: TBannerImageFormSchema) => {
       await EditExistingBannerImage(id, url, tx);
       await updateGalleryImagePublishedStatusBybannerImageId(url, id, tx);
     });
-    await revalidateTagStore(["banners"]);
+    // await revalidateTagStore(["banners"]);
+    await revalidateStore(["/"]);
     revalidatePath(`/banners${id}`);
     return {
       success: "Banner edited",
@@ -145,7 +147,8 @@ export async function deleteBanner(url: string) {
         await deleteGalleryImageByUrl(url, tx);
       }
     });
-    await revalidateTagStore(["banners"]);
+    // await revalidateTagStore(["banners"]);
+    await revalidateStore(["/"]);
     revalidatePath("/banners");
     return {
       success: "Banner deleted",
@@ -180,7 +183,8 @@ export async function deleteBannerById(id: string) {
         await deleteGalleryImageByUrl(bannerImage.url, tx);
       }
     });
-    await revalidateTagStore(["banners"]);
+    // await revalidateTagStore(["banners"]);
+    await revalidateStore(["/"]);
     revalidatePath("/banners");
     return {
       success: "Banner deleted",
@@ -231,7 +235,8 @@ export async function moveBannerUp(id: string) {
   });
 
   revalidatePath("/banners");
-  await revalidateTagStore(["banners"]);
+  // await revalidateTagStore(["banners"]);
+  await revalidateStore(["/"]);
 }
 
 export async function moveBannerDown(id: string) {
@@ -274,5 +279,6 @@ export async function moveBannerDown(id: string) {
 
   // Revalidate the path
   revalidatePath("/banners");
-  await revalidateTagStore(["banners"]);
+  // await revalidateTagStore(["banners"]);
+  await revalidateStore(["/"]);
 }

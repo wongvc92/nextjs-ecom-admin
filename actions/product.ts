@@ -107,7 +107,8 @@ export const editProduct = async (values: TProductSchema) => {
     });
     await updateOutOfStock(productData.id!, false);
     revalidatePath(`/products/${productData.id!}`);
-    await revalidateTagStore([`/products-${productData.id!}`, "featuredProducts"]);
+    await revalidateStore(["/", `/products${productData.id!}`]);
+    // await revalidateTagStore([`/products${productData.id!}`, "featuredProducts"]);
     return { success: "Product updated" };
   } catch (error) {
     return { error: "Failed update product" };
@@ -159,7 +160,8 @@ export const deleteProduct = async (formData: FormData) => {
 
     await deleteProductFromDB(parsed.data.id);
     revalidatePath("/products");
-    await revalidateTagStore(["featuredProducts", "products"]);
+    // await revalidateTagStore(["featuredProducts", "products"]);
+    await revalidateStore(["/", "/products"]);
     return { success: `Product deleted` };
   } catch (error) {
     console.log(error);
@@ -215,9 +217,10 @@ export const createProduct = async (values: TProductSchema) => {
         }
       }
     });
-    await revalidateStore(urlPaths);
+    // await revalidateStore(urlPaths);
+    await revalidateStore(["/", "/products"]);
     revalidatePath("/products");
-    await revalidateTagStore(["featuredProducts"]);
+    // await revalidateTagStore(["featuredProducts"]);
     return { success: `Product created 🎉` };
   } catch (error) {
     console.error("Failed create product", error);
