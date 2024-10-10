@@ -147,8 +147,8 @@ export async function deleteBanner(url: string) {
         await deleteGalleryImageByUrl(url, tx);
       }
     });
-    // await revalidateTagStore(["banners"]);
-    await revalidateStore(["/"]);
+    await revalidateTagStore(["banners"]);
+    // await revalidateStore(["/"]);
     revalidatePath("/banners");
     return {
       success: "Banner deleted",
@@ -183,8 +183,8 @@ export async function deleteBannerById(id: string) {
         await deleteGalleryImageByUrl(bannerImage.url, tx);
       }
     });
-    // await revalidateTagStore(["banners"]);
-    await revalidateStore(["/"]);
+    await revalidateTagStore(["banners"]);
+    // await revalidateStore(["/"]);
     revalidatePath("/banners");
     return {
       success: "Banner deleted",
@@ -235,8 +235,8 @@ export async function moveBannerUp(id: string) {
   });
 
   revalidatePath("/banners");
-  // await revalidateTagStore(["banners"]);
-  await revalidateStore(["/"]);
+  await revalidateTagStore(["banners"]);
+  // await revalidateStore(["/"]);
 }
 
 export async function moveBannerDown(id: string) {
@@ -278,7 +278,7 @@ export async function moveBannerDown(id: string) {
   });
 
   // Revalidate the path
-  revalidatePath("/banners");
-  // await revalidateTagStore(["banners"]);
+  // revalidatePath("/banners");
+  await revalidateTagStore(["banners"]);
   await revalidateStore(["/"]);
 }
