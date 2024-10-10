@@ -107,7 +107,7 @@ export const editProduct = async (values: TProductSchema) => {
     });
     await updateOutOfStock(productData.id!, false);
     revalidatePath(`/products/${productData.id!}`);
-    await revalidateTagStore([`/products/${productData.id!}`, "featuredProducts"]);
+    await revalidateTagStore([`/products-${productData.id!}`, "featuredProducts"]);
     return { success: "Product updated" };
   } catch (error) {
     return { error: "Failed update product" };

@@ -111,6 +111,7 @@ export async function deleteCropBanner(url: string) {
     });
 
     revalidatePath("/banners");
+
     return {
       success: "image deleted",
     };
