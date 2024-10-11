@@ -5,12 +5,15 @@ import { IProductsQuery } from "@/lib/validation/productValidation";
 import { buildQueryArrayCondition } from "@/lib/services/queryServices";
 import { unstable_cache } from "next/cache";
 
-export const getProductsId = async (): Promise<{ id: string }[] | []> => {
-  let productsId = await db.select({ id: productsTable.id }).from(productsTable);
-  if (!productsId) return [];
-  console.log(productsId);
-  return productsId;
-};
+export const getProductsId = unstable_cache(
+  async (): Promise<{ id: string }[] | []> => {
+    let productsId = await db.select({ id: productsTable.id }).from(productsTable);
+    if (!productsId) return [];
+    return productsId;
+  },
+  ["products"],
+  { tags: ["products"] }
+);
 export const getProducts = async (validatedParams: IProductsQuery) => {
   const { category, color, maxPrice, minPrice, page, query, size, sort, tags } = validatedParams;
 
