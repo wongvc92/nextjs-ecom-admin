@@ -6,7 +6,7 @@ import { createNewOrder } from "@/lib/services/orderServices";
 import { stripe } from "@/lib/stripe";
 import { CartItem } from "@/lib/types";
 import { capitalizeSentenceFirstChar } from "@/lib/utils";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export interface ICheckoutCartItem extends CartItem {
@@ -112,6 +112,7 @@ export async function POST(req: NextRequest) {
       success_url: `${STORE_URL}?success=1`,
       cancel_url: `${STORE_URL}?error=1`,
     });
+    revalidatePath("/orders");
     revalidateTag("orders");
     return NextResponse.json(session, { headers: corsHeaders });
   } catch (error) {

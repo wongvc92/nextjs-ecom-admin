@@ -3,12 +3,9 @@
 import { updateOrderStatus, updateTrackingNumber } from "@/lib/services/orderServices";
 import { ensureAuthenticated } from "@/lib/helpers/authHelpers";
 import { trackingNumberSchema, TtrackingNumberSchema } from "@/lib/validation/trackingNumberValidation";
-import { revalidatePath } from "next/cache";
-import { revalidateTagStore } from "@/lib/services/storeServices";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { createOrderStatusHistory } from "@/lib/services/orderHistoryStatusServices";
 import { updateOrderStatusSchema } from "@/lib/validation/orderValidation";
-
-const urlPaths = ["/orders"];
 
 export const updateTrackingNumberByOrderId = async (formData: TtrackingNumberSchema) => {
   await ensureAuthenticated();
@@ -23,7 +20,7 @@ export const updateTrackingNumberByOrderId = async (formData: TtrackingNumberSch
     await updateTrackingNumber(tracking, orderId);
     await createOrderStatusHistory("shipped", orderId);
     revalidatePath(`/orders/${orderId}`);
-    await revalidateTagStore([`/orders/${orderId}`]);
+    revalidateTag("orders");
     return { success: "tracking number updated" };
   } catch (error) {
     return {
@@ -45,7 +42,7 @@ export const updateOrderStatusByOrderId = async (formData: FormData) => {
   try {
     await updateOrderStatus(status, id);
     await createOrderStatusHistory(status, id);
-
+    revalidateTag("orders");
     return {
       success: "order status updated",
     };

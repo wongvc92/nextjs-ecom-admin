@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { stripe } from "@/lib/stripe";
 import { processOrder } from "@/lib/services/orderServices";
 
@@ -28,7 +28,8 @@ export async function POST(request: NextRequest) {
     }
 
     revalidatePath("/orders");
-    
+    revalidateTag("orders");
+
     return new NextResponse("Updated successfully", { status: 200 });
   } catch (error) {
     console.error("Error updating order or shipping information:", error);
