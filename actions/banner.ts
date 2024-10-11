@@ -45,7 +45,6 @@ export const createBanner = async (values: TBannerImageFormSchema) => {
 
     revalidatePath("/banners");
     revalidateTag("banners");
-    // await revalidateStore(["banners"]);
     await revalidateTagStore(["banners"]);
     return {
       success: "Banners created",
@@ -75,8 +74,7 @@ export const editBanner = async (values: TBannerImageFormSchema) => {
       await EditExistingBannerImage(id, url, tx);
       await updateGalleryImagePublishedStatusBybannerImageId(url, id, tx);
     });
-    // await revalidateTagStore(["banners"]);
-    await revalidateStore(["/"]);
+    revalidateTag("banners");
     revalidatePath(`/banners${id}`);
     return {
       success: "Banner edited",
@@ -148,8 +146,7 @@ export async function deleteBanner(url: string) {
         await deleteGalleryImageByUrl(url, tx);
       }
     });
-    await revalidateTagStore(["banners"]);
-    // await revalidateStore(["/"]);
+    revalidateTag("banners");
     revalidatePath("/banners");
     return {
       success: "Banner deleted",
@@ -184,8 +181,7 @@ export async function deleteBannerById(id: string) {
         await deleteGalleryImageByUrl(bannerImage.url, tx);
       }
     });
-    await revalidateTagStore(["banners"]);
-    // await revalidateStore(["/"]);
+    revalidateTag("banners");
     revalidatePath("/banners");
     return {
       success: "Banner deleted",
@@ -236,8 +232,7 @@ export async function moveBannerUp(id: string) {
   });
 
   revalidatePath("/banners");
-  await revalidateTagStore(["banners"]);
-  // await revalidateStore(["/"]);
+  revalidateTag("banners");
 }
 
 export async function moveBannerDown(id: string) {
@@ -278,8 +273,6 @@ export async function moveBannerDown(id: string) {
     await trx.update(bannerImagesTable).set({ order: currentOrder }).where(eq(bannerImagesTable.id, nextBanner.id));
   });
 
-  // Revalidate the path
-  // revalidatePath("/banners");
-  await revalidateTagStore(["banners"]);
-  await revalidateStore(["/"]);
+  revalidateTag("banners");
+  revalidatePath("/banners");
 }
