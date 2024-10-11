@@ -3,6 +3,7 @@ import { db } from "../..";
 import { variations as variationsTable } from "@/lib/db/schema/variations";
 import { nestedVariations as nestedVariationsTable } from "@/lib/db/schema/nestedVariations";
 import { categories as categoriesTable } from "@/lib/db/schema/categories";
+import { unstable_cache } from "next/cache";
 
 export const getDistinctColors = async () => {
   try {
@@ -53,10 +54,14 @@ export const getDistinctSizes = async () => {
   }
 };
 
-export const getDistinctCategories = async () => {
-  try {
-    return await db.selectDistinct({ name: categoriesTable.name }).from(categoriesTable);
-  } catch (error) {
-    throw new Error("Failed fetch distinct categories");
-  }
-};
+export const getDistinctCategories = unstable_cache(
+  async () => {
+    try {
+      return await db.selectDistinct({ name: categoriesTable.name }).from(categoriesTable);
+    } catch (error) {
+      throw new Error("Failed fetch distinct categories");
+    }
+  },
+  ["categories"],
+  { tags: ["categories"] }
+);
