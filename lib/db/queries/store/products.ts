@@ -39,13 +39,15 @@ export const getProducts = async (validatedParams: IProductsQuery) => {
   }
 
   if (minPrice && maxPrice) {
-    between(productsTable.lowestPriceInCents, parseInt(minPrice) * 100, parseInt(maxPrice) * 100);
+    productConditions.push(between(productsTable.lowestPriceInCents, parseInt(minPrice) * 100, parseInt(maxPrice) * 100));
   }
 
   const variationsCondition = buildQueryArrayCondition(productsTable.availableVariations, [...color, ...size]);
   const tagsCodition = buildQueryArrayCondition(productsTable.tags, tags);
 
-  const conditions = [...productConditions, variationsCondition, tagsCodition].filter(Boolean);
+  const conditions = [...productConditions, variationsCondition ? variationsCondition : undefined, tagsCodition ? tagsCodition : undefined].filter(
+    Boolean
+  ); // Filter out undefined values
 
   try {
     const productsData = await db.query.products.findMany({
