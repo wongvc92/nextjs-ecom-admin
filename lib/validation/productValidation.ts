@@ -193,9 +193,18 @@ export const deleteProductSchema = z.object({
 export const productsQuerySchema = z.object({
   query: z.string().max(100).optional().default(""),
   category: z.string().max(50).optional().default(""),
-  color: z.array(z.string().max(20)).optional().default([]),
-  size: z.array(z.string().max(20)).optional().default([]),
-  tags: z.array(z.string().max(20)).optional().default([]),
+  color: z
+    .union([z.string().max(20), z.array(z.string().max(20))])
+    .optional()
+    .default([]),
+  size: z
+    .union([z.string().max(20), z.array(z.string().max(20))])
+    .optional()
+    .default([]),
+  tags: z
+    .union([z.string().max(20), z.array(z.string().max(20))])
+    .optional()
+    .default([]),
   page: z
     .string()
     .optional()
@@ -207,7 +216,7 @@ export const productsQuerySchema = z.object({
       },
       { message: "page must be a non-negative number" }
     )
-    .default(""),
+    .default("1"),
   minPrice: z
     .string()
     .optional()
@@ -219,7 +228,7 @@ export const productsQuerySchema = z.object({
       },
       { message: "minPrice must be a non-negative number" }
     )
-    .default(""),
+    .default("0"),
   maxPrice: z
     .string()
     .optional()
@@ -231,7 +240,7 @@ export const productsQuerySchema = z.object({
       },
       { message: "maxPrice must be a non-negative number" }
     )
-    .default(""),
+    .default("10000000"),
   sort: z.string().max(20).optional().default(""),
 });
 

@@ -1,4 +1,4 @@
-import { and, asc, between, count, desc, eq, ilike } from "drizzle-orm";
+import { and, arrayContains, asc, between, count, desc, eq, ilike } from "drizzle-orm";
 import { Product, products as productsTable } from "@/lib/db/schema/products";
 import { db } from "@/lib/db/index";
 import { IProductsQuery } from "@/lib/validation/productValidation";
@@ -17,6 +17,7 @@ export const getProductsId = unstable_cache(
 export const getProducts = async (validatedParams: IProductsQuery) => {
   const { category, color, maxPrice, minPrice, page, query, size, sort, tags } = validatedParams;
 
+  console.log("color", color);
   const PRODUCT_PER_PAGE = 6;
   const productConditions = [eq(productsTable.isArchived, false), between(productsTable.lowestPriceInCents, 0, 1000000)];
 
@@ -42,12 +43,25 @@ export const getProducts = async (validatedParams: IProductsQuery) => {
     productConditions.push(between(productsTable.lowestPriceInCents, parseInt(minPrice) * 100, parseInt(maxPrice) * 100));
   }
 
-  const variationsCondition = buildQueryArrayCondition(productsTable.availableVariations, [...color, ...size]);
-  const tagsCodition = buildQueryArrayCondition(productsTable.tags, tags);
+  if (typeof color === "string") {
+    productConditions.push(arrayContains(productsTable.availableVariations, [color]));
+  } else if (Array.isArray(color) && color.length > 0) {
+    productConditions.push(arrayContains(productsTable.availableVariations, color));
+  }
 
-  const conditions = [...productConditions, variationsCondition ? variationsCondition : undefined, tagsCodition ? tagsCodition : undefined].filter(
-    Boolean
-  ); // Filter out undefined values
+  if (typeof size === "string") {
+    productConditions.push(arrayContains(productsTable.availableVariations, [size]));
+  } else if (Array.isArray(size) && size.length > 0) {
+    productConditions.push(arrayContains(productsTable.availableVariations, size));
+  }
+
+  if (typeof tags === "string") {
+    productConditions.push(arrayContains(productsTable.tags, [tags]));
+  } else if (Array.isArray(size) && tags.length > 0) {
+    productConditions.push(arrayContains(productsTable.tags, tags));
+  }
+
+  const conditions = productConditions.filter(Boolean);
 
   try {
     const productsData = await db.query.products.findMany({
