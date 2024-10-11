@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { db } from "@/lib/db";
 import { validate as isUuid } from "uuid";
 import {
@@ -44,6 +44,7 @@ export const createBanner = async (values: TBannerImageFormSchema) => {
     });
 
     revalidatePath("/banners");
+    revalidateTag("banners");
     // await revalidateStore(["banners"]);
     await revalidateTagStore(["banners"]);
     return {
