@@ -7,6 +7,7 @@ import { getProductsWithCategory } from "@/lib/db/queries/admin/products";
 import { getCategoryById } from "@/lib/db/queries/admin/categories";
 import { ensureAuthenticated } from "@/lib/helpers/authHelpers";
 import { categorySchema } from "@/lib/validation/categoryValidation";
+import { revalidateTagStore } from "@/lib/services/storeServices";
 
 export const createCategory = async (formData: FormData) => {
   await ensureAuthenticated();
@@ -20,6 +21,7 @@ export const createCategory = async (formData: FormData) => {
     const category = await createCategoryDB(parsed.data.name);
     revalidatePath("/categories");
     revalidateTag("categories");
+    await revalidateTagStore(["categories"]);
     return { success: `Category "${category.name}" created 🎉` };
   } catch (error) {
     return {
@@ -41,6 +43,7 @@ export const editCategory = async (formData: FormData) => {
     await updateCategoryDB(name, id!);
     revalidatePath("/categories");
     revalidateTag("categories");
+    await revalidateTagStore(["categories"]);
     return { success: `Category changed to "${name}" 🎉` };
   } catch (error) {
     return {
@@ -75,6 +78,7 @@ export const deleteCategory = async (formData: FormData) => {
 
     revalidatePath("/categories");
     revalidateTag("categories");
+    await revalidateTagStore(["categories"]);
     return { success: `Category deleted` };
   } catch (error) {
     return {
