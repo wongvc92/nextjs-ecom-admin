@@ -1,11 +1,17 @@
 import "server-only";
+const baseUrl = process.env.NEXT_PUBLIC_STORE_URL!;
+const secret = process.env.REVALIDATE_SECRET!;
 
 export const revalidateStore = async (urlPaths: string[]) => {
-  const url = new URL(`${process.env.NEXT_PUBLIC_STORE_URL}/api/revalidate`);
+  const url = new URL(`${baseUrl}/api/revalidate`);
 
   try {
     await fetch(url.toString(), {
+      headers: {
+        "Content-Type": "application/json",
+      },
       method: "POST",
+      body: JSON.stringify({ urlPaths, secret }),
     });
 
     return {
@@ -17,8 +23,6 @@ export const revalidateStore = async (urlPaths: string[]) => {
 };
 
 export const revalidateTagStore = async (tags: string[]) => {
-  const baseUrl = process.env.NEXT_PUBLIC_STORE_URL!;
-  const secret = process.env.REVALIDATE_SECRET!;
   const url = new URL(`${baseUrl}/api/revalidateTagStore`);
 
   try {

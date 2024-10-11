@@ -27,6 +27,7 @@ import { deleteProductSchema, productSchema, TProductSchema } from "@/lib/valida
 import { getGalleryImageByUrl } from "@/lib/db/queries/admin/galleries";
 import { ensureAuthenticated } from "@/lib/helpers/authHelpers";
 import { deleteImageFromS3 } from "@/lib/helpers/awsS3Helpers";
+import { revalidateStore } from "@/lib/services/storeServices";
 
 export const editProduct = async (values: TProductSchema) => {
   await ensureAuthenticated();
@@ -105,6 +106,7 @@ export const editProduct = async (values: TProductSchema) => {
     await updateOutOfStock(productData.id!, false);
     revalidatePath(`/products/${productData.id!}`);
     revalidateTag("products");
+    await revalidateStore([`/products${parsed.data.id}`]);
     return { success: "Product updated" };
   } catch (error) {
     return { error: "Failed update product" };
