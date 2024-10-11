@@ -9,6 +9,7 @@ export const nestedVariationsSchema = z.object({
     })
     .max(30, { message: "Cannot more than 30 character" })
     .optional()
+    .transform((val) => val?.toLocaleLowerCase())
     .or(z.literal("")),
   name: z
     .string()
@@ -17,6 +18,7 @@ export const nestedVariationsSchema = z.object({
     })
     .max(50, { message: "Name cannot more than 50 character" })
     .optional()
+    .transform((val) => val?.toLocaleLowerCase())
     .or(z.literal("")),
   price: z.coerce
     .number({ message: "Price must be a number" })

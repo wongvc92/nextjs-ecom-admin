@@ -11,8 +11,8 @@ export const variationsSchema = z.object({
     })
     .max(30, { message: "Cannot more than 30 character" })
     .optional()
+    .transform((val) => val?.toLocaleLowerCase())
     .or(z.literal("")),
-
   image: z
     .string()
     .min(1, {
@@ -40,8 +40,8 @@ export const variationsSchema = z.object({
     })
     .max(50, { message: "Name cannot more than 50 character" })
     .optional()
+    .transform((val) => val?.toLocaleLowerCase())
     .or(z.literal("")),
-
   price: z.coerce
     .number({ message: "Price must be a number" })
     .min(1)

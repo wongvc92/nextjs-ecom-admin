@@ -5,9 +5,9 @@ import { productImagesSchema } from "./productImagesValidation";
 export const productSchema = z
   .object({
     id: z.string().optional(),
-    tags: z.optional(z.array(z.string())),
+    tags: z.optional(z.array(z.string().transform((val) => val.toLocaleLowerCase()))),
     productImages: productImagesSchema,
-    availableVariations: z.array(z.string()),
+    availableVariations: z.array(z.string().transform((val) => val.toLocaleLowerCase())),
     lowestPrice: z.coerce.number(),
     variationType: z
       .string(z.enum(["NESTED_VARIATION", "VARIATION", "NONE"]))
@@ -194,15 +194,48 @@ export const productsQuerySchema = z.object({
   query: z.string().max(100).optional().default(""),
   category: z.string().max(50).optional().default(""),
   color: z
-    .union([z.string().max(20), z.array(z.string().max(20))])
+    .union([
+      z
+        .string()
+        .max(20)
+        .transform((val) => val?.toLocaleLowerCase()),
+      z.array(
+        z
+          .string()
+          .max(20)
+          .transform((val) => val?.toLocaleLowerCase())
+      ),
+    ])
     .optional()
     .default([]),
   size: z
-    .union([z.string().max(20), z.array(z.string().max(20))])
+    .union([
+      z
+        .string()
+        .max(20)
+        .transform((val) => val?.toLocaleLowerCase()),
+      z.array(
+        z
+          .string()
+          .max(20)
+          .transform((val) => val?.toLocaleLowerCase())
+      ),
+    ])
     .optional()
     .default([]),
   tags: z
-    .union([z.string().max(20), z.array(z.string().max(20))])
+    .union([
+      z
+        .string()
+        .max(20)
+        .transform((val) => val?.toLocaleLowerCase()),
+      z.array(
+        z
+          .string()
+          .max(20)
+          .transform((val) => val?.toLocaleLowerCase())
+      ),
+    ])
     .optional()
     .default([]),
   page: z
