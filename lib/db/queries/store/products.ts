@@ -2,7 +2,6 @@ import { and, arrayContains, asc, between, count, desc, eq, ilike } from "drizzl
 import { Product, products as productsTable } from "@/lib/db/schema/products";
 import { db } from "@/lib/db/index";
 import { IProductsQuery } from "@/lib/validation/productValidation";
-import { buildQueryArrayCondition } from "@/lib/services/queryServices";
 import { unstable_cache } from "next/cache";
 
 export const getProductsId = unstable_cache(
@@ -17,7 +16,6 @@ export const getProductsId = unstable_cache(
 export const getProducts = async (validatedParams: IProductsQuery) => {
   const { category, color, maxPrice, minPrice, page, query, size, sort, tags } = validatedParams;
 
-  console.log("color", color);
   const PRODUCT_PER_PAGE = 6;
   const productConditions = [eq(productsTable.isArchived, false), between(productsTable.lowestPriceInCents, 0, 1000000)];
 
@@ -57,7 +55,7 @@ export const getProducts = async (validatedParams: IProductsQuery) => {
 
   if (typeof tags === "string") {
     productConditions.push(arrayContains(productsTable.tags, [tags]));
-  } else if (Array.isArray(size) && tags.length > 0) {
+  } else if (Array.isArray(tags) && tags.length > 0) {
     productConditions.push(arrayContains(productsTable.tags, tags));
   }
 
