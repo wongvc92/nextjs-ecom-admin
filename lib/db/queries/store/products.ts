@@ -3,6 +3,7 @@ import { Product, products as productsTable } from "@/lib/db/schema/products";
 import { db } from "@/lib/db/index";
 import { IProductsQuery } from "@/lib/validation/productValidation";
 import { buildQueryArrayCondition } from "@/lib/services/queryServices";
+import { unstable_cache } from "next/cache";
 
 export const getProductsId = async (): Promise<{ id: string }[] | []> => {
   let productsId = await db.select({ id: productsTable.id }).from(productsTable);
@@ -69,41 +70,49 @@ export const getProducts = async (validatedParams: IProductsQuery) => {
   }
 };
 
-export const getProductById = async (productId: string): Promise<Product | undefined> => {
-  try {
-    const product = await db.query.products.findFirst({
-      where: eq(productsTable.id, productId),
-      with: {
-        variations: {
-          with: {
-            nestedVariations: true,
+export const getProductById = unstable_cache(
+  async (productId: string): Promise<Product | undefined> => {
+    try {
+      const product = await db.query.products.findFirst({
+        where: eq(productsTable.id, productId),
+        with: {
+          variations: {
+            with: {
+              nestedVariations: true,
+            },
           },
+          productImages: true,
         },
-        productImages: true,
-      },
-    });
-    return product;
-  } catch (error) {
-    throw new Error("Failed fetch product");
-  }
-};
+      });
+      return product;
+    } catch (error) {
+      throw new Error("Failed fetch product");
+    }
+  },
+  ["products"],
+  { tags: ["products"] }
+);
 
-export const getFeaturedProducts = async () => {
-  try {
-    const featuredProducts = await db.query.products.findMany({
-      where: eq(productsTable.isFeatured, true),
-      with: {
-        variations: {
-          with: {
-            nestedVariations: true,
+export const getFeaturedProducts = unstable_cache(
+  async () => {
+    try {
+      const featuredProducts = await db.query.products.findMany({
+        where: eq(productsTable.isFeatured, true),
+        with: {
+          variations: {
+            with: {
+              nestedVariations: true,
+            },
           },
+          productImages: true,
         },
-        productImages: true,
-      },
-      limit: 6,
-    });
-    return featuredProducts;
-  } catch (error) {
-    return null;
-  }
-};
+        limit: 6,
+      });
+      return featuredProducts;
+    } catch (error) {
+      return null;
+    }
+  },
+  ["products"],
+  { tags: ["products"] }
+);

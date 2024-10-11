@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { db } from "@/lib/db";
 import {
   createNewProduct,
@@ -26,10 +26,7 @@ import { getVariationImageByUrl, getVariationsByProductId } from "@/lib/db/queri
 import { deleteProductSchema, productSchema, TProductSchema } from "@/lib/validation/productValidation";
 import { getGalleryImageByUrl } from "@/lib/db/queries/admin/galleries";
 import { ensureAuthenticated } from "@/lib/helpers/authHelpers";
-import { revalidateStore, revalidateTagStore } from "@/lib/services/storeServices";
 import { deleteImageFromS3 } from "@/lib/helpers/awsS3Helpers";
-
-const urlPaths = ["/", "/products"];
 
 export const editProduct = async (values: TProductSchema) => {
   await ensureAuthenticated();
@@ -107,8 +104,7 @@ export const editProduct = async (values: TProductSchema) => {
     });
     await updateOutOfStock(productData.id!, false);
     revalidatePath(`/products/${productData.id!}`);
-    await revalidateStore(["/", `/products${productData.id!}`]);
-    // await revalidateTagStore([`/products${productData.id!}`, "featuredProducts"]);
+    revalidateTag("products");
     return { success: "Product updated" };
   } catch (error) {
     return { error: "Failed update product" };
@@ -160,8 +156,7 @@ export const deleteProduct = async (formData: FormData) => {
 
     await deleteProductFromDB(parsed.data.id);
     revalidatePath("/products");
-    // await revalidateTagStore(["featuredProducts", "products"]);
-    await revalidateStore(["/", "/products"]);
+    revalidateTag("products");
     return { success: `Product deleted` };
   } catch (error) {
     console.log(error);
@@ -217,10 +212,10 @@ export const createProduct = async (values: TProductSchema) => {
         }
       }
     });
-    // await revalidateStore(urlPaths);
-    await revalidateStore(["/", "/products"]);
+
+    revalidateTag("products");
     revalidatePath("/products");
-    // await revalidateTagStore(["featuredProducts"]);
+
     return { success: `Product created 🎉` };
   } catch (error) {
     console.error("Failed create product", error);
@@ -251,7 +246,7 @@ export const deleteProductImage = async (url: string) => {
         await deleteGalleryImageByUrl(url, tx);
       }
     });
-    await revalidateTagStore(["featuredProducts", "products"]);
+
     revalidatePath("/products");
     return {
       success: "Image deleted",
@@ -286,7 +281,7 @@ export async function deleteVariationImage(url: string) {
         await deleteGalleryImageByUrl(url, tx);
       }
     });
-    await revalidateTagStore(["featuredProducts", "products"]);
+
     revalidatePath("/products");
     return {
       success: "Image deleted",
