@@ -1,6 +1,5 @@
+import { getDistinctCategories } from "@/lib/db/queries/store/filters";
 import { NextResponse } from "next/server";
-
-import { getDistinctCategories } from "@/lib/db/queries/admin/categories";
 
 export async function GET(req: Request) {
   try {
