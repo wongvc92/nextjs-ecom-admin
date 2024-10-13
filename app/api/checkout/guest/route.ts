@@ -1,6 +1,7 @@
 import { OrderItem } from "@/lib/db/schema/orderItems";
 import { findCartItemsShippingSubTotal, findCartItemsSubTotal } from "@/lib/helpers/cartItemHelpers";
 import { recheckCartItems } from "@/lib/services/cartItemServices";
+import { courierServices } from "@/lib/services/courierServices";
 import { createOrderStatusHistory } from "@/lib/services/orderHistoryStatusServices";
 import { createNewOrder } from "@/lib/services/orderServices";
 import { stripe } from "@/lib/stripe";
@@ -30,7 +31,7 @@ export async function OPTIONS() {
 }
 export async function POST(req: NextRequest) {
   try {
-    const { cartItems } = await req.json();
+    const { cartItems, customer, toPostcode, courierChoice, totalWeightInKg } = await req.json();
 
     if (!cartItems) {
       return NextResponse.json({ error: "Failed checkout cart items" }, { status: 400 });
@@ -39,17 +40,23 @@ export async function POST(req: NextRequest) {
     if (!checkoutCartItems) {
       return NextResponse.json({ error: "Failed checkout cart items" }, { status: 400 });
     }
+
+    const courier = await courierServices({ toPostcode, courierChoice, totalWeightInKg });
+    if (!courier) {
+      return NextResponse.json({ error: "Failed to fetch courier, please try again" }, { status: 400 });
+    }
     const cartItemsSubTotal = findCartItemsSubTotal(checkoutCartItems);
-    const totalShipping = findCartItemsShippingSubTotal(checkoutCartItems);
+    const totalShipping = courier[0].price;
     const totalPriceInCents = cartItemsSubTotal + totalShipping;
     const customerId = "";
 
-    const newOrder = await createNewOrder(
-      customerId,
-      checkoutCartItems[0].product?.name ?? "",
+    const newOrder = await createNewOrder({
+      courierChoice,
+      customerId: customerId,
+      productName: checkoutCartItems[0].product?.name ?? "",
       totalPriceInCents,
-      checkoutCartItems[0].checkoutImage
-    );
+      image: checkoutCartItems[0].checkoutImage,
+    });
 
     if (!newOrder) {
       return NextResponse.json({ error: "Failed to create a new order" }, { status: 400 });

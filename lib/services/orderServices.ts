@@ -16,11 +16,18 @@ export const updateTrackingNumber = async (tracking: string, orderId: string) =>
   }
 };
 
-export const createNewOrder = async (customerId: string, productName: string, totalPriceInCents: number, image: string) => {
+interface CreateNewOrderProps {
+  courierChoice: string;
+  customerId: string;
+  productName: string;
+  totalPriceInCents: number;
+  image: string;
+}
+export const createNewOrder = async ({ customerId, productName, totalPriceInCents, image, courierChoice }: CreateNewOrderProps) => {
   const [newOrder] = await db
     .insert(ordersTable)
     .values({
-      courierName: null,
+      courierName: courierChoice,
       trackingNumber: null,
       customerId: customerId,
       status: "pending",

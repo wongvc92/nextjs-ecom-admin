@@ -1,6 +1,7 @@
 import { OrderItem } from "@/lib/db/schema/orderItems";
 import { findCartItemsShippingSubTotal, findCartItemsSubTotal } from "@/lib/helpers/cartItemHelpers";
 import { recheckCartItems } from "@/lib/services/cartItemServices";
+import { courierServices } from "@/lib/services/courierServices";
 import { createOrderStatusHistory } from "@/lib/services/orderHistoryStatusServices";
 import { createNewOrder } from "@/lib/services/orderServices";
 import { stripe } from "@/lib/stripe";
@@ -32,31 +33,40 @@ const STORE_URL = process.env.NEXT_PUBLIC_STORE_URL!;
 
 export async function POST(req: NextRequest) {
   try {
-    const { cartItems, customer } = await req.json();
+    const { cartItems, customer, toPostcode, courierChoice, totalWeightInKg } = await req.json();
 
     if (!cartItems || !customer) {
       return NextResponse.json({ error: "Failed checkout cart items" }, { status: 400 });
     }
+
     const checkoutCartItems = await recheckCartItems(cartItems);
     if (!checkoutCartItems) {
       return NextResponse.json({ error: "Failed checkout cart items" }, { status: 400 });
     }
+
+    const courier = await courierServices({ toPostcode, courierChoice, totalWeightInKg });
+    if (!courier) {
+      return NextResponse.json({ error: "Failed to fetch courier, please try again" }, { status: 400 });
+    }
+
     const cartItemsSubTotal = findCartItemsSubTotal(checkoutCartItems);
-    const totalShipping = findCartItemsShippingSubTotal(checkoutCartItems);
+    const totalShipping = courier[0].price;
     const totalPriceInCents = cartItemsSubTotal + totalShipping;
 
-    const newOrder = await createNewOrder(
-      customer.customerId,
-      checkoutCartItems[0].product?.name ?? "",
+    const newOrder = await createNewOrder({
+      courierChoice,
+      customerId: customer.customerId,
+      productName: checkoutCartItems[0].product?.name ?? "",
       totalPriceInCents,
-      checkoutCartItems[0].checkoutImage
-    );
+      image: checkoutCartItems[0].checkoutImage,
+    });
 
     if (!newOrder) {
       return NextResponse.json({ error: "Failed to create a new order" }, { status: 400 });
     }
 
     await createOrderStatusHistory("pending", newOrder.id);
+
     const session = await stripe.checkout.sessions.create({
       metadata: {
         userId: customer.id,
