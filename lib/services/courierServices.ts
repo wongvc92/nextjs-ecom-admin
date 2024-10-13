@@ -1,9 +1,12 @@
 import { CourierService } from "../types";
 import { CourierRequest } from "../validation/courierValidation";
 
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL!;
+
 export const courierServices = async ({ toPostcode, totalWeightInKg, courierChoice }: CourierRequest): Promise<CourierService[] | null> => {
+  const url = new URL(`${baseUrl}/api/courier/services`);
   try {
-    const res = await fetch("/api/courier/services", {
+    const res = await fetch(url, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -24,7 +27,7 @@ export const courierServices = async ({ toPostcode, totalWeightInKg, courierChoi
 
     return data;
   } catch (error) {
-    console.error("Failed fetch courier service");
+    console.error("Failed fetch courier service: ", error);
+    return null;
   }
-  return null;
 };

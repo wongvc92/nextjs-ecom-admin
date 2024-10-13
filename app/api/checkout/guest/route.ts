@@ -31,7 +31,7 @@ export async function OPTIONS() {
 }
 export async function POST(req: NextRequest) {
   try {
-    const { cartItems, customer, toPostcode, courierChoice, totalWeightInKg } = await req.json();
+    const { cartItems, toPostcode, courierChoice, totalWeightInKg } = await req.json();
 
     if (!cartItems) {
       return NextResponse.json({ error: "Failed checkout cart items" }, { status: 400 });
@@ -46,8 +46,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Failed to fetch courier, please try again" }, { status: 400 });
     }
     const cartItemsSubTotal = findCartItemsSubTotal(checkoutCartItems);
-    const totalShipping = courier[0].price;
-    const totalPriceInCents = cartItemsSubTotal + totalShipping;
+
+    const totalShippingInCents = courier[0].price;
+
+    const totalPriceInCents = cartItemsSubTotal + totalShippingInCents;
     const customerId = "";
 
     const newOrder = await createNewOrder({
@@ -89,7 +91,6 @@ export async function POST(req: NextRequest) {
           currency: "myr",
           product_data: {
             name: capitalizeSentenceFirstChar(item.product?.name as string),
-            description: "Includes all items and shipping fee",
             images: [item.checkoutImage],
             metadata: {
               productId: item.productId,
@@ -101,7 +102,7 @@ export async function POST(req: NextRequest) {
               }),
             },
           },
-          unit_amount: item.checkoutPriceInCents + item.checkoutShippingFeeInCents,
+          unit_amount: item.checkoutPriceInCents,
         },
         quantity: item.quantity,
       })),
@@ -118,6 +119,22 @@ export async function POST(req: NextRequest) {
       client_reference_id: `${newOrder.id}`,
       success_url: `${STORE_URL}?success=1`,
       cancel_url: `${STORE_URL}?error=1`,
+      shipping_options: [
+        {
+          shipping_rate_data: {
+            type: "fixed_amount",
+            fixed_amount: {
+              amount: totalShippingInCents,
+              currency: "myr",
+            },
+            display_name: courier[0].courier_title,
+            delivery_estimate: {
+              minimum: { unit: "business_day", value: 3 },
+              maximum: { unit: "business_day", value: 5 },
+            },
+          },
+        },
+      ],
     });
     revalidatePath("/orders");
     revalidateTag("orders");

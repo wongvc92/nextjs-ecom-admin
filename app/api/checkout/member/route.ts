@@ -50,8 +50,8 @@ export async function POST(req: NextRequest) {
     }
 
     const cartItemsSubTotal = findCartItemsSubTotal(checkoutCartItems);
-    const totalShipping = courier[0].price;
-    const totalPriceInCents = cartItemsSubTotal + totalShipping;
+    const totalShippingInCents = courier[0].price;
+    const totalPriceInCents = cartItemsSubTotal + totalShippingInCents;
 
     const newOrder = await createNewOrder({
       courierChoice,
@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
               }),
             },
           },
-          unit_amount: item.checkoutPriceInCents + item.checkoutShippingFeeInCents,
+          unit_amount: item.checkoutPriceInCents,
         },
         quantity: item.quantity,
       })),
@@ -121,6 +121,22 @@ export async function POST(req: NextRequest) {
       client_reference_id: `${newOrder.id}`,
       success_url: `${STORE_URL}?success=1`,
       cancel_url: `${STORE_URL}?error=1`,
+      shipping_options: [
+        {
+          shipping_rate_data: {
+            type: "fixed_amount",
+            fixed_amount: {
+              amount: totalShippingInCents,
+              currency: "myr",
+            },
+            display_name: courier[0].courier_title,
+            delivery_estimate: {
+              minimum: { unit: "business_day", value: 3 },
+              maximum: { unit: "business_day", value: 5 },
+            },
+          },
+        },
+      ],
     });
     revalidatePath("/orders");
     revalidateTag("orders");
