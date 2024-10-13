@@ -30,9 +30,11 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   totalPage: number;
+  perPage: string;
+  filteredCounts: number;
 }
 
-export function DataTable<TData, TValue>({ columns, data, totalPage }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, totalPage, perPage, filteredCounts }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const debouncedColumnFilters: ColumnFiltersState = useDebounce(columnFilters, 1000);
@@ -82,7 +84,8 @@ export function DataTable<TData, TValue>({ columns, data, totalPage }: DataTable
 
   return (
     <>
-      <div className="flex flex-wrap items-center gap-2 ">
+      <div className="flex  items-center gap-2 ">
+        <p className="text-muted-foreground text-xs">{filteredCounts > 0 ? `${filteredCounts} results found` : "No results"}</p>
         <DropdownMenu open={toggleOpen} onOpenChange={() => setToggleOpen(!toggleOpen)}>
           <DropdownMenuTrigger asChild>
             <Button variant={"outline"} className="ml-auto text-muted-foreground text-xs gap-1" size="sm" type="button">
@@ -109,7 +112,7 @@ export function DataTable<TData, TValue>({ columns, data, totalPage }: DataTable
           </DropdownMenuContent>
         </DropdownMenu>
         <Button onClick={() => downloadToExcel(data as IContent[])} size="sm" className="text-xs">
-          Export to excel{" "}
+          Export to excel
         </Button>
       </div>
       <div>
@@ -152,16 +155,17 @@ export function DataTable<TData, TValue>({ columns, data, totalPage }: DataTable
         <div className="flex items-center justify-center space-x-2 py-4">
           <Link
             href={createPageUrl(currentPage - 1)}
-            className={`border flex justify-center items-center rounded-md px-2 py-1 text-xs text-muted-foreground ${
-              currentPage === 1 && "cursor-not-allowed pointer-events-none text-muted"
+            className={`border flex justify-center items-center rounded-md px-4 py-2  text-xs text-muted-foreground ${
+              currentPage === 1 && "cursor-not-allowed pointer-events-none text-transparent border-none"
             }`}
           >
             Previous
           </Link>
+
           <Link
             href={createPageUrl(currentPage + 1)}
-            className={`border flex justify-center items-center rounded-md px-2 py-1 text-xs text-muted-foreground ${
-              currentPage >= totalPage && "cursor-not-allowed pointer-events-none text-muted"
+            className={`border flex justify-center items-center rounded-md px-4 py-2 text-xs text-muted-foreground hover:bg-muted ${
+              currentPage >= totalPage && "cursor-not-allowed pointer-events-none text-transparent border-none"
             }`}
           >
             Next
@@ -170,7 +174,7 @@ export function DataTable<TData, TValue>({ columns, data, totalPage }: DataTable
         <div>
           <Select onValueChange={handlePageSize}>
             <SelectTrigger className="w-fit">
-              <SelectValue placeholder="Rows per page" />
+              <SelectValue placeholder={perPage} />
             </SelectTrigger>
             <SelectContent>
               {[5, 10, 50, 100].map((pageSize) => (

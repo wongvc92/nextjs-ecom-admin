@@ -141,3 +141,49 @@ export interface OrderStats {
   shippedOrdersCount: number;
   completedOrdersCount: number;
 }
+
+export interface CourierService {
+  available_pickup_date?: string[];
+  charged_weight: number;
+  cod_currency: string | null;
+  cod_max_amount: number | null;
+  cod_min_charge: number | null;
+  cod_rate: number | null;
+  cod_percentage?: string;
+  company_id: number;
+  courier_handle: string;
+  courier_image: string;
+  courier_title: string;
+  groups: Group[];
+  is_polystyrene: boolean;
+  is_required_printer: boolean;
+  is_return_charge: boolean;
+  is_sst: boolean;
+  last_booking_time: string | null;
+  max_working_days: number;
+  min_parcel: number | null;
+  min_working_days: number;
+  name: string | null;
+  parcel_value_currency: string;
+  pickup_period: string | null;
+  price: number;
+  service_id: number;
+  service_type: string;
+  type: string;
+  volumetric: number;
+  weight: number;
+}
+
+interface Group {
+  id: number;
+  name: string;
+  charged_weight: number;
+  price: number;
+  first_kg: number;
+  first_price: number;
+  next_price: number;
+  next_kg: number;
+  min_kg: number;
+  max_kg: number;
+  is_follow?: boolean;
+}

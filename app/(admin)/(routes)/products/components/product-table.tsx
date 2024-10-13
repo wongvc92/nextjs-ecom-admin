@@ -1,7 +1,7 @@
 import { DataTable } from "@/components/ui/data-table";
 import React from "react";
-import { columns } from "./Columns";
 import { getProducts } from "@/lib/db/queries/admin/products";
+import { columns } from "./Columns";
 
 const ProductTable = async ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
   const name = (searchParams.name as string) || "";
@@ -17,7 +17,7 @@ const ProductTable = async ({ searchParams }: { searchParams: { [key: string]: s
   const { filteredCount, products } = await getProducts(name, perPage, page, dateFrom, dateTo, isArchived, isFeatured, category, isOutOfStock);
 
   const totalPage = Math.ceil(filteredCount / parseInt(perPage));
-  return <DataTable columns={columns} data={products} totalPage={totalPage} />;
+  return <DataTable columns={columns} data={products} totalPage={totalPage} filteredCounts={filteredCount} perPage={perPage} />;
 };
 
 export default ProductTable;

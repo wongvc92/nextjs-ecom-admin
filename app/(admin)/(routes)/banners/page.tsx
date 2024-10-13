@@ -20,20 +20,17 @@ const BannerPage = async ({ searchParams }: { searchParams: { name: string; perP
   const dateTo = searchParams.dateTo || "";
 
   return (
-    <section className="w-full md:container">
-      <div className="py-8 px-4 flex-col space-y-8 w-full min-h-screen">
-        <div className="flex  items-center justify-between bg-white rounded-md p-4 shadow-sm dark:bg-inherit border">
-          <Heading title={`Banner `} description="Manage banner for your store" />
-
-          <Link href={`banners/add-new`} type="button" className="flex items-center bg-black text-white px-4 py-3 rounded-md text-sm">
-            <Plus className="h-4 w-4" />
-            <span className="hidden sm:inline ml-2">Add new</span>
-          </Link>
-        </div>
-        <Suspense fallback={<TableLoading />}>
-          <BannerTable perPage={perPage} name={name} page={page} dateFrom={dateFrom} dateTo={dateTo} />
-        </Suspense>
+    <section className="py-8 px-4 flex-col space-y-4 w-full">
+      <div className="flex  items-center justify-between bg-white rounded-md p-4 shadow-sm dark:bg-inherit border">
+        <Heading title={`Banner `} description="Manage banner for your store" />
+        <Link href={`banners/add-new`} type="button" className="flex items-center bg-black text-white px-4 py-3 rounded-md text-sm">
+          <Plus className="h-4 w-4" />
+          <span className="hidden sm:inline ml-2">Add new</span>
+        </Link>
       </div>
+      <Suspense fallback={<TableLoading />}>
+        <BannerTable perPage={perPage} name={name} page={page} dateFrom={dateFrom} dateTo={dateTo} />
+      </Suspense>
     </section>
   );
 };

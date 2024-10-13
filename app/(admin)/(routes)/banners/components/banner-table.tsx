@@ -11,9 +11,17 @@ interface BannerTableProps {
   dateTo: string;
 }
 const BannerTable = async ({ name, perPage, page, dateFrom, dateTo }: BannerTableProps) => {
-  const data = await getBannerImages();
+  const { banner, filteredCounts } = await getBannerImages({ perPage, page });
 
-  return <DataTable columns={columns} data={data} totalPage={Math.ceil(data.length / parseInt(perPage))} />;
+  return (
+    <DataTable
+      columns={columns}
+      data={banner}
+      totalPage={Math.ceil(banner.length / parseInt(perPage))}
+      filteredCounts={filteredCounts}
+      perPage={perPage}
+    />
+  );
 };
 
 export default BannerTable;

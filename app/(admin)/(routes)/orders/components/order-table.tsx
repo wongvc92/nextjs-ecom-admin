@@ -9,7 +9,7 @@ const OrderTable = async ({ searchParams }: { searchParams: { [key: string]: str
   const perPage = (searchParams.perPage as string) || "5";
   const totalPage = Math.ceil(orderCount / parseInt(perPage));
 
-  return <DataTable columns={columns} data={ordersData} totalPage={totalPage} />;
+  return <DataTable columns={columns} data={ordersData} totalPage={totalPage} perPage={perPage} filteredCounts={orderCount} />;
 };
 
 export default OrderTable;

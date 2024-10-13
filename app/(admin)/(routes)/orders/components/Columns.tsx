@@ -6,7 +6,6 @@ import { cn, convertCentsToTwoDecimalString } from "@/lib/utils";
 import { Order } from "@/lib/db/schema/orders";
 import { format } from "date-fns";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowDownIcon, ArrowUpDown, ArrowUpIcon } from "lucide-react";
 import TableSortButton from "@/components/ui/table-sort-button";
 
 export const columns: ColumnDef<Order>[] = [
