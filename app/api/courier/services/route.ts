@@ -40,6 +40,6 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json(filteredServices as CourierService[], { status: 200 });
   } catch (error) {
     console.log("Failed fetch courier list: ", error);
-    return NextResponse.json("Failed fetch courier list:", { status: 500 });
+    return NextResponse.json({ error: "Failed fetch courier list:" }, { status: 500 });
   }
 };
