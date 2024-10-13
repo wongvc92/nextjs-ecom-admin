@@ -34,9 +34,8 @@ export const POST = async (req: NextRequest) => {
 
     const data = await res.json();
 
-    console.log("data services", data.services);
     const filteredServices = data.services.filter((item: CourierService) => item.courier_title === courierChoice);
-    console.log("filteredServices", filteredServices);
+
     return NextResponse.json(filteredServices as CourierService[], { status: 200 });
   } catch (error) {
     console.log("Failed fetch courier list: ", error);

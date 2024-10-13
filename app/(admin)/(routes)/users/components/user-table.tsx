@@ -9,7 +9,7 @@ const UserTable = async ({ searchParams }: { searchParams: { [key: string]: stri
   const perPage = (searchParams.perPage as string) || "5";
   const totalPage = Math.ceil(count / parseInt(perPage));
 
-  return <DataTable columns={columns} data={usersData} totalPage={totalPage} />;
+  return <DataTable columns={columns} data={usersData} totalPage={totalPage} filteredCounts={count} perPage={perPage} />;
 };
 
 export default UserTable;
