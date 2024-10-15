@@ -54,6 +54,9 @@ export async function POST(req: NextRequest) {
     const totalPriceInCents = cartItemsSubTotal + totalShippingInCents;
 
     const newOrder = await createNewOrder({
+      totalWeightInGram: totalWeightInKg * 1000,
+      totalShippingInCents,
+      subtotalInCents: cartItemsSubTotal,
       courierChoice,
       customerId: customer.customerId,
       productName: checkoutCartItems[0].product?.name ?? "",

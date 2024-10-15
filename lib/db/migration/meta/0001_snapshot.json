@@ -1,6 +1,6 @@
 {
-  "id": "0496cbe8-52a9-41a4-8220-2ed86945ee61",
-  "prevId": "b7bbaa42-e439-4359-bf99-ca47122672db",
+  "id": "67274cb4-29c0-4bec-88f9-54bc8f1558d1",
+  "prevId": "0845e4ad-88f2-4613-a678-cbea3779b670",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -410,8 +410,26 @@
           "primaryKey": false,
           "notNull": false
         },
+        "subtotalInCents": {
+          "name": "subtotalInCents",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "totalShippingsInCents": {
+          "name": "totalShippingsInCents",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
         "amount_in_cents": {
           "name": "amount_in_cents",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "totalWeightInGram": {
+          "name": "totalWeightInGram",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -432,11 +450,16 @@
           "name": "status",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": true,
-          "default": "'pending'"
+          "notNull": true
         },
         "tracking_number": {
           "name": "tracking_number",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "shippingOrderNumber": {
+          "name": "shippingOrderNumber",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
@@ -488,8 +511,7 @@
           "name": "status",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": true,
-          "default": "'pending'"
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",

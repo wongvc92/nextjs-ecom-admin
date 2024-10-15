@@ -1,5 +1,5 @@
 import { OrderItem } from "@/lib/db/schema/orderItems";
-import { findCartItemsShippingSubTotal, findCartItemsSubTotal } from "@/lib/helpers/cartItemHelpers";
+import { findCartItemsSubTotal } from "@/lib/helpers/cartItemHelpers";
 import { recheckCartItems } from "@/lib/services/cartItemServices";
 import { courierServices } from "@/lib/services/courierServices";
 import { createOrderStatusHistory } from "@/lib/services/orderHistoryStatusServices";
@@ -50,11 +50,13 @@ export async function POST(req: NextRequest) {
     const totalShippingInCents = courier[0].price;
 
     const totalPriceInCents = cartItemsSubTotal + totalShippingInCents;
-    const customerId = "";
 
     const newOrder = await createNewOrder({
+      totalWeightInGram: totalWeightInKg * 1000,
+      totalShippingInCents,
+      subtotalInCents: cartItemsSubTotal,
       courierChoice,
-      customerId: customerId,
+      customerId: "",
       productName: checkoutCartItems[0].product?.name ?? "",
       totalPriceInCents,
       image: checkoutCartItems[0].checkoutImage,
@@ -65,10 +67,11 @@ export async function POST(req: NextRequest) {
     }
 
     await createOrderStatusHistory("pending", newOrder.id);
-
+    console.log("courier[0].service_id", courier[0].service_id);
     const session = await stripe.checkout.sessions.create({
       metadata: {
         userId: "",
+        service_id: courier[0].service_id,
         orderId: newOrder.id,
         orderDetails: JSON.stringify(
           checkoutCartItems.map(

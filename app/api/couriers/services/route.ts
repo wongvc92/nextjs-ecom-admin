@@ -28,8 +28,8 @@ export const POST = async (req: NextRequest) => {
       },
     });
     if (!res.ok) {
-      console.log("Failed fetch Tracking list");
-      return NextResponse.json({ error: "Failed to fetch Tracking list" }, { status: res.status });
+      console.log("Failed fetch Tracking list: ", `${res.status}-${res.statusText}`);
+      return NextResponse.json({ error: "Failed to fetch Tracking list" }, { status: res.status, statusText: res.statusText });
     }
 
     const data = await res.json();

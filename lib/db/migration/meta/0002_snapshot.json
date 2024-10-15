@@ -1,6 +1,6 @@
 {
-  "id": "a82237e0-8d1d-4a7f-ae68-752b590763bc",
-  "prevId": "0496cbe8-52a9-41a4-8220-2ed86945ee61",
+  "id": "6d76ccf9-ec3c-4f89-bd6a-de4a2485f8c9",
+  "prevId": "67274cb4-29c0-4bec-88f9-54bc8f1558d1",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -410,8 +410,26 @@
           "primaryKey": false,
           "notNull": false
         },
+        "subtotalInCents": {
+          "name": "subtotalInCents",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "totalShippingsInCents": {
+          "name": "totalShippingsInCents",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
         "amount_in_cents": {
           "name": "amount_in_cents",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "totalWeightInGram": {
+          "name": "totalWeightInGram",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -436,6 +454,12 @@
         },
         "tracking_number": {
           "name": "tracking_number",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "shippingOrderNumber": {
+          "name": "shippingOrderNumber",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
@@ -703,6 +727,83 @@
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.senders": {
+      "name": "senders",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "dialing_country_code": {
+          "name": "dialing_country_code",
+          "type": "varchar(2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address_1": {
+          "name": "address_1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address_2": {
+          "name": "address_2",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "postcode": {
+          "name": "postcode",
+          "type": "varchar(5)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "province": {
+          "name": "province",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "city": {
+          "name": "city",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "country": {
+          "name": "country",
+          "type": "varchar(2)",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},

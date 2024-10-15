@@ -1,4 +1,4 @@
-import { Box, GalleryHorizontal, Image, LayoutDashboard, ShoppingCart, StretchHorizontal, UsersRound } from "lucide-react";
+import { Box, GalleryHorizontal, Image, LayoutDashboard, ShoppingCart, StretchHorizontal, TruckIcon, UsersRound } from "lucide-react";
 import Link from "next/link";
 
 export const routes = [
@@ -31,6 +31,11 @@ export const routes = [
     name: "Galleries",
     path: "/galleries",
     icon: Image,
+  },
+  {
+    name: "Shippings",
+    path: "/shippings",
+    icon: TruckIcon,
   },
   {
     name: "Users",

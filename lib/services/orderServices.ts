@@ -5,8 +5,9 @@ import Stripe from "stripe";
 import { OrderItem } from "../db/schema/orderItems";
 import { createOrderItem } from "./orderItemServices";
 import { updateStock } from "./productServices";
-import { processShippings } from "./shippingServices";
+import { createShippingAddress } from "./shippingServices";
 import { createOrderStatusHistory } from "./orderHistoryStatusServices";
+import { createShipment } from "./courierServices";
 
 export const updateTrackingNumber = async (tracking: string, orderId: string) => {
   try {
@@ -16,17 +17,36 @@ export const updateTrackingNumber = async (tracking: string, orderId: string) =>
   }
 };
 
+export const updateShippingOrderNumber = async (shippingOrderNumber: string, orderId: string) => {
+  return await db.update(ordersTable).set({ shippingOrderNumber }).where(eq(ordersTable.id, orderId!));
+};
+
 interface CreateNewOrderProps {
+  totalWeightInGram: number;
+  subtotalInCents: number;
+  totalShippingInCents: number;
   courierChoice: string;
   customerId: string;
   productName: string;
   totalPriceInCents: number;
   image: string;
 }
-export const createNewOrder = async ({ customerId, productName, totalPriceInCents, image, courierChoice }: CreateNewOrderProps) => {
+export const createNewOrder = async ({
+  customerId,
+  productName,
+  totalPriceInCents,
+  image,
+  courierChoice,
+  subtotalInCents,
+  totalShippingInCents,
+  totalWeightInGram,
+}: CreateNewOrderProps) => {
   const [newOrder] = await db
     .insert(ordersTable)
     .values({
+      totalWeightInGram,
+      subtotalInCents,
+      totalShippingInCents,
       courierName: courierChoice,
       trackingNumber: null,
       customerId: customerId,
@@ -52,7 +72,9 @@ export const processOrder = async (session: Stripe.Checkout.Session, eventType: 
     await createOrderItem(orderDetails, session.metadata?.orderId!);
 
     await updateStock(orderDetails);
-    await processShippings(session);
+    await createShippingAddress(session);
+    const shippingOrderNumber = await createShipment(session.metadata?.orderId!, Number(session.metadata?.service_id));
+    await updateShippingOrderNumber(shippingOrderNumber, session.metadata?.orderId!);
   }
 };
 

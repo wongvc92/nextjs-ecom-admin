@@ -1,5 +1,5 @@
 {
-  "id": "b7bbaa42-e439-4359-bf99-ca47122672db",
+  "id": "0845e4ad-88f2-4613-a678-cbea3779b670",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -410,8 +410,26 @@
           "primaryKey": false,
           "notNull": false
         },
+        "subtotalInCents": {
+          "name": "subtotalInCents",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "totalShippingsInCents": {
+          "name": "totalShippingsInCents",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
         "amount_in_cents": {
           "name": "amount_in_cents",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "totalWeightInGram": {
+          "name": "totalWeightInGram",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -430,11 +448,9 @@
         },
         "status": {
           "name": "status",
-          "type": "order_status",
-          "typeSchema": "public",
+          "type": "varchar",
           "primaryKey": false,
-          "notNull": true,
-          "default": "'pending'"
+          "notNull": true
         },
         "tracking_number": {
           "name": "tracking_number",
@@ -487,11 +503,9 @@
         },
         "status": {
           "name": "status",
-          "type": "order_status",
-          "typeSchema": "public",
+          "type": "varchar",
           "primaryKey": false,
-          "notNull": true,
-          "default": "'pending'"
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
@@ -1425,17 +1439,6 @@
     }
   },
   "enums": {
-    "public.order_status": {
-      "name": "order_status",
-      "schema": "public",
-      "values": [
-        "pending",
-        "toShip",
-        "shipped",
-        "completed",
-        "released"
-      ]
-    },
     "public.userRole": {
       "name": "userRole",
       "schema": "public",

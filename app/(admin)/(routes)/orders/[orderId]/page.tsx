@@ -7,6 +7,7 @@ import OrderAmount from "./components/order-amount";
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getShipmentByShippingOrderNumber } from "@/lib/db/queries/admin/couriers";
 
 export const metadata: Metadata = {
   title: "View order",
@@ -23,6 +24,7 @@ export const generateStaticParams = async () => {
 
 const OrderPageById = async ({ params }: { params: { orderId: string } }) => {
   const order = await getOrderById(params.orderId);
+  const shipmentData = await getShipmentByShippingOrderNumber(order.shippingOrderNumber as string);
   if (!order) {
     return <div>No orders</div>;
   }
@@ -67,7 +69,7 @@ const OrderPageById = async ({ params }: { params: { orderId: string } }) => {
             </div>
 
             {/* Logistic Information */}
-            <OrderLogisticInfo order={order} />
+            <OrderLogisticInfo order={order} shipmentData={shipmentData} />
           </div>
 
           {/* Payment Information */}

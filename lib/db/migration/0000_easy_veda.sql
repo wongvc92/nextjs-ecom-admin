@@ -1,10 +1,4 @@
 DO $$ BEGIN
- CREATE TYPE "public"."order_status" AS ENUM('pending', 'toShip', 'shipped', 'completed', 'released');
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
  CREATE TYPE "public"."userRole" AS ENUM('USER', 'ADMIN');
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -78,10 +72,13 @@ CREATE TABLE IF NOT EXISTS "orderItem" (
 CREATE TABLE IF NOT EXISTS "order" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"customer_id" text,
+	"subtotalInCents" integer NOT NULL,
+	"totalShippingsInCents" integer NOT NULL,
 	"amount_in_cents" integer NOT NULL,
+	"totalWeightInGram" integer NOT NULL,
 	"product_name" varchar NOT NULL,
 	"image" varchar,
-	"status" "order_status" DEFAULT 'pending' NOT NULL,
+	"status" varchar NOT NULL,
 	"tracking_number" varchar,
 	"courier_name" varchar,
 	"created_at" timestamp DEFAULT now(),
@@ -91,7 +88,7 @@ CREATE TABLE IF NOT EXISTS "order" (
 CREATE TABLE IF NOT EXISTS "orderStatusHistory" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"order_id" uuid NOT NULL,
-	"status" "order_status" DEFAULT 'pending' NOT NULL,
+	"status" varchar NOT NULL,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now()
 );

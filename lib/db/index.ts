@@ -13,6 +13,7 @@ import * as shippings from "./schema/shippings";
 import * as users from "./schema/users";
 import * as productImages from "./schema/productImages";
 import * as customers from "./schema/customers";
+import * as senders from "./schema/senders";
 
 export const schema = {
   ...bannerImages,
@@ -27,6 +28,7 @@ export const schema = {
   ...users,
   ...productImages,
   ...customers,
+  ...senders,
 };
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL!,
