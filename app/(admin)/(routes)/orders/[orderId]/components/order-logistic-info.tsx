@@ -21,15 +21,15 @@ const OrderLogisticInfo = async ({ order }: OrderLogisticInfoProps) => {
           <div className="pl-6">
             <div className="text-sm my-2">
               <p className="flex items-center gap-2">
-                Tracking no: <span className="text-muted-foreground font-light">{shipmentData.shipment.tracking?.tracking_number || ""}</span>
+                Tracking no: <span className="text-muted-foreground font-light">{shipmentData.tracking?.tracking_number || ""}</span>
               </p>
               <p>
-                Courier: <span className="text-muted-foreground font-light">{shipmentData.shipment.courier.title || ""}</span>
+                Courier: <span className="text-muted-foreground font-light">{shipmentData.courier.title || ""}</span>
               </p>
             </div>
             <div className="bg-muted p-4 dark:border rounded-md shadow-sm my-2">
               <ul>
-                {shipmentData?.shipment?.tracking?.checkpoints?.map((checkpoint, i) => (
+                {shipmentData?.tracking?.checkpoints?.map((checkpoint, i) => (
                   <li key={checkpoint.time} className="relative flex gap-6 pb-5 items-baseline">
                     <div className="before:absolute before:left-[16px]  before:h-full before:w-[1px] before:bg-muted-foreground">
                       <div className="bg-muted relative rounded-full p-1 text-center ">

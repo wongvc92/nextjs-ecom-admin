@@ -1,8 +1,4 @@
 export interface ShipmentResponse {
-  shipment: Shipment;
-}
-
-export interface Shipment {
   id: number;
   order_number: string;
   tracking_detail: TrackingDetail;

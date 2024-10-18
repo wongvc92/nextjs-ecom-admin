@@ -7,7 +7,6 @@ import OrderAmount from "./components/order-amount";
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getShipmentByShippingOrderNumber } from "@/lib/db/queries/admin/couriers";
 import ShipButton from "../components/ship-button";
 
 export const metadata: Metadata = {

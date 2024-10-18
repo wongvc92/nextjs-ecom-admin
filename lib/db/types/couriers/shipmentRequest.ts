@@ -17,7 +17,7 @@ export interface ShipmentRequest {
   weight: number; // Required parcel weight in kg
   pickup_at?: string; // Required if service type is 'pick_up', must be a date
   items?: FulfillmentItem[]; // Optional items array for fulfillment
-  order?: OrderInfo; // Optional order information
+  order: OrderInfo; // Optional order information
 }
 
 export interface Address {

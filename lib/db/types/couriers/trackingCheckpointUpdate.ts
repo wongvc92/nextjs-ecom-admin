@@ -19,7 +19,7 @@ export interface Tracking {
   reason: string | null; // Reason for failure or issue (nullable)
   status: string; // Current status, e.g., 'delivered', 'pending'
   courier: string; // Courier service name, e.g., 'jt'
-  order_id: number | null; // Order ID (nullable)
+  order_id: string | null; // Order ID (nullable)
   created_at: string; // ISO8601 format date when tracking was created
   deleted_at: string | null; // ISO8601 format date when tracking was deleted (nullable)
   short_link: string; // Short link to the tracking page
