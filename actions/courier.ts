@@ -20,6 +20,10 @@ const webhookSecretKey = process.env.TRACKING_MY_WEBHOOK_SECRET_KEY!;
 // `https://nextjs-ecom-store-pi.vercel.app/api/webhook/courier?secret=${webhookSecretKey}`
 
 export const updateCourierWebhook = async (eventOptions: string[]) => {
+  if (!webhookSecretKey || !webhookBaseUrl || !apiKey || !BASE_URL) {
+    console.log("Please make sure webhookSecretKey, webhookBaseUrl,apiKey,BASE_URL is provided");
+    return { error: "Failed update event options" };
+  }
   const trackingURL = new URL(`${BASE_URL}/api/v1/webhook`);
   const url = new URL(`${webhookBaseUrl}/api/webhook/courier?secret=${webhookSecretKey}`);
   try {
