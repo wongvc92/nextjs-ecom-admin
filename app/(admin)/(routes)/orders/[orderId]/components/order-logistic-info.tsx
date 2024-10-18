@@ -9,6 +9,7 @@ interface OrderLogisticInfoProps {
 
 const OrderLogisticInfo = async ({ order }: OrderLogisticInfoProps) => {
   const shipmentData = await getShipmentByShippingOrderNumber(order.shippingOrderNumber as string);
+  console.log("shipmentData", shipmentData);
   return (
     <div className="flex">
       <div className="flex flex-col space-y-2">

@@ -11,9 +11,9 @@ export const getShipmentByShippingOrderNumber = async (shippingOrderNumber: stri
     if (!res.ok) {
       return null;
     }
-    const data: ShipmentResponse = await res.json();
-
-    return data;
+    const data = await res.json();
+    const shipment: ShipmentResponse = data.shipment;
+    return shipment;
   } catch (error) {
     return null;
   }
