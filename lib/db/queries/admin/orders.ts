@@ -160,3 +160,8 @@ export const getOrderStatsCount = async () => {
     throw new Error("Failed fetch order stats");
   }
 };
+
+export const getOrderIdByTrackingNumber = async (trackingNumber: string) => {
+  const [data] = await db.select({ id: orderTables.id }).from(orderTables).where(eq(orderTables.trackingNumber, trackingNumber));
+  return data;
+};

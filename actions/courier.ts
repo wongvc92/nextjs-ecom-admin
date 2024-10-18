@@ -9,7 +9,7 @@ import { Payment } from "@/lib/db/types/couriers/paymentResponse";
 import { Address, OrderInfo, OrderItem, ShipmentRequest } from "@/lib/db/types/couriers/shipmentRequest";
 import { ShipmentResponse } from "@/lib/db/types/couriers/shipmentResponse";
 import { createOrderStatusHistory } from "@/lib/services/orderHistoryStatusServices";
-import { updateOrderStatus } from "@/lib/services/orderServices";
+import { updateOrderStatus, updateShippingOrderNumber, updateTrackingNumberByOrderId } from "@/lib/services/orderServices";
 import { calculateTotalDimensions } from "@/lib/utils";
 import { revalidatePath, revalidateTag } from "next/cache";
 
@@ -164,13 +164,14 @@ export const createShipment = async (orderId: string, service_id: number): Promi
     }
     const data: ShipmentResponse = await res.json();
     console.log("shipment create", data);
-    // await updateShippingOrderNumber(data.shipment.order_number, orderId);
-    // const paymentRes = await makePayment(data.shipment.order_number, orderData.id);
-    // if (paymentRes?.error) {
-    //   return {
-    //     error: paymentRes.error,
-    //   };
-    // }
+    await updateShippingOrderNumber(data.shipment.order_number, orderId);
+    const paymentRes = await makePayment(data.shipment.order_number, orderData.id);
+    if (paymentRes?.error) {
+      return {
+        error: paymentRes.error,
+      };
+    }
+
     return {
       success: "Succesfully create shipment",
     };
@@ -190,8 +191,6 @@ export const makePayment = async (
 } | null> => {
   const url = new URL(`${BASE_URL}/api/v1/shipments/payments`);
 
-  console.log("order_number", order_number);
-
   try {
     const res = await fetch(url, {
       method: "POST",
@@ -210,7 +209,7 @@ export const makePayment = async (
     }
 
     const data: Payment = await res.json();
-    console.log("makePayment data", data);
+    await updateTrackingNumberByOrderId(data.shipments[0].tracking.tracking_number, orderId);
     await createOrderStatusHistory("shipped", orderId);
     await updateOrderStatus("shipped", orderId);
     return null;

@@ -7,7 +7,7 @@ import { updateStock } from "./productServices";
 import { createShippingAddress } from "./shippingServices";
 import { createOrderStatusHistory } from "./orderHistoryStatusServices";
 
-export const updateTrackingNumber = async (tracking: string, orderId: string) => {
+export const updateTrackingNumberByOrderId = async (tracking: string, orderId: string) => {
   try {
     await db.update(ordersTable).set({ trackingNumber: tracking, status: "shipped" }).where(eq(ordersTable.id, orderId));
   } catch (error) {
@@ -78,4 +78,9 @@ export const processOrder = async (session: Stripe.Checkout.Session, eventType: 
 export const updateOrderStatus = async (orderStatus: OrderStatusEnumType, orderId: string) => {
   if (!orderStatus || orderId) return;
   return await db.update(ordersTable).set({ status: orderStatus }).where(eq(ordersTable.id, orderId!));
+};
+
+export const updateOrderStatusByTrackingNumber = async (orderStatus: OrderStatusEnumType, trackingNumber: string) => {
+  if (!orderStatus || trackingNumber) return;
+  return await db.update(ordersTable).set({ status: orderStatus }).where(eq(ordersTable.trackingNumber, trackingNumber));
 };
