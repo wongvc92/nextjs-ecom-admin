@@ -5,7 +5,7 @@ import { products as productsTable } from "../../schema/products";
 
 export const getTodoListCount = async () => {
   try {
-    const [toShipCount] = await db.select({ count: count() }).from(ordersTable).where(eq(ordersTable.status, "toShip"));
+    const [toShipCount] = await db.select({ count: count() }).from(ordersTable).where(eq(ordersTable.status, "to_ship"));
 
     const [shippedCount] = await db.select({ count: count() }).from(ordersTable).where(eq(ordersTable.status, "shipped"));
     const [outofStockCount] = await db.select({ count: count() }).from(productsTable).where(eq(productsTable.isOutOfStock, true));

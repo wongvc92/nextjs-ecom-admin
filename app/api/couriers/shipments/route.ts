@@ -15,11 +15,12 @@ export const POST = async (req: NextRequest) => {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ shipping }),
+      body: JSON.stringify(shipping),
     });
     if (!res.ok) {
-      console.log("Failed create shipment: ", `${res.status} - ${res.statusText}`);
-      return NextResponse.json({ error: res.statusText }, { status: res.status });
+      const errorResponse = await res.json();
+      console.log("Failed create shipment: ", `${res.status} - ${res.statusText}`, errorResponse);
+      return NextResponse.json({ error: res.statusText, details: errorResponse }, { status: res.status });
     }
     const data = await res.json();
     console.log("data from shipment api", data);

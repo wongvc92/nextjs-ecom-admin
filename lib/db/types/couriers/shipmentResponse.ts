@@ -108,7 +108,3 @@ export interface ConsignmentUrl {
   a4: string;
   sticker: string;
 }
-
-
-
-

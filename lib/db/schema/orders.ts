@@ -3,16 +3,19 @@ import { integer, pgEnum, pgTable, text, timestamp, uuid, varchar } from "drizzl
 import { Shipping, shippings } from "./shippings";
 import { OrderItem, orderItems } from "./orderItems";
 
+const orderStatusEnum = pgEnum("order_status", ["cancelled", "pending", "to_ship", "shipped", "completed"]);
+
 export const orders = pgTable("order", {
   id: uuid("id").primaryKey().defaultRandom(),
   customerId: text("customer_id"),
   subtotalInCents: integer("subtotalInCents").notNull(),
   totalShippingInCents: integer("totalShippingsInCents").notNull(),
+  courierServiceId: integer("courierServiceId").notNull(),
   amountInCents: integer("amount_in_cents").notNull(),
   totalWeightInGram: integer("totalWeightInGram").notNull(),
   productName: varchar("product_name").notNull(),
   image: varchar("image"),
-  status: varchar("status").notNull(),
+  status: orderStatusEnum("status").notNull(),
   trackingNumber: varchar("tracking_number"),
   shippingOrderNumber: varchar("shippingOrderNumber"),
   courierName: varchar("courier_name"),
@@ -24,6 +27,8 @@ export type Order = InferSelectModel<typeof orders> & {
   orderItems: OrderItem[];
   shippings: Shipping[];
 };
+
+export type OrderStatusEnumType = (typeof orderStatusEnum.enumValues)[number];
 
 export const ordersRelations = relations(orders, ({ many }) => ({
   shippings: many(shippings),

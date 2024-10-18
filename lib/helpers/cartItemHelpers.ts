@@ -7,10 +7,3 @@ export const findCartItemsSubTotal = (checkoutCartItems: ICheckoutCartItem[]) =>
     return acc + itemSubTotalPriceInCents;
   }, 0);
 };
-
-export const findCartItemsShippingSubTotal = (checkoutCartItems: ICheckoutCartItem[]) => {
-  return checkoutCartItems.reduce((acc, item) => {
-    const itemTotalPriceInCents = item.checkoutShippingFeeInCents * item.quantity;
-    return acc + itemTotalPriceInCents;
-  }, 0);
-};

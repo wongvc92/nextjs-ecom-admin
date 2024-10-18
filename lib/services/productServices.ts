@@ -9,9 +9,8 @@ import { OrderItem } from "../db/schema/orderItems";
 import { nestedVariations as nestedVariationsTable } from "@/lib/db/schema/nestedVariations";
 import { variations as variationsTable } from "@/lib/db/schema/variations";
 import { findSomeProductOutOfStock } from "../helpers/productHelpers";
-import { PgTransaction } from "drizzle-orm/pg-core";
 import { revalidatePath } from "next/cache";
-import { revalidateStore } from "./storeServices";
+
 
 export const createNewProduct = async (productData: TProductSchema, tx: any): Promise<{ id: string }> => {
   try {
@@ -21,7 +20,6 @@ export const createNewProduct = async (productData: TProductSchema, tx: any): Pr
         ...productData,
         tags: productData?.tags && productData.tags.length > 0 ? productData.tags : [],
         priceInCents: productData.price ? convertTwoDecimalNumberToCents(productData.price) : 0,
-        shippingFeeInCents: convertTwoDecimalNumberToCents(productData.shippingFee),
         weightInGram: convertKilogramToGram(productData.weight),
         lowestPriceInCents: convertTwoDecimalNumberToCents(productData.lowestPrice),
       })
@@ -41,7 +39,6 @@ export const updateExistingProduct = async (productData: TProductSchema, tx: any
         ...productData,
         tags: !!productData?.tags && productData?.tags?.length > 0 ? productData.tags : null,
         priceInCents: productData.price ? convertTwoDecimalNumberToCents(productData.price) : 0,
-        shippingFeeInCents: convertTwoDecimalNumberToCents(productData.shippingFee),
         weightInGram: convertKilogramToGram(productData.weight),
         lowestPriceInCents: convertTwoDecimalNumberToCents(productData.lowestPrice),
       })

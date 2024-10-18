@@ -1,3 +1,4 @@
+import { getDefaultSender } from "@/lib/db/queries/admin/senders";
 import { CourierService } from "@/lib/types";
 import { CourierRequest, courierRequestSchema } from "@/lib/validation/courierValidation";
 import { NextRequest, NextResponse } from "next/server";
@@ -13,11 +14,15 @@ export const POST = async (req: NextRequest) => {
   if (!parsed.success) {
     return NextResponse.json({ error: "Something went wrong" }, { status: 400 });
   }
-  const { toPostcode, totalWeightInKg, courierChoice } = parsed.data;
+  const { toPostcode, totalWeightInKg, courierChoice, totalHeight, totalLength, totalWidth } = parsed.data;
 
+  const sender = await getDefaultSender();
+  if (!sender) {
+    return NextResponse.json({ error: "Sender info needed" }, { status: 400 });
+  }
   try {
     const url = new URL(
-      `${baseUrl}/api/v1/services?from_postcode=${51000}&to_postcode=${toPostcode}&weight=${totalWeightInKg}&from_country=MY&to_country=MY&type=normal&service_type=`
+      `${baseUrl}/api/v1/services?from_postcode=${sender.postcode}&to_postcode=${toPostcode}&weight=${totalWeightInKg}&${totalLength}&${totalWidth}&${totalHeight}&from_country=MY&to_country=MY&type=normal&service_type=drop_off`
     );
     const res = await fetch(url.toString(), {
       method: "GET",
@@ -28,8 +33,9 @@ export const POST = async (req: NextRequest) => {
       },
     });
     if (!res.ok) {
-      console.log("Failed fetch Tracking list: ", `${res.status}-${res.statusText}`);
-      return NextResponse.json({ error: "Failed to fetch Tracking list" }, { status: res.status, statusText: res.statusText });
+      const errorResponse = await res.json();
+      console.log("Failed create shipment: ", `${res.status} - ${res.statusText}`, errorResponse);
+      return NextResponse.json({ error: res.statusText, details: errorResponse }, { status: res.status });
     }
 
     const data = await res.json();

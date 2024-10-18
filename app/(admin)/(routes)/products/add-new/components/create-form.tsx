@@ -11,7 +11,6 @@ import PriceField from "../../components/form/price-field";
 import MaxPurchaseField from "../../components/form/max-purchase-field";
 import MinPurchaseField from "../../components/form/min-purchase-field";
 import WeightField from "../../components/form/weight-field";
-import ShippingField from "../../components/form/shipping-field";
 import StickyBar from "../../components/form/sticky-bar";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { createProduct } from "@/actions/product";
@@ -24,12 +23,12 @@ import ArchiveField from "../../components/form/archive-field";
 import FeaturedField from "../../components/form/featured-field";
 import SubmitButton from "@/components/submit-button";
 import Link from "next/link";
-import { v4 as uuid4 } from "uuid";
 import ImagesField from "../../components/form/images-field";
 import { ImageCropProvider } from "@/providers/image-crop-provider";
 import TagsField from "../../components/form/tags-field";
 import { TCategorySchema } from "@/lib/validation/categoryValidation";
 import { productSchema, TProductSchema } from "@/lib/validation/productValidation";
+import DimensionField from "../../components/form/dimension-field";
 type SectionId = "basic-info" | "sales-info" | "shipping-info" | "others-info";
 
 const defaultValues = {
@@ -43,12 +42,14 @@ const defaultValues = {
   minPurchase: 0,
   maxPurchase: 0,
   weight: 0,
-  shippingFee: 0,
   availableVariations: [],
   tags: [],
   lowestPrice: 0,
   isArchived: false,
   isFeatured: false,
+  height: 0,
+  width: 0,
+  length: 0,
   variations: [
     {
       image: "",
@@ -286,7 +287,7 @@ const CreateForm: React.FC<CreateFormProps> = ({ distinctCategories }) => {
                     Shipping Information
                   </h3>
                   <WeightField />
-                  <ShippingField />
+                  <DimensionField />
                 </div>
 
                 {/* feature or archive  product */}

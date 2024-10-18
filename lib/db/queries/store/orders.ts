@@ -1,6 +1,6 @@
 import { and, asc, between, count, desc, eq, ilike, inArray } from "drizzle-orm";
 import { db } from "../..";
-import { Order, orders as orderTables } from "../../schema/orders";
+import { Order, OrderStatusEnumType, orders as orderTables } from "../../schema/orders";
 import { TOrdersQuery } from "@/lib/validation/orderValidation";
 import { unstable_cache } from "next/cache";
 
@@ -14,7 +14,7 @@ export const getOrdersByCustomerId = unstable_cache(
     }
 
     if (Array.isArray(status) && status.length > 0) {
-      whereCondition.push(inArray(orderTables.status, status));
+      whereCondition.push(inArray(orderTables.status, status as OrderStatusEnumType[]));
     }
 
     if (productName) {
@@ -60,7 +60,7 @@ export const getOrderStatsCountByCustomerId = unstable_cache(
       const [toShipOrders] = await db
         .select({ count: count() })
         .from(orderTables)
-        .where(and(eq(orderTables.status, "toShip"), eq(orderTables.customerId, customerId)));
+        .where(and(eq(orderTables.status, "to_ship"), eq(orderTables.customerId, customerId)));
       const [pendingOrders] = await db
         .select({ count: count() })
         .from(orderTables)

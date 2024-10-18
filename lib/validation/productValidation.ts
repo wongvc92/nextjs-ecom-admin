@@ -67,15 +67,9 @@ export const productSchema = z
       .refine((value) => /^\d+(\.\d{1,2})?$/.test(value.toFixed(2)), {
         message: "Price must have at most two decimal places",
       }),
-    shippingFee: z.coerce
-      .number()
-
-      .min(0.1, {
-        message: "Value must be equal or greater than 0.1",
-      })
-      .refine((value) => /^\d+(\.\d{1,2})?$/.test(value.toFixed(2)), {
-        message: "Price must have at most two decimal places",
-      }),
+    height: z.coerce.number().positive().nonnegative(),
+    length: z.coerce.number().positive().nonnegative(),
+    width: z.coerce.number().positive().nonnegative(),
   })
 
   .refine(

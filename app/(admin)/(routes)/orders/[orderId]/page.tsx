@@ -8,6 +8,7 @@ import { Metadata } from "next";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getShipmentByShippingOrderNumber } from "@/lib/db/queries/admin/couriers";
+import ShipButton from "../components/ship-button";
 
 export const metadata: Metadata = {
   title: "View order",
@@ -24,7 +25,7 @@ export const generateStaticParams = async () => {
 
 const OrderPageById = async ({ params }: { params: { orderId: string } }) => {
   const order = await getOrderById(params.orderId);
-  const shipmentData = await getShipmentByShippingOrderNumber(order.shippingOrderNumber as string);
+
   if (!order) {
     return <div>No orders</div>;
   }
@@ -33,11 +34,12 @@ const OrderPageById = async ({ params }: { params: { orderId: string } }) => {
     <section className="w-full md:container">
       <div className="flex flex-col xl:flex-row  py-10 px-4 gap-4">
         <div className="flex flex-col gap-6 w-full">
-          <div className=" border rounded-md p-4 bg-white shadow-sm dark:bg-black">
-            <p className="flex items-center gap-2 font-semibold text-sm">
-              <ScrollText className="h-4 w-4" />
-              {order.status}
+          <div className="flex justify-between items-center border rounded-md p-4 bg-white shadow-sm dark:bg-black">
+            <p className="flex items-center gap-2 font-semibold text-sm capitalize">
+              <ScrollText className="h-4 w-4 " />
+              {order.status.split("_").join(" ")}
             </p>
+            {order.status === "to_ship" && <ShipButton order={order} />}
           </div>
           <div className="flex flex-col space-y-8 border p-4 rounded-md  bg-white dark:bg-black shadow-sm">
             <div className="flex">
@@ -69,7 +71,7 @@ const OrderPageById = async ({ params }: { params: { orderId: string } }) => {
             </div>
 
             {/* Logistic Information */}
-            <OrderLogisticInfo order={order} shipmentData={shipmentData} />
+            <OrderLogisticInfo order={order} />
           </div>
 
           {/* Payment Information */}

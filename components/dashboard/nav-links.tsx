@@ -34,7 +34,7 @@ export const routes = [
   },
   {
     name: "Shippings",
-    path: "/shippings",
+    path: "/shippings/sender",
     icon: TruckIcon,
   },
   {

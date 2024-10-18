@@ -53,6 +53,40 @@ const OrderPaymentInfo = ({ order }: { order: Order }) => {
                 <td className="p-4 font-normal text-xs text-center">{currencyFormatter(memoizedSubTotals[i])}</td>
               </tr>
             ))}
+            <tr className="hidden md:table-row">
+              <td colSpan={8} className="p-4">
+                <div className="flex justify-end">
+                  <div className="space-y-2 text-xs flex flex-col">
+                    <div className="flex justify-between gap-2">
+                      <span className="text-muted-foreground">Order total</span>
+                      <span>{currencyFormatter(order.subtotalInCents)}</span>
+                    </div>
+                    <div className="flex justify-between gap-2">
+                      <span className="text-muted-foreground">Shipping total</span>
+                      <span>{currencyFormatter(order.totalShippingInCents)}</span>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+
+            {/* For small screens */}
+            <tr className="table-row md:hidden">
+              <td colSpan={3} className="p-4">
+                <div className="flex justify-end">
+                  <div className="space-y-2 text-xs flex flex-col">
+                    <div className="flex justify-between gap-2">
+                      <span className="text-muted-foreground">Order total</span>
+                      <span>{currencyFormatter(order.subtotalInCents)}</span>
+                    </div>
+                    <div className="flex justify-between gap-2">
+                      <span className="text-muted-foreground">Shipping total</span>
+                      <span>{currencyFormatter(order.totalShippingInCents)}</span>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>

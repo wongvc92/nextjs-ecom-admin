@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { Product } from "./db/schema/products";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -83,4 +84,21 @@ export const capitalizeSentenceFirstChar = (sentence: string) => {
   const firstChar = sentence.charAt(0).toUpperCase();
   const restChars = sentence.slice(1).toLowerCase();
   return firstChar + restChars;
+};
+
+export const calculateTotalDimensions = (products: Product[]) => {
+  return products.reduce(
+    (totals, product) => {
+      return {
+        totalWidth: totals.totalWidth + product.width,
+        totalLength: totals.totalLength + product.length,
+        totalHeight: totals.totalHeight + product.height,
+      };
+    },
+    {
+      totalWidth: 0,
+      totalLength: 0,
+      totalHeight: 0,
+    }
+  );
 };

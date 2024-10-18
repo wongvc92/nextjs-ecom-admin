@@ -1,13 +1,11 @@
 import { eq } from "drizzle-orm";
 import { db } from "../db";
-import { orders as ordersTable } from "../db/schema/orders";
+import { orders as ordersTable, OrderStatusEnumType } from "../db/schema/orders";
 import Stripe from "stripe";
 import { OrderItem } from "../db/schema/orderItems";
-import { createOrderItem } from "./orderItemServices";
 import { updateStock } from "./productServices";
 import { createShippingAddress } from "./shippingServices";
 import { createOrderStatusHistory } from "./orderHistoryStatusServices";
-import { createShipment } from "./courierServices";
 
 export const updateTrackingNumber = async (tracking: string, orderId: string) => {
   try {
@@ -22,6 +20,7 @@ export const updateShippingOrderNumber = async (shippingOrderNumber: string, ord
 };
 
 interface CreateNewOrderProps {
+  courierServiceId: number;
   totalWeightInGram: number;
   subtotalInCents: number;
   totalShippingInCents: number;
@@ -32,6 +31,7 @@ interface CreateNewOrderProps {
   image: string;
 }
 export const createNewOrder = async ({
+  courierServiceId,
   customerId,
   productName,
   totalPriceInCents,
@@ -44,6 +44,7 @@ export const createNewOrder = async ({
   const [newOrder] = await db
     .insert(ordersTable)
     .values({
+      courierServiceId,
       totalWeightInGram,
       subtotalInCents,
       totalShippingInCents,
@@ -67,17 +68,14 @@ export const processOrder = async (session: Stripe.Checkout.Session, eventType: 
     await updateOrderStatus("cancelled", session.metadata?.orderId!);
   }
   if (eventType === "completed") {
-    await updateOrderStatus("toShip", session.metadata?.orderId!);
-    await createOrderStatusHistory("toShip", session.metadata?.orderId!);
-    await createOrderItem(orderDetails, session.metadata?.orderId!);
-
+    await updateOrderStatus("to_ship", session.metadata?.orderId!);
+    await createOrderStatusHistory("to_ship", session.metadata?.orderId!);
     await updateStock(orderDetails);
     await createShippingAddress(session);
-    const shippingOrderNumber = await createShipment(session.metadata?.orderId!, Number(session.metadata?.service_id));
-    await updateShippingOrderNumber(shippingOrderNumber, session.metadata?.orderId!);
   }
 };
 
-export const updateOrderStatus = async (orderStatus: string, orderId: string) => {
+export const updateOrderStatus = async (orderStatus: OrderStatusEnumType, orderId: string) => {
+  if (!orderStatus || orderId) return;
   return await db.update(ordersTable).set({ status: orderStatus }).where(eq(ordersTable.id, orderId!));
 };

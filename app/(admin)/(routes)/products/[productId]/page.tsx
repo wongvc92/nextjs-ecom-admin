@@ -23,7 +23,9 @@ const ProductPage = async ({ params }: { params: { productId: string } }) => {
     minPurchase: product?.minPurchase ?? 0,
     maxPurchase: product?.maxPurchase ?? 0,
     weight: convertGramToKilogram(product?.weightInGram as number) ?? 0,
-    shippingFee: convertCentsToTwoDecimalNumber(product?.shippingFeeInCents as number) ?? 0,
+    height: product?.height ?? 0,
+    width: product?.width ?? 0,
+    length: product?.length ?? 0,
     productImages:
       product?.productImages.map((image) => ({
         id: image.id,

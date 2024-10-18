@@ -18,7 +18,6 @@ export const orderItems = pgTable("orderItem", {
   nestedVariationId: varchar("nested_variation_id"),
   nestedVariationLabel: varchar("nested_variation_label"),
   nestedVariationName: varchar("nested_variation_name"),
-  shippingFeeInCents: integer("shipping_fee_in_cents").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

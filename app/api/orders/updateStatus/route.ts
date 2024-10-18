@@ -1,3 +1,4 @@
+import { OrderStatusEnumType } from "@/lib/db/schema/orders";
 import { createOrderStatusHistory } from "@/lib/services/orderHistoryStatusServices";
 import { updateOrderStatus } from "@/lib/services/orderServices";
 import { NextRequest, NextResponse } from "next/server";
@@ -16,8 +17,8 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json({ error: "orderId or status is needed" }, { status: 400 });
     }
 
-    await createOrderStatusHistory(status, id);
-    await updateOrderStatus(status, id);
+    await createOrderStatusHistory(status as OrderStatusEnumType, id);
+    await updateOrderStatus(status as OrderStatusEnumType, id);
     return NextResponse.json({ success: "Order status updated successfully" });
   } catch (error) {
     console.error("Error updating order status history:", error);

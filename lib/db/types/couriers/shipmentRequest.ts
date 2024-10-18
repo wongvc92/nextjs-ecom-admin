@@ -23,11 +23,11 @@ export interface ShipmentRequest {
 export interface Address {
   name: string;
   dialing_country_code: "MY" | "SG" | "TH";
-  phone: string;
+  phone: number;
   email?: string; // Optional email
   address_1: string;
   address_2?: string; // Optional address line 2
-  postcode: string;
+  postcode: number;
   province: string;
   city: string;
   country: "MY" | "SG" | "TH";

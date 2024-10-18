@@ -8,25 +8,30 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { senderFormSchema, TSenderFormSchema } from "@/lib/validation/courierValidation";
 import { Heading } from "@/components/ui/heading";
-import { createSender } from "@/actions/senders";
-import SubmitButton from "@/components/submit-button";
 import { useRouter } from "next/navigation";
+import { editSender } from "@/actions/senders";
+import SubmitButton from "@/components/submit-button";
 
-const CreateForm = () => {
+interface UpdateFormProps {
+  defaultValues: TSenderFormSchema;
+}
+
+const EditForm = ({ defaultValues }: UpdateFormProps) => {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const {
     register,
     handleSubmit,
-    formState: { errors },
     getValues,
+    formState: { errors },
   } = useForm<TSenderFormSchema>({
     resolver: zodResolver(senderFormSchema),
+    defaultValues, // This will prefill the form with the existing values for updating
   });
 
-  const onSubmit = async () => {
+  const onSubmit = () => {
     startTransition(async () => {
-      const res = await createSender(getValues());
+      const res = await editSender(getValues());
       if (res.error) {
         toast.error(res.error);
       }
@@ -39,10 +44,11 @@ const CreateForm = () => {
 
   return (
     <>
-      <div className="px-4 pt-8">
-        <Heading title="Create Product" description="Add a new product" />
+      <div className="py-4">
+        <Heading title="Update Sender" description="Update an existing sender's information" />
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <input id="id" placeholder="id" {...register("id")} hidden />
         {/* Name */}
         <div>
           <Label htmlFor="name">Name</Label>
@@ -50,19 +56,21 @@ const CreateForm = () => {
           {errors.name && <p className="text-red-500">{errors.name.message}</p>}
         </div>
 
-        {/* Dialing Country Code */}
+        {/* Dialing Country Code and Phone */}
         <div className="w-full md:flex md:gap-2">
           <div>
             <Label htmlFor="dialing_country_code">Dialing Country Code</Label>
             <Input id="dialing_country_code" placeholder="MY" {...register("dialing_country_code")} />
             {errors.dialing_country_code && <p className="text-red-500">{errors.dialing_country_code.message}</p>}
           </div>
+
           {/* Phone */}
           <div>
             <Label htmlFor="phone">Phone</Label>
             <Input id="phone" placeholder="60123456789" {...register("phone")} />
             {errors.phone && <p className="text-red-500">{errors.phone.message}</p>}
           </div>
+
           {/* Email */}
           <div>
             <Label htmlFor="email">Email</Label>
@@ -92,12 +100,14 @@ const CreateForm = () => {
             <Input id="postcode" placeholder="50200" {...register("postcode")} />
             {errors.postcode && <p className="text-red-500">{errors.postcode.message}</p>}
           </div>
+
           {/* Province */}
           <div>
             <Label htmlFor="province">Province</Label>
             <Input id="province" placeholder="Kuala Lumpur" {...register("province")} />
             {errors.province && <p className="text-red-500">{errors.province.message}</p>}
           </div>
+
           {/* City */}
           <div>
             <Label htmlFor="city">City</Label>
@@ -114,10 +124,10 @@ const CreateForm = () => {
         </div>
 
         {/* Submit Button */}
-        <SubmitButton defaultTitle="Create Sender" isLoading={isPending} isLoadingTitle="Creating sender..." />
+        <SubmitButton defaultTitle="Edit Sender" isLoading={isPending} isLoadingTitle="Editing sender..." />
       </form>
     </>
   );
 };
 
-export default CreateForm;
+export default EditForm;

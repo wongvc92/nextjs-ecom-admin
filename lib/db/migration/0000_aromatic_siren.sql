@@ -64,7 +64,6 @@ CREATE TABLE IF NOT EXISTS "orderItem" (
 	"nested_variation_id" varchar,
 	"nested_variation_label" varchar,
 	"nested_variation_name" varchar,
-	"shipping_fee_in_cents" integer NOT NULL,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now()
 );
@@ -74,12 +73,14 @@ CREATE TABLE IF NOT EXISTS "order" (
 	"customer_id" text,
 	"subtotalInCents" integer NOT NULL,
 	"totalShippingsInCents" integer NOT NULL,
+	"courierServiceId" integer NOT NULL,
 	"amount_in_cents" integer NOT NULL,
 	"totalWeightInGram" integer NOT NULL,
 	"product_name" varchar NOT NULL,
 	"image" varchar,
-	"status" varchar NOT NULL,
+	"status" "order_status" NOT NULL,
 	"tracking_number" varchar,
+	"shippingOrderNumber" varchar,
 	"courier_name" varchar,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now()
@@ -88,7 +89,7 @@ CREATE TABLE IF NOT EXISTS "order" (
 CREATE TABLE IF NOT EXISTS "orderStatusHistory" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"order_id" uuid NOT NULL,
-	"status" varchar NOT NULL,
+	"status" "order_status" DEFAULT 'pending' NOT NULL,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now()
 );
@@ -113,12 +114,31 @@ CREATE TABLE IF NOT EXISTS "product" (
 	"min_purchase" integer NOT NULL,
 	"max_purchase" integer NOT NULL,
 	"weight_in_gram" integer NOT NULL,
-	"shipping_fee_in_cents" integer NOT NULL,
+	"height" integer NOT NULL,
+	"width" integer NOT NULL,
+	"length" integer NOT NULL,
 	"tags" text[],
 	"category" varchar NOT NULL,
 	"available_variations" text[],
 	"lowest_price" integer NOT NULL,
 	"is_out_of_stock" boolean DEFAULT false,
+	"created_at" timestamp DEFAULT now(),
+	"updated_at" timestamp DEFAULT now()
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "senders" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"name" varchar(255) NOT NULL,
+	"dialing_country_code" varchar(2) NOT NULL,
+	"phone" varchar(20) NOT NULL,
+	"defaultSender" boolean DEFAULT false NOT NULL,
+	"email" varchar(255),
+	"address_1" text NOT NULL,
+	"address_2" text,
+	"postcode" varchar(5) NOT NULL,
+	"province" varchar(255) NOT NULL,
+	"city" varchar(255) NOT NULL,
+	"country" varchar(2) NOT NULL,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now()
 );

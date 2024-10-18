@@ -18,7 +18,7 @@ export default function PageBreadcrumb() {
   return (
     <div>
       {data?.user.id && !data?.user.isBlocked && (
-        <nav aria-label="Breadcrumb" className="flex items-center space-x-2 text-sm">
+        <nav aria-label="Breadcrumb" className="flex items-center space-x-2 text-xs font-light">
           <Link href={basePath} className="text-gray-600 hover:text-gray-900">
             Home
           </Link>
@@ -32,7 +32,7 @@ export default function PageBreadcrumb() {
             const isLast = index === filteredSegments.length - 1;
 
             return (
-              <div key={segment} className="flex items-center space-x-2 text-sm text-ellipsis">
+              <div key={segment} className="flex items-center space-x-2 text-xs font-light text-ellipsis">
                 {/* Separator Icon */}
                 {index > 0 && <ChevronRightIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />}
 

@@ -63,14 +63,6 @@ export const findOrderItemdNestedVariationLabel = (variationId: string, nestedVa
   return nestedVariationLabel;
 };
 
-export const findOrderItemsShippingSubTotal = (orderItems: OrderItem[]) => {
-  if (!orderItems) return 0;
-  return orderItems.reduce((acc, item) => {
-    const itemTotalPriceInCents = item.shippingFeeInCents * item.quantity;
-    return acc + itemTotalPriceInCents;
-  }, 0);
-};
-
 export const findOrderItemsSubTotal = (orderItems: OrderItem[]) => {
   if (!orderItems) return 0;
   return orderItems.reduce((acc, item) => {

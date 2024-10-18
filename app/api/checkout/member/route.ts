@@ -1,24 +1,16 @@
-import { OrderItem } from "@/lib/db/schema/orderItems";
-import { findCartItemsShippingSubTotal, findCartItemsSubTotal } from "@/lib/helpers/cartItemHelpers";
+import { getProductById } from "@/lib/db/queries/admin/products";
+import { Product } from "@/lib/db/schema/products";
+import { findCartItemsSubTotal } from "@/lib/helpers/cartItemHelpers";
 import { recheckCartItems } from "@/lib/services/cartItemServices";
 import { courierServices } from "@/lib/services/courierServices";
 import { createOrderStatusHistory } from "@/lib/services/orderHistoryStatusServices";
+import { createOrderItem } from "@/lib/services/orderItemServices";
 import { createNewOrder } from "@/lib/services/orderServices";
 import { stripe } from "@/lib/stripe";
-import { CartItem } from "@/lib/types";
-import { capitalizeSentenceFirstChar } from "@/lib/utils";
+import { calculateTotalDimensions, capitalizeSentenceFirstChar } from "@/lib/utils";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
-export interface ICheckoutCartItem extends CartItem {
-  checkoutPriceInCents: number;
-  checkoutShippingFeeInCents: number;
-  checkoutNestedVariationName?: string;
-  checkoutNestedVariationLabel?: string;
-  checkoutVariationName?: string;
-  checkoutVariationLabel?: string;
-  checkoutImage: string;
-}
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -44,7 +36,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Failed checkout cart items" }, { status: 400 });
     }
 
-    const courier = await courierServices({ toPostcode, courierChoice, totalWeightInKg });
+    let products: Product[] = [];
+    for (const checkoutCartItem of checkoutCartItems) {
+      const product = await getProductById(checkoutCartItem.productId);
+      if (product) {
+        products.push(product);
+      }
+    }
+
+    const { totalHeight, totalLength, totalWidth } = calculateTotalDimensions(products);
+
+    const courier = await courierServices({ toPostcode, courierChoice, totalWeightInKg, totalHeight, totalLength, totalWidth });
     if (!courier) {
       return NextResponse.json({ error: "Failed to fetch courier, please try again" }, { status: 400 });
     }
@@ -54,6 +56,7 @@ export async function POST(req: NextRequest) {
     const totalPriceInCents = cartItemsSubTotal + totalShippingInCents;
 
     const newOrder = await createNewOrder({
+      courierServiceId: courier[0].service_id,
       totalWeightInGram: totalWeightInKg * 1000,
       totalShippingInCents,
       subtotalInCents: cartItemsSubTotal,
@@ -69,26 +72,12 @@ export async function POST(req: NextRequest) {
     }
 
     await createOrderStatusHistory("pending", newOrder.id);
-
+    await createOrderItem(checkoutCartItems, newOrder.id);
     const session = await stripe.checkout.sessions.create({
       metadata: {
         userId: customer.id,
         orderId: newOrder.id,
-        orderDetails: JSON.stringify(
-          checkoutCartItems.map(
-            (item) =>
-              ({
-                productId: item.productId,
-                variationId: item.variationId,
-                nestedVariationId: item.nestedVariationId,
-                priceInCents: item.checkoutPriceInCents,
-                quantity: item.quantity,
-                shippingFeeInCents: item.checkoutShippingFeeInCents,
-              } as OrderItem)
-          )
-        ),
       },
-
       payment_method_types: ["card"],
       line_items: checkoutCartItems.map((item) => ({
         price_data: {

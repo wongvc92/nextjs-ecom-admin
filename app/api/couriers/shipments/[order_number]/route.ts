@@ -1,4 +1,4 @@
-import { ShipmentResponse } from "@/lib/db/types/courier";
+import { ShipmentResponse } from "@/lib/db/types/couriers/shipmentResponse";
 import { NextRequest, NextResponse } from "next/server";
 
 const baseUrl = process.env.NEXT_PUBLIC_TRACKING_MY_URL!;

@@ -6,6 +6,7 @@ import { trackingNumberSchema, TtrackingNumberSchema } from "@/lib/validation/tr
 import { revalidatePath, revalidateTag } from "next/cache";
 import { createOrderStatusHistory } from "@/lib/services/orderHistoryStatusServices";
 import { updateOrderStatusSchema } from "@/lib/validation/orderValidation";
+import { OrderStatusEnumType } from "@/lib/db/schema/orders";
 
 export const updateTrackingNumberByOrderId = async (formData: TtrackingNumberSchema) => {
   await ensureAuthenticated();
@@ -40,8 +41,8 @@ export const updateOrderStatusByOrderId = async (formData: FormData) => {
   const { id, status } = parsed.data;
 
   try {
-    await updateOrderStatus(status, id);
-    await createOrderStatusHistory(status, id);
+    await updateOrderStatus(status as OrderStatusEnumType, id);
+    await createOrderStatusHistory(status as OrderStatusEnumType, id);
     revalidateTag("orders");
     return {
       success: "order status updated",

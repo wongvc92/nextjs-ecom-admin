@@ -4,7 +4,6 @@ import { findSelectedNestedVariation, findSelectedVariation } from "../helpers/p
 
 export interface ICheckoutCartItem extends CartItem {
   checkoutPriceInCents: number;
-  checkoutShippingFeeInCents: number;
   checkoutNestedVariationName?: string;
   checkoutNestedVariationLabel?: string;
   checkoutVariationName?: string;
@@ -40,7 +39,6 @@ export const recheckCartItems = async (cartItems: CartItem[]): Promise<ICheckout
         checkoutNestedVariationName: foundNestedVariation.name ?? "",
         checkoutNestedVariationLabel: foundNestedVariation.label ?? "",
         checkoutPriceInCents: foundNestedVariation.priceInCents as number,
-        checkoutShippingFeeInCents: product.shippingFeeInCents,
         checkoutImage: foundVariation.image as string,
       };
       checkoutCartItems.push(cartItemData);
@@ -59,7 +57,6 @@ export const recheckCartItems = async (cartItems: CartItem[]): Promise<ICheckout
         checkoutNestedVariationName: "",
         checkoutNestedVariationLabel: "",
         checkoutPriceInCents: foundVariation.priceInCents as number,
-        checkoutShippingFeeInCents: product.shippingFeeInCents,
         checkoutImage: foundVariation.image as string,
       };
       checkoutCartItems.push(cartItemData);
@@ -71,7 +68,6 @@ export const recheckCartItems = async (cartItems: CartItem[]): Promise<ICheckout
         checkoutNestedVariationName: "",
         checkoutNestedVariationLabel: "",
         checkoutPriceInCents: product.priceInCents as number,
-        checkoutShippingFeeInCents: product.shippingFeeInCents,
         checkoutImage: product.productImages[0].url as string,
       };
       checkoutCartItems.push(cartItemData);

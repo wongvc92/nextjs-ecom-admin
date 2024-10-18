@@ -2,7 +2,6 @@ import { and, between, count, eq, ilike, inArray } from "drizzle-orm";
 import { db } from "../..";
 import { Product, products as productsTable } from "../../schema/products";
 
-
 export const getProducts = async (
   name: string,
   perPage: string,
@@ -77,7 +76,7 @@ export const getProducts = async (
 
     return { products: productsData, filteredCount: filteredCount.count };
   } catch (error) {
-    throw new Error("Failed to fetch products.");
+    return { products: [], filteredCount: 0 };
   }
 };
 
@@ -93,8 +92,8 @@ export const getProductById = async (productId: string): Promise<Product | null>
       productImages: true,
     },
   });
-
-  return product || null;
+  if (!product) return null;
+  return product;
 };
 
 export const getProductStatsCount = async () => {

@@ -1,6 +1,6 @@
 import { and, between, count, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
 import { db } from "../..";
-import { Order, orders as orderTables } from "../../schema/orders";
+import { Order, OrderStatusEnumType, orders as orderTables } from "../../schema/orders";
 import { TOrdersQuery, orderQuerySchema } from "@/lib/validation/orderValidation";
 
 export const getOrders = async (searchParams: TOrdersQuery): Promise<{ ordersData: Order[]; orderCount: number }> => {
@@ -19,7 +19,7 @@ export const getOrders = async (searchParams: TOrdersQuery): Promise<{ ordersDat
     }
 
     if (!!status?.length && status.length > 0) {
-      whereCondition.push(inArray(orderTables.status, status));
+      whereCondition.push(inArray(orderTables.status, status as OrderStatusEnumType[]));
     }
 
     if (productName) {
@@ -48,8 +48,8 @@ export const getOrders = async (searchParams: TOrdersQuery): Promise<{ ordersDat
 
     return { ordersData, orderCount: orderCount.count };
   } catch (error) {
-    console.log(error);
-    throw new Error("Failed fetch orders");
+    console.log("Failed fetch orders :", error);
+    return { ordersData: [], orderCount: 0 };
   }
 };
 
@@ -58,7 +58,7 @@ export const getOrderIds = async () => {
   return orderIds || [];
 };
 
-export const getOrderById = async (orderId: string): Promise<Order> => {
+export const getOrderById = async (orderId: string): Promise<Order | null> => {
   try {
     const order = await db.query.orders.findFirst({
       where: eq(orderTables.id, orderId),
@@ -70,7 +70,8 @@ export const getOrderById = async (orderId: string): Promise<Order> => {
 
     return order as Order;
   } catch (error) {
-    throw new Error("Failed fetch order");
+    console.log("Failed fetch order");
+    return null;
   }
 };
 
@@ -141,7 +142,7 @@ export const getOrderStatsCount = async () => {
   try {
     const [allOrders] = await db.select({ count: count() }).from(orderTables);
     const [cancelledOrders] = await db.select({ count: count() }).from(orderTables).where(eq(orderTables.status, "cancelled"));
-    const [toShipOrders] = await db.select({ count: count() }).from(orderTables).where(eq(orderTables.status, "toShip"));
+    const [toShipOrders] = await db.select({ count: count() }).from(orderTables).where(eq(orderTables.status, "to_ship"));
     const [pendingOrders] = await db.select({ count: count() }).from(orderTables).where(eq(orderTables.status, "pending"));
     const [shipppedOrders] = await db.select({ count: count() }).from(orderTables).where(eq(orderTables.status, "shipped"));
     const [completedOrders] = await db.select({ count: count() }).from(orderTables).where(eq(orderTables.status, "completed"));

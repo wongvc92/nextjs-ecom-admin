@@ -11,7 +11,6 @@ import PriceField from "@/app/(admin)/(routes)/products/components/form/price-fi
 import MaxPurchaseField from "@/app/(admin)/(routes)/products/components/form/max-purchase-field";
 import MinPurchaseField from "@/app/(admin)/(routes)/products/components/form/min-purchase-field";
 import WeightField from "@/app/(admin)/(routes)/products/components/form/weight-field";
-import ShippingField from "@/app/(admin)/(routes)/products/components/form/shipping-field";
 import StickyBar from "@/app/(admin)/(routes)/products/components/form/sticky-bar";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { editProduct } from "@/actions/product";
@@ -29,6 +28,7 @@ import { ImageCropProvider } from "@/providers/image-crop-provider";
 import TagsField from "../../components/form/tags-field";
 import { productSchema, TProductSchema } from "@/lib/validation/productValidation";
 import { TCategorySchema } from "@/lib/validation/categoryValidation";
+import DimensionField from "../../components/form/dimension-field";
 
 type SectionId = "basic-info" | "sales-info" | "shipping-info" | "others-info";
 
@@ -46,11 +46,13 @@ const defaultValues = {
   minPurchase: 0,
   maxPurchase: 0,
   weight: 0,
-  shippingFee: 0,
   availableVariations: [],
   lowestPrice: 0,
   isArchived: false,
   isFeatured: false,
+  height: 0,
+  width: 0,
+  length: 0,
   variations: [
     {
       image: "",
@@ -289,7 +291,7 @@ const EditForm: React.FC<ProductFormProps> = ({ productsData, distinctCategories
                 Shipping Information
               </h3>
               <WeightField />
-              <ShippingField />
+              <DimensionField />
             </div>
 
             {/* feature or archive  product */}

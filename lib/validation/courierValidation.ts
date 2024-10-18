@@ -1,9 +1,12 @@
 import { z } from "zod";
 
 export const courierRequestSchema = z.object({
-  toPostcode: z.preprocess((value) => parseInt(value as string, 10), z.number().positive().int()),
+  toPostcode: z.coerce.number().positive(),
   totalWeightInKg: z.coerce.number().positive(),
-  courierChoice: z.string().min(1),
+  courierChoice: z.string(),
+  totalHeight: z.coerce.number().positive(),
+  totalLength: z.coerce.number().positive(),
+  totalWidth: z.coerce.number().positive(),
 });
 
 export type CourierRequest = z.infer<typeof courierRequestSchema>;
