@@ -15,7 +15,10 @@ export const senderFormSchema = z.object({
   id: z.string().uuid().optional(),
   name: z.string().min(1, "Name is required"),
   dialing_country_code: z.enum(["MY", "SG", "TH"], { message: "Country code is required, eg MY, SG, TH" }),
-  phone: z.string().min(10, "Phone number is required"),
+  phone: z
+    .string()
+    .regex(/^60\d{9,10}$/, "Phone number must start with '60' e.g 60123456789")
+    .min(11, "Phone number is required"),
   email: z.string().email("Invalid email").optional(),
   address_1: z.string().min(1, "Address is required"),
   address_2: z.string().optional(),
