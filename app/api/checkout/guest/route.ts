@@ -1,4 +1,3 @@
-import { createShipment } from "@/actions/courier";
 import { getProductById } from "@/lib/db/queries/admin/products";
 import { Product } from "@/lib/db/schema/products";
 import { findCartItemsSubTotal } from "@/lib/helpers/cartItemHelpers";
@@ -72,9 +71,8 @@ export async function POST(req: NextRequest) {
     }
 
     await createOrderStatusHistory("pending", newOrder.id);
-
     await createOrderItem(checkoutCartItems, newOrder.id);
-    await createShipment(newOrder.id, courier[0].service_id);
+
     const session = await stripe.checkout.sessions.create({
       metadata: {
         userId: "",
