@@ -15,9 +15,13 @@ import { revalidatePath, revalidateTag } from "next/cache";
 
 const BASE_URL = process.env.NEXT_PUBLIC_TRACKING_MY_URL!;
 const apiKey = process.env.TRACKING_MY_API_KEY!;
+const webhookBaseUrl = process.env.NEXT_PUBLIC_APP_URL!;
+const webhookSecretKey = process.env.TRACKING_MY_WEBHOOK_SECRET_KEY!;
+// `https://nextjs-ecom-store-pi.vercel.app/api/webhook/courier?secret=${webhookSecretKey}`
 
 export const updateCourierWebhook = async (eventOptions: string[]) => {
   const trackingURL = new URL(`${BASE_URL}/api/v1/webhook`);
+  const url = new URL(`${webhookBaseUrl}/api/webhook/courier?secret=${webhookSecretKey}`);
   try {
     const res = await fetch(trackingURL, {
       method: "PUT",
@@ -26,7 +30,7 @@ export const updateCourierWebhook = async (eventOptions: string[]) => {
         Accept: "application/json",
         "Tracking-Api-Key": apiKey,
       },
-      body: JSON.stringify({ url: "https://nextjs-ecom-store-pi.vercel.app", events: eventOptions }),
+      body: JSON.stringify({ url, events: eventOptions }),
     });
     if (!res.ok) {
       const errorResponse = await res.json();
@@ -162,15 +166,15 @@ export const createShipment = async (orderId: string, service_id: number): Promi
       console.log("Failed create shipment: ", `${res.status} - ${res.statusText}`, errorResponse);
       return { error: "Failed create shipment" };
     }
-    const data: ShipmentResponse = await res.json();
-    console.log("shipment create", data);
-    await updateShippingOrderNumber(data.shipment.order_number, orderId);
-    const paymentRes = await makePayment(data.shipment.order_number, orderData.id);
-    if (paymentRes?.error) {
-      return {
-        error: paymentRes.error,
-      };
-    }
+    // const data: ShipmentResponse = await res.json();
+    // console.log("shipment create", data);
+    // await updateShippingOrderNumber(data.shipment.order_number, orderId);
+    // const paymentRes = await makePayment(data.shipment.order_number, orderData.id);
+    // if (paymentRes?.error) {
+    //   return {
+    //     error: paymentRes.error,
+    //   };
+    // }
 
     return {
       success: "Succesfully create shipment",

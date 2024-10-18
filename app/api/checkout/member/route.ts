@@ -84,7 +84,6 @@ export async function POST(req: NextRequest) {
           currency: "myr",
           product_data: {
             name: capitalizeSentenceFirstChar(item.product?.name as string),
-            description: "Includes all items and shipping fee",
             images: [item.checkoutImage],
             metadata: {
               productId: item.productId,
