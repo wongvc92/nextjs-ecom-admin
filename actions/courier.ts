@@ -96,16 +96,16 @@ export const createShipment = async (orderId: string, service_id: number): Promi
   };
 
   const receiver: Address = {
-    name: orderShippingData?.name!,
-    dialing_country_code: "MY",
-    phone: parseInt(orderShippingData?.phone as string),
-    email: orderShippingData?.email!,
-    address_1: orderShippingData?.address!,
-    address_2: orderShippingData?.address2 || "",
-    postcode: parseInt(orderShippingData?.postalCode as string),
-    province: orderShippingData?.state!,
-    city: orderShippingData?.city!,
-    country: "MY",
+    name: defaultSender.name,
+    dialing_country_code: defaultSender.dialing_country_code as "MY" | "SG" | "TH",
+    phone: parseInt(defaultSender.phone as string),
+    email: defaultSender.email || "",
+    address_1: defaultSender.address_1,
+    address_2: defaultSender.address_2 || "",
+    postcode: parseInt(defaultSender.postcode as string),
+    province: defaultSender.province,
+    city: defaultSender.city,
+    country: defaultSender.country as "MY" | "SG" | "TH",
   };
 
   const orderItems: OrderItem[] = orderData.orderItems.map((item) => {
