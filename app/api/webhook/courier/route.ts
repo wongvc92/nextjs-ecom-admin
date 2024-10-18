@@ -29,8 +29,8 @@ export const POST = async (req: NextRequest) => {
     }
 
     if (event === EventOptions.ShipmentCreate) {
-      const shipment: ShipmentResponse = body.shipment;
-      await updateShippingOrderNumber(shipment.shipment.order_number, "cbfcf1a0-e5b3-4801-9716-867a13274245");
+      const shipment = body.shipment;
+      await updateShippingOrderNumber(shipment.order_number, "cbfcf1a0-e5b3-4801-9716-867a13274245");
       console.log("shipment created webook", shipment);
     }
     return NextResponse.json({ success: true }, { status: 200 });
