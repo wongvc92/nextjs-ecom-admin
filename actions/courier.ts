@@ -27,7 +27,7 @@ export const updateCourierWebhook = async (eventOptions: string[]) => {
     console.log("Please provide TRACKING_MY_API_KEY in env file");
     return { error: "Failed update event options " };
   }
-  if (webhookBaseUrl) {
+  if (!webhookBaseUrl) {
     console.log("Please provide webhook Base Url in env file");
     return { error: "Failed update event options " };
   }
