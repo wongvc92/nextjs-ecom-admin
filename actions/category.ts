@@ -4,7 +4,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 import { createCategoryDB, deleteCategoryDB, updateCategoryDB } from "@/lib/services/categoryServices";
 import { getProductsWithCategory } from "@/lib/db/queries/admin/products";
-import { getCategoryById } from "@/lib/db/queries/admin/categories";
+import { getCategoryById, getCategoryByName } from "@/lib/db/queries/admin/categories";
 import { ensureAuthenticated } from "@/lib/helpers/authHelpers";
 import { categorySchema } from "@/lib/validation/categoryValidation";
 import { revalidateTagStore } from "@/lib/services/storeServices";
@@ -18,6 +18,12 @@ export const createCategory = async (formData: FormData) => {
     return { error: errorMessage };
   }
   try {
+    const existingCategory = await getCategoryByName(parsed.data.name);
+    if (existingCategory) {
+      return {
+        error: "Category already exist",
+      };
+    }
     const category = await createCategoryDB(parsed.data.name);
     revalidatePath("/categories");
     revalidateTag("categories");

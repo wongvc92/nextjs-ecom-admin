@@ -57,3 +57,9 @@ export const getDistinctCategories = async (): Promise<Category[]> => {
     throw new Error("Failed fetch categorys");
   }
 };
+
+export const getCategoryByName = async (name: string): Promise<Category | null> => {
+  const [category] = await db.select().from(categoriesTable).where(ilike(categoriesTable.name, name));
+  if (!category) return null;
+  return category;
+};
