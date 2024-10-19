@@ -14,8 +14,10 @@ import * as users from "./schema/users";
 import * as productImages from "./schema/productImages";
 import * as customers from "./schema/customers";
 import * as senders from "./schema/senders";
+import * as orderStatusHistories from "./schema/orderStatusHistories";
 
 export const schema = {
+  ...orderStatusHistories,
   ...bannerImages,
   ...categories,
   ...galleries,

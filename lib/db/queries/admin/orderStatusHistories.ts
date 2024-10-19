@@ -1,5 +1,5 @@
 import { db } from "../..";
-import { orderStatusHistories as orderStatusHistoriesTable, OrderStatusHistory } from "../../schema/orderStatusHistory";
+import { orderStatusHistories as orderStatusHistoriesTable, OrderStatusHistory } from "../../schema/orderStatusHistories";
 import { asc, eq } from "drizzle-orm";
 
 export const getOrderStatusHistoriesByOrderId = async (orderId: string): Promise<OrderStatusHistory[] | null> => {

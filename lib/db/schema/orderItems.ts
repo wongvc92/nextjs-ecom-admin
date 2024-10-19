@@ -6,7 +6,7 @@ export const orderItems = pgTable("orderItem", {
   id: uuid("id").primaryKey().defaultRandom(),
   orderId: uuid("order_id")
     .notNull()
-    .references(() => orders.id),
+    .references(() => orders.id, { onDelete: "cascade" }),
   productId: varchar("product_id").notNull(),
   productName: varchar("product_name").notNull(),
   priceInCents: integer("price_in_cents").notNull(),

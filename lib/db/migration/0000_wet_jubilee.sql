@@ -1,4 +1,10 @@
 DO $$ BEGIN
+ CREATE TYPE "public"."status" AS ENUM('cancelled', 'pending', 'to_ship', 'shipped', 'completed');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  CREATE TYPE "public"."userRole" AS ENUM('USER', 'ADMIN');
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -78,7 +84,7 @@ CREATE TABLE IF NOT EXISTS "order" (
 	"totalWeightInGram" integer NOT NULL,
 	"product_name" varchar NOT NULL,
 	"image" varchar,
-	"status" "order_status" NOT NULL,
+	"status" "status" DEFAULT 'pending' NOT NULL,
 	"tracking_number" varchar,
 	"shippingOrderNumber" varchar,
 	"courier_name" varchar,
@@ -89,7 +95,7 @@ CREATE TABLE IF NOT EXISTS "order" (
 CREATE TABLE IF NOT EXISTS "orderStatusHistory" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"order_id" uuid NOT NULL,
-	"status" "order_status" DEFAULT 'pending' NOT NULL,
+	"status" "status" DEFAULT 'pending' NOT NULL,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now()
 );
@@ -264,13 +270,13 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "orderItem" ADD CONSTRAINT "orderItem_order_id_order_id_fk" FOREIGN KEY ("order_id") REFERENCES "public"."order"("id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "orderItem" ADD CONSTRAINT "orderItem_order_id_order_id_fk" FOREIGN KEY ("order_id") REFERENCES "public"."order"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "orderStatusHistory" ADD CONSTRAINT "orderStatusHistory_order_id_order_id_fk" FOREIGN KEY ("order_id") REFERENCES "public"."order"("id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "orderStatusHistory" ADD CONSTRAINT "orderStatusHistory_order_id_order_id_fk" FOREIGN KEY ("order_id") REFERENCES "public"."order"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -282,7 +288,7 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "shipping" ADD CONSTRAINT "shipping_order_id_order_id_fk" FOREIGN KEY ("order_id") REFERENCES "public"."order"("id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "shipping" ADD CONSTRAINT "shipping_order_id_order_id_fk" FOREIGN KEY ("order_id") REFERENCES "public"."order"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

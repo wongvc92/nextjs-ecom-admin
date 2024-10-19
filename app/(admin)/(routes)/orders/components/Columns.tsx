@@ -7,18 +7,23 @@ import { Order } from "@/lib/db/schema/orders";
 import { format } from "date-fns";
 import { Checkbox } from "@/components/ui/checkbox";
 import TableSortButton from "@/components/ui/table-sort-button";
+import DeleteTableRows from "./delete-table-rows";
 
 export const columns: ColumnDef<Order>[] = [
   {
     id: "select",
     header: ({ table }) => {
+      const selectedRowIds = table.getSelectedRowModel().rows.map((row) => (row.original as ColumnDef<Order>).id);
       return (
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          onCheckedChange={(value) => {
-            table.toggleAllPageRowsSelected(!!value);
-          }}
-        />
+        <div className="flex items-center gap-2 w-fit">
+          <Checkbox
+            checked={table.getIsAllPageRowsSelected()}
+            onCheckedChange={(value) => {
+              table.toggleAllPageRowsSelected(!!value);
+            }}
+          />
+          <DeleteTableRows selectedRowIds={selectedRowIds as string[]} resetSelection={table.resetRowSelection} />
+        </div>
       );
     },
     cell: ({ row }) => {
@@ -42,16 +47,12 @@ export const columns: ColumnDef<Order>[] = [
   {
     accessorKey: "productName",
     header: ({ column }) => {
-      const sorted = column.getIsSorted();
-
       return <TableSortButton title="Name" column={column} />;
     },
   },
   {
     accessorKey: "amountInCents",
     header: ({ column }) => {
-      const sorted = column.getIsSorted();
-
       return <TableSortButton title="Amount" column={column} />;
     },
     cell: ({ row }) => {
@@ -63,8 +64,6 @@ export const columns: ColumnDef<Order>[] = [
   {
     accessorKey: "status",
     header: ({ column }) => {
-      const sorted = column.getIsSorted();
-
       return <TableSortButton title="Status" column={column} />;
     },
     cell: ({ row }) => {
@@ -88,8 +87,6 @@ export const columns: ColumnDef<Order>[] = [
   {
     accessorKey: "createdAt",
     header: ({ column }) => {
-      const sorted = column.getIsSorted();
-
       return <TableSortButton title="Created" column={column} />;
     },
     cell: ({ row }) => {

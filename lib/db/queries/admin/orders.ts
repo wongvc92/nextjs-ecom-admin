@@ -80,7 +80,7 @@ export interface ISalesReport {
   totalAmountSum: number;
 }
 
-export const getSalesReport = async (salesDateFrom: string, salesDateTo: string, salesStatus: string): Promise<ISalesReport[]> => {
+export const getSalesReport = async (salesDateFrom: string, salesDateTo: string, salesStatus: string): Promise<ISalesReport[] | null> => {
   try {
     const whereCondition = [];
     if (salesDateFrom && salesDateTo) {
@@ -103,7 +103,7 @@ export const getSalesReport = async (salesDateFrom: string, salesDateTo: string,
 
     return salesReport;
   } catch (error) {
-    throw new Error("Failed fetch complete dOrders By Month");
+    return null;
   }
 };
 export interface IOrdersReport {
@@ -111,7 +111,7 @@ export interface IOrdersReport {
   ordersCount: number;
 }
 
-export const getOrdersReport = async (ordersDateFrom: string, ordersDateTo: string, ordersStatus: string): Promise<IOrdersReport[]> => {
+export const getOrdersReport = async (ordersDateFrom: string, ordersDateTo: string, ordersStatus: string): Promise<IOrdersReport[] | null> => {
   try {
     const whereCondition = [];
     if (ordersDateFrom && ordersDateTo) {
@@ -134,7 +134,7 @@ export const getOrdersReport = async (ordersDateFrom: string, ordersDateTo: stri
 
     return ordersReport;
   } catch (error) {
-    throw new Error("Failed fetch orders report");
+    return null;
   }
 };
 
@@ -157,7 +157,14 @@ export const getOrderStatsCount = async () => {
     };
   } catch (error) {
     console.error("Error fetching order stats:", error);
-    throw new Error("Failed fetch order stats");
+    return {
+      allOrdersCount: 0,
+      cancelledOrdersCount: 0,
+      toShipOrdersCount: 0,
+      pendingOrdersCount: 0,
+      shipppedOrdersCount: 0,
+      completedOrdersCount: 0,
+    };
   }
 };
 

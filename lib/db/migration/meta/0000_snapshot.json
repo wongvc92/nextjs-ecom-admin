@@ -1,5 +1,5 @@
 {
-  "id": "d32dc12c-6761-4fff-9a4b-5869c33a63f3",
+  "id": "fd406220-76a9-4202-83fd-1f9c3b91c110",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -380,7 +380,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -448,10 +448,11 @@
         },
         "status": {
           "name": "status",
-          "type": "order_status",
+          "type": "status",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'pending'"
         },
         "tracking_number": {
           "name": "tracking_number",
@@ -510,7 +511,7 @@
         },
         "status": {
           "name": "status",
-          "type": "order_status",
+          "type": "status",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
@@ -543,7 +544,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -951,7 +952,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -1558,6 +1559,17 @@
     }
   },
   "enums": {
+    "public.status": {
+      "name": "status",
+      "schema": "public",
+      "values": [
+        "cancelled",
+        "pending",
+        "to_ship",
+        "shipped",
+        "completed"
+      ]
+    },
     "public.userRole": {
       "name": "userRole",
       "schema": "public",

@@ -15,7 +15,7 @@ export const shippings = pgTable("shipping", {
   email: varchar("email"),
   orderId: uuid("order_id")
     .notNull()
-    .references(() => orders.id),
+    .references(() => orders.id, { onDelete: "cascade" }),
   customerId: text("customer_id"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

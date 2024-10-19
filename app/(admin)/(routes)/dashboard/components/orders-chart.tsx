@@ -12,12 +12,12 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 interface OrdersChartProps {
-  ordersReportData: IOrdersReport[];
+  ordersReportData: IOrdersReport[] | null;
 }
 const OrdersChart = ({ ordersReportData }: OrdersChartProps) => {
   return (
     <>
-      {ordersReportData.length === 0 ? (
+      {!ordersReportData || ordersReportData.length === 0 ? (
         <div className="flex justify-center items-center bg-muted w-full py-20 rounded-md text-muted-foreground">No results</div>
       ) : (
         <ChartContainer config={chartConfig}>

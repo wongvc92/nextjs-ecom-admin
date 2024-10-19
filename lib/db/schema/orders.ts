@@ -2,8 +2,9 @@ import { InferSelectModel, relations } from "drizzle-orm";
 import { integer, pgEnum, pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 import { Shipping, shippings } from "./shippings";
 import { OrderItem, orderItems } from "./orderItems";
+import { orderStatusHistories } from "./orderStatusHistories";
 
-const orderStatusEnum = pgEnum("order_status", ["cancelled", "pending", "to_ship", "shipped", "completed"]);
+export const orderStatusEnum = pgEnum("status", ["cancelled", "pending", "to_ship", "shipped", "completed"]);
 
 export const orders = pgTable("order", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -15,7 +16,7 @@ export const orders = pgTable("order", {
   totalWeightInGram: integer("totalWeightInGram").notNull(),
   productName: varchar("product_name").notNull(),
   image: varchar("image"),
-  status: orderStatusEnum("status").notNull(),
+  status: orderStatusEnum("status").notNull().default("pending"),
   trackingNumber: varchar("tracking_number"),
   shippingOrderNumber: varchar("shippingOrderNumber"),
   courierName: varchar("courier_name"),
@@ -33,4 +34,5 @@ export type OrderStatusEnumType = (typeof orderStatusEnum.enumValues)[number];
 export const ordersRelations = relations(orders, ({ many }) => ({
   shippings: many(shippings),
   orderItems: many(orderItems),
+  orderStatusHistories: many(orderStatusHistories),
 }));

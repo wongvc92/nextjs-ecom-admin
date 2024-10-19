@@ -11,6 +11,6 @@ export const getTodoListCount = async () => {
     const [outofStockCount] = await db.select({ count: count() }).from(productsTable).where(eq(productsTable.isOutOfStock, true));
     return { toShipCount: toShipCount.count, shippedCount: shippedCount.count, outofStockCount: outofStockCount.count };
   } catch (error) {
-    throw new Error("Something went wrong");
+    return { toShipCount: 0, shippedCount: 0, outofStockCount: 0 };
   }
 };

@@ -80,7 +80,6 @@ export const updateOrderStatus = async (orderStatus: OrderStatusEnumType, orderI
   return await db.update(ordersTable).set({ status: orderStatus }).where(eq(ordersTable.id, orderId!));
 };
 
-export const updateOrderStatusByTrackingNumber = async (orderStatus: OrderStatusEnumType, trackingNumber: string) => {
-  if (!orderStatus || trackingNumber) return;
-  return await db.update(ordersTable).set({ status: orderStatus }).where(eq(ordersTable.trackingNumber, trackingNumber));
+export const deleteOrderDB = async (id: string) => {
+  return await db.delete(ordersTable).where(eq(ordersTable.id, id));
 };

@@ -1,12 +1,13 @@
 "use client";
 
-import { Copy, MoreHorizontal, PackageIcon, ScrollText } from "lucide-react";
+import { Copy, MoreHorizontal, PackageIcon, ScrollText, Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { Order } from "@/lib/db/schema/orders";
-import { updateOrderStatusByOrderId } from "@/actions/order";
+import { deleteOrder } from "@/actions/order";
+import { useTransition } from "react";
 
 interface CellActionProps {
   data: Order;
@@ -14,24 +15,23 @@ interface CellActionProps {
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
     toast.success("Order ID copied to clipboard.");
   };
 
-  const onOrderReceived = async (id: string) => {
-    const formData = new FormData();
-    formData.append("status", "completed");
-    formData.append("id", id);
-
-    const res = await updateOrderStatusByOrderId(formData);
-
-    if (res.error) {
-      toast.error(res.error);
-    } else if (res.success) {
-      toast.success(res.success);
-    }
+  const onDeleteOrder = async () => {
+    startTransition(async () => {
+      const res = await deleteOrder(data.id);
+      if (res.error) {
+        toast.error(res.error);
+        return;
+      } else if (res.success) {
+        toast.success(res.success);
+      }
+    });
   };
 
   return (
@@ -52,9 +52,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             <ScrollText className="mr-2 h-4 w-4" />
             Details
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onOrderReceived(data.id)}>
-            <PackageIcon className="mr-2 h-4 w-4" />
-            Order received
+          <DropdownMenuItem onClick={onDeleteOrder} disabled={isPending}>
+            <Trash2Icon className="mr-2 h-4 w-4" />
+            Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
