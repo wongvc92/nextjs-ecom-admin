@@ -3,12 +3,12 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 import { createCategoryDB, deleteCategoryDB, updateCategoryDB } from "@/lib/services/categoryServices";
-import { getProductsWithCategory } from "@/lib/db/queries/admin/products";
-import { getCategoryById, getCategoryByName } from "@/lib/db/queries/admin/categories";
+import { getProductByCategoryId } from "@/lib/db/queries/admin/products";
+import { getCategoryByName } from "@/lib/db/queries/admin/categories";
 import { ensureAuthenticated } from "@/lib/helpers/authHelpers";
 import { categorySchema } from "@/lib/validation/categoryValidation";
 import { revalidateTagStore } from "@/lib/services/storeServices";
-
+import { validate as isUuid } from "uuid";
 export const createCategory = async (formData: FormData) => {
   await ensureAuthenticated();
 
@@ -71,10 +71,9 @@ export const deleteCategory = async (formData: FormData) => {
   }
 
   try {
-    const existingProductWithCategory = await getProductsWithCategory();
-    const foundCategory = await getCategoryById(parsed.data.id);
+    const existingProductWithCategory = await getProductByCategoryId(parsed.data.id);
 
-    if (existingProductWithCategory.some((category) => category.categoryName === foundCategory.name)) {
+    if (existingProductWithCategory) {
       return {
         error: "Category is in used",
       };
@@ -90,5 +89,47 @@ export const deleteCategory = async (formData: FormData) => {
     return {
       error: "Failed to delete category",
     };
+  }
+};
+
+export const deleteMultipleCategories = async (ids: string[]) => {
+  if (!ids.length) {
+    return {
+      error: "ids is needed",
+    };
+  }
+
+  if (ids.some((id) => !isUuid(id))) {
+    return {
+      error: "incorrect id format",
+    };
+  }
+
+  try {
+    // Filter out the categories that have products associated with them
+    const toDeleteIds = await Promise.all(
+      ids.map(async (id) => {
+        const existingProductWithCategory = await getProductByCategoryId(id);
+        return existingProductWithCategory ? null : id;
+      })
+    );
+
+    // Remove null values (categories that have associated products)
+    const validToDeleteIds = toDeleteIds.filter(Boolean) as string[];
+
+    if (validToDeleteIds.length === 0) {
+      return { error: "Categories still in used in product" };
+    }
+
+    // Delete categories concurrently
+    await Promise.all(validToDeleteIds.map((id) => deleteCategoryDB(id)));
+
+    // Revalidate after successful deletion
+    revalidatePath("/categories");
+    revalidateTag("categories");
+    return { success: `Category deleted` };
+  } catch (error) {
+    console.log("Failed delete category :", error);
+    return { error: `Failed delete category` };
   }
 };

@@ -1,6 +1,7 @@
 import { and, between, count, eq, ilike, inArray } from "drizzle-orm";
 import { db } from "../..";
 import { Product, products as productsTable } from "../../schema/products";
+import { categories as categoriesTable } from "../../schema/categories";
 
 export const getProducts = async (
   name: string,
@@ -121,4 +122,11 @@ export const getProductStatsCount = async () => {
 export const getProductsWithCategory = async () => {
   const existingProductWithCategory = await db.select({ categoryName: productsTable.category }).from(productsTable);
   return existingProductWithCategory || [];
+};
+
+export const getProductByCategoryId = async (id: string) => {
+  const [category] = await db.select({ name: categoriesTable.name }).from(categoriesTable).where(eq(categoriesTable.id, id));
+  const [data] = await db.select({ category: productsTable.category }).from(productsTable).where(ilike(productsTable.category, category.name));
+  if (!data) return null;
+  return data.category;
 };
