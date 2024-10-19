@@ -39,9 +39,7 @@ const ImagesField = () => {
       if (e.target.files) {
         const filesToUpload = e.target.files[0];
         const uploadedImage = await uploadSingleImage(filesToUpload);
-        if (!uploadedImage) {
-          toast.error("Something went wrong, please try again later");
-        }
+        if (!uploadedImage) return;
         setValue("url", uploadedImage);
         setPreviewImage({ id: uuidv4(), url: uploadedImage });
         if (hiddenFileRef.current) {

@@ -32,10 +32,10 @@ export const validateMultipleImages = (filesToUpload: File[], existingImages: Im
 
   if (!filesToAppend.every((file) => file.type.startsWith("image"))) {
     toast.error(`Failed to upload image, make sure upload image only`);
-    return;
-  } else if (!filesToAppend.every((file) => file.size <= allowedFileSize)) {
+    return null;
+  } else if (filesToAppend.some((file) => file.size >= allowedFileSize)) {
     toast.error(`Failed to upload image, max size 1Mb only`);
-    return;
+    return null;
   }
   return filesToAppend;
 };
@@ -43,10 +43,10 @@ export const validateMultipleImages = (filesToUpload: File[], existingImages: Im
 export const validateSingleImage = (fileToUpload: File) => {
   if (!fileToUpload.type.startsWith("image")) {
     toast.error(`Failed to upload image, make sure upload image only`);
-    return;
-  } else if (fileToUpload.size <= allowedFileSize) {
+    return null;
+  } else if (fileToUpload.size >= allowedFileSize) {
     toast.error(`Failed to upload image, max size 1Mb only`);
-    return;
+    return null;
   }
   return fileToUpload;
 };
@@ -90,11 +90,13 @@ export const useImageManager = () => {
   };
 
   const uploadSingleImage = async (file: File) => {
-    const checksum = await computeSHA256(file);
-    validateSingleImage(file);
+    const fileToUpload = validateSingleImage(file);
+    if (!fileToUpload) return;
+    const checksum = await computeSHA256(fileToUpload);
+
     const formData = new FormData();
-    formData.append("size", file.size.toString());
-    formData.append("type", file.type);
+    formData.append("size", fileToUpload.size.toString());
+    formData.append("type", fileToUpload.type);
     formData.append("checksum", checksum);
     const res = await getSignedURL(formData);
 
@@ -106,9 +108,9 @@ export const useImageManager = () => {
     await fetch(signedUrl, {
       method: "PUT",
       headers: {
-        "Content-Type": file.type,
+        "Content-Type": fileToUpload.type,
       },
-      body: file,
+      body: fileToUpload,
     });
 
     const fileUrl = signedUrl?.split("?")[0];

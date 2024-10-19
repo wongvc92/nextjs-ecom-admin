@@ -30,6 +30,7 @@ const CreateForm = ({ bannerImagesCount }: { bannerImagesCount: number | null })
       const res = await createBanner(methods.getValues());
       if (res.error) {
         toast.error(res.error);
+        return;
       } else if (res.success) {
         toast.success(res.success);
         router.push("/banners");

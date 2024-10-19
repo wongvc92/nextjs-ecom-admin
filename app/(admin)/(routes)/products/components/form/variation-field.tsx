@@ -212,7 +212,6 @@ const VariationField: React.FC<VariationFieldProps> = ({ productsData }) => {
                           hiddenFileInputs.current[variationIndex] = element;
                         }}
                         type="file"
-                        accept="images/*"
                         onChange={(e) => onChangeImage(e, variationIndex)}
                       />
                       <Input
