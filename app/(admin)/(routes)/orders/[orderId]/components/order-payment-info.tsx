@@ -2,14 +2,13 @@
 
 import { Order } from "@/lib/db/schema/orders";
 import { findOrderItemSubTotal } from "@/lib/helpers/orderItemHelpers";
-
 import { currencyFormatter } from "@/lib/utils";
-
 import { ImageIcon, LucideBadgeDollarSign } from "lucide-react";
 import Image from "next/image";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 
 const OrderPaymentInfo = ({ order }: { order: Order }) => {
+  const [imgError, setImgError] = useState(false);
   const memoizedSubTotals: number[] = useMemo(() => {
     return order.orderItems.map((item) => {
       return findOrderItemSubTotal(Number(item.quantity), Number(item.priceInCents));
@@ -42,7 +41,11 @@ const OrderPaymentInfo = ({ order }: { order: Order }) => {
                 <td className="p-4 font-normal text-xs text-center">{i + 1}</td>
                 <td className="p-4  flex justify-center items-center">
                   <div className="rounded-md h-[100px] w-[100px] relative overflow-hidden">
-                    {item.image ? <Image src={item.image} alt={`Order item image-${i}`} fill className="object-cover" /> : <ImageIcon />}
+                    {item.image && !imgError ? (
+                      <Image src={item.image} alt={`Order item image-${i}`} fill className="object-cover" onError={() => setImgError(true)} />
+                    ) : (
+                      <ImageIcon className="w-full h-full object-contain text-gray-300" />
+                    )}
                   </div>
                 </td>
                 <td className="p-4  font-normal text-xs text-center">{item.productName}</td>
