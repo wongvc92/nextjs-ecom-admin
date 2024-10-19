@@ -28,6 +28,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       const res = await deleteProduct(formData);
       if (res.error) {
         toast.error(res.error);
+        setOpen(false);
+        return;
       } else if (res.success) {
         toast.success(res.success);
         router.refresh();

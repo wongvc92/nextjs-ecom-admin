@@ -114,13 +114,8 @@ export const editProduct = async (values: TProductSchema) => {
 };
 
 export const deleteProduct = async (formData: FormData) => {
-  const session = await ensureAuthenticated();
+  await ensureAuthenticated();
 
-  if (session.user.role !== "ADMIN") {
-    return {
-      error: "You are not allowed to perform this action",
-    };
-  }
   const parsed = deleteProductSchema.safeParse({ id: formData.get("id") });
   if (!parsed.success) {
     const errorMessage = parsed.error.issues.map((issue) => issue.message).join(", ");

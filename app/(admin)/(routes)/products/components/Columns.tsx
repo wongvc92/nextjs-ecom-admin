@@ -10,18 +10,23 @@ import { CheckIcon, XIcon } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { getDistinctNestedVariationNames } from "@/lib/helpers/productHelpers";
 import TableSortButton from "@/components/ui/table-sort-button";
+import DeleteTableRows from "./delete-table-rows";
 
 export const columns: ColumnDef<Product>[] = [
   {
     id: "select",
     header: ({ table }) => {
+      const selectedRowIds = table.getSelectedRowModel().rows.map((row) => (row.original as ColumnDef<Product>).id);
       return (
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          onCheckedChange={(value) => {
-            table.toggleAllPageRowsSelected(!!value);
-          }}
-        />
+        <div className="flex items-center gap-2 w-fit">
+          <Checkbox
+            checked={table.getIsAllPageRowsSelected()}
+            onCheckedChange={(value) => {
+              table.toggleAllPageRowsSelected(!!value);
+            }}
+          />
+          <DeleteTableRows selectedRowIds={selectedRowIds as string[]} resetSelection={table.resetRowSelection} />
+        </div>
       );
     },
     cell: ({ row }) => {
@@ -41,8 +46,6 @@ export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => {
-      const sorted = column.getIsSorted();
-
       return <TableSortButton title="Name" column={column} />;
     },
     cell: ({ row }) => {
@@ -53,8 +56,6 @@ export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "lowestPriceInCents",
     header: ({ column }) => {
-      const sorted = column.getIsSorted();
-
       return <TableSortButton title="Price" column={column} />;
     },
     cell: ({ row }) => {
@@ -66,8 +67,6 @@ export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "isFeatured",
     header: ({ column }) => {
-      const sorted = column.getIsSorted();
-
       return <TableSortButton title="Featured" column={column} />;
     },
     cell: ({ row }) => {
@@ -88,8 +87,6 @@ export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "isArchived",
     header: ({ column }) => {
-      const sorted = column.getIsSorted();
-
       return <TableSortButton title="Archived" column={column} />;
     },
 
@@ -102,8 +99,6 @@ export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "category",
     header: ({ column }) => {
-      const sorted = column.getIsSorted();
-
       return <TableSortButton title="Category" column={column} />;
     },
 
@@ -136,8 +131,6 @@ export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "createdAt",
     header: ({ column }) => {
-      const sorted = column.getIsSorted();
-
       return <TableSortButton title="Created" column={column} />;
     },
     cell: ({ row }) => {
