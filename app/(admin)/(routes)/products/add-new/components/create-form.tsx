@@ -73,8 +73,9 @@ const defaultValues = {
 
 interface CreateFormProps {
   distinctCategories: TCategorySchema[];
+  senderCount: number;
 }
-const CreateForm: React.FC<CreateFormProps> = ({ distinctCategories }) => {
+const CreateForm: React.FC<CreateFormProps> = ({ distinctCategories, senderCount }) => {
   const basicRef = useRef<HTMLDivElement | null>(null);
   const salesRef = useRef<HTMLDivElement | null>(null);
   const shippingRef = useRef<HTMLDivElement | null>(null);
@@ -165,8 +166,6 @@ const CreateForm: React.FC<CreateFormProps> = ({ distinctCategories }) => {
     const product = methods.getValues();
     let lowestPrice = Infinity;
 
-    console.log("Product:", product);
-
     if (product.variationType === "NESTED_VARIATION") {
       product.variations?.forEach((variation) => {
         variation.nestedVariations?.forEach((nested) => {
@@ -234,8 +233,17 @@ const CreateForm: React.FC<CreateFormProps> = ({ distinctCategories }) => {
           <div className="px-4 pt-8 flex items-center gap-2">
             <p className="text-sm ">
               Please create category first{" "}
-              <Link href="/categories" className="border-b-2 border-blue-500 text-blue-500">
+              <Link href="/categories/add-new" className="border-b-2 border-blue-500 text-blue-500">
                 Create category
+              </Link>
+            </p>
+          </div>
+        ) : !!distinctCategories.length && senderCount === 0 ? (
+          <div className="px-4 pt-8 flex items-center gap-2">
+            <p className="text-sm ">
+              Please create sender information first{" "}
+              <Link href="/shippings/sender/add-new" className="border-b-2 border-blue-500 text-blue-500">
+                Create sender
               </Link>
             </p>
           </div>
