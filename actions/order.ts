@@ -34,7 +34,6 @@ export const updateOrderStatusByOrderId = async (formData: FormData) => {
 };
 
 export const deleteMultipleOrders = async (ids: string[]) => {
-  console.log("ids length", ids.length);
   if (!ids.length) {
     return {
       error: "ids is needed",
@@ -120,8 +119,11 @@ export const deleteOrder = async (id: string) => {
     const twentyFourHoursAgo = new Date();
     twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
 
-    const isLessThan24Hour = orderData.createdAt && new Date(orderData.createdAt as Date) < twentyFourHoursAgo; // Compare createdAt
-    if (isLessThan24Hour) {
+    const orderCreatedTime = new Date(orderData.createdAt as Date);
+    const isMoreThan24HoursOld = orderCreatedTime < twentyFourHoursAgo;
+
+    // If the order is less than 24 hours old, prevent deletion
+    if (!isMoreThan24HoursOld) {
       return {
         error: "Only pending orders created more than 24 hours ago can be deleted",
       };
