@@ -1,15 +1,35 @@
 import { Circle, MapPin } from "lucide-react";
 import { Order } from "@/lib/db/schema/orders";
 import { format } from "date-fns";
-import { getShipmentByShippingOrderNumber } from "@/lib/db/queries/admin/couriers";
+import { ShipmentResponse } from "@/lib/db/types/couriers/shipmentResponse";
 
 interface OrderLogisticInfoProps {
   order: Order;
 }
 
+const baseUrl = process.env.NEXT_PUBLIC_TRACKING_MY_URL!;
+const apiKey = process.env.TRACKING_MY_API_KEY!;
+
+export const getShipmentByShippingOrderNumber = async (shippingOrderNumber: string) => {
+  const url = new URL(`${baseUrl}/api/v1/shipments/${shippingOrderNumber}`);
+  try {
+    const res = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Tracking-Api-Key": apiKey,
+      },
+    });
+    const data = await res.json();
+    const shipment: ShipmentResponse = data.shipment;
+    return shipment;
+  } catch (error) {
+    return null;
+  }
+};
+
 const OrderLogisticInfo = async ({ order }: OrderLogisticInfoProps) => {
   const shipmentData = await getShipmentByShippingOrderNumber(order.shippingOrderNumber as string);
-  console.log("shipmentData", shipmentData);
+
   return (
     <div className="flex">
       <div className="flex flex-col space-y-2">
@@ -34,12 +54,15 @@ const OrderLogisticInfo = async ({ order }: OrderLogisticInfoProps) => {
                   <li key={checkpoint.time} className="relative flex gap-6 pb-5 items-baseline">
                     <div className="before:absolute before:left-[16px]  before:h-full before:w-[1px] before:bg-muted-foreground">
                       <div className="bg-muted relative rounded-full p-1 text-center ">
-                        <Circle className="z-10 text-emerald-100" fill="green" />
+                        <Circle
+                          className={`z-10 ${i === 0 ? "text-lime-100" : "text-muted-foreground"}`}
+                          fill={`${i === 0 ? "green" : "text-muted-foreground"}`}
+                        />
                       </div>
                     </div>
                     <div className="flex flex-col space-y-1 w-full self-start py-1">
-                      <p className="text-xs font-medium text-emerald-500">{checkpoint.location}</p>
-                      <p className="text-xs font-medium text-emerald-500">{checkpoint.status}</p>
+                      <p className={`"text-xs font-medium ${i === 0 ? "text-emerald-500" : "text-muted-foreground"}"`}>{checkpoint.location}</p>
+                      <p className={`"text-xs font-medium ${i === 0 ? "text-emerald-500" : "text-muted-foreground"}"`}>{checkpoint.status}</p>
                       <span className="text-[12px] text-muted-foreground">{format(checkpoint.time, "DD/MM/YY MM:HH")}</span>
                     </div>
                   </li>
