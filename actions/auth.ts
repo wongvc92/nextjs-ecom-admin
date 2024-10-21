@@ -287,13 +287,6 @@ export const settings = async (formData: TSettingsFormSchema) => {
     return { error: errorMessage };
   }
 
-  const sameNameUser = await getUserByName(formData.name as string);
-  if (sameNameUser) {
-    return {
-      error: `"${formData.name}" already exist, please choose other name.`,
-    };
-  }
-
   const dbUser = await getUserById(session.user.id);
 
   if (!dbUser) {
@@ -324,26 +317,35 @@ export const settings = async (formData: TSettingsFormSchema) => {
     };
   }
 
+  const updateData: Partial<TSettingsFormSchema> = {
+    name: formData.name,
+    email: formData.email,
+    role: formData.role as UserRoleEnum,
+    isTwoFactorEnabled: formData.isTwoFactorEnabled,
+  };
+
   if (formData.password && formData.newPassword && dbUser.password) {
     const passwordMatched = await bcrypt.compare(formData.password, dbUser.password);
     if (!passwordMatched) {
       return {
-        error: "Incorrect password!",
+        error: "Incorrect old password!",
       };
     }
 
     const hashedPassword = await bcrypt.hash(formData.newPassword, 10);
 
-    formData.password = hashedPassword;
-    formData.newPassword = undefined;
+    updateData.password = hashedPassword;
+    await db
+      .update(users)
+      .set({ ...updateData, role: updateData.role as UserRoleEnum })
+      .where(eq(users.id, dbUser.id));
+
+    return { success: "Settings updated" };
   }
 
   await db
     .update(users)
-    .set({
-      ...formData,
-      role: formData.role as UserRoleEnum,
-    })
+    .set({ ...updateData, role: updateData.role as UserRoleEnum })
     .where(eq(users.id, dbUser.id));
   revalidatePath("/settings");
   return { success: "Settings updated" };

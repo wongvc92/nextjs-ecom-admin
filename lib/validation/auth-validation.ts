@@ -24,17 +24,14 @@ export const settingsFormSchema = z
   })
   .refine(
     (data) => {
-      if (data.password && !data.newPassword) {
-        return false;
-      }
       if (data.newPassword && !data.password) {
         return false;
       }
       return true;
     },
     {
-      message: "NewPassword is required.",
-      path: ["newPassword"],
+      message: "old password is required.",
+      path: ["password"],
     }
   );
 

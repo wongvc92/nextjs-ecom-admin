@@ -53,7 +53,7 @@ export const SettingsForm = ({ session }: { session: Session }) => {
               <FormItem>
                 <FormLabel className="text-muted-foreground">Name</FormLabel>
                 <FormControl>
-                  <Input type="code" {...field} defaultValue={field.value} disabled={isPending} />
+                  <Input type="code" {...field} disabled={isPending} />
                 </FormControl>
                 {form.formState.errors.name && <FormMessage>{form.formState.errors.name.message}</FormMessage>}
               </FormItem>
@@ -95,7 +95,7 @@ export const SettingsForm = ({ session }: { session: Session }) => {
                       <Input type="password" {...field} disabled={isPending} />
                     </FormControl>
 
-                    {form.formState.errors.password && <FormMessage>{form.formState.errors.password.message}</FormMessage>}
+                    {form.formState.errors.newPassword && <FormMessage>{form.formState.errors.newPassword.message}</FormMessage>}
                   </FormItem>
                 )}
               />
@@ -119,7 +119,7 @@ export const SettingsForm = ({ session }: { session: Session }) => {
                   <Switch checked={field.value} onCheckedChange={field.onChange} disabled={isPending} />
                 </FormControl>
 
-                {form.formState.errors.password && <FormMessage>{form.formState.errors.password.message}</FormMessage>}
+                {form.formState.errors.isTwoFactorEnabled && <FormMessage>{form.formState.errors.isTwoFactorEnabled.message}</FormMessage>}
               </FormItem>
             )}
           />
