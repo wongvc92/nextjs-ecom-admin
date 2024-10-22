@@ -35,6 +35,7 @@ export const getOrders = async (searchParams: TOrdersQuery): Promise<{ ordersDat
       with: {
         orderItems: true,
         shippings: true,
+        orderStatusHistories: true,
       },
       limit: parseInt(perPage),
       offset: (parseInt(page) - 1) * parseInt(perPage),

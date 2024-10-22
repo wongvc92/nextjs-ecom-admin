@@ -30,6 +30,7 @@ export const getOrdersByCustomerId = unstable_cache(
       with: {
         orderItems: true,
         shippings: true,
+        orderStatusHistories: true,
       },
       limit: parseInt(perPage),
       offset: (parseInt(page) - 1) * parseInt(perPage),
