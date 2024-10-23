@@ -76,7 +76,6 @@ export const processOrder = async (session: Stripe.Checkout.Session, eventType: 
 };
 
 export const updateOrderStatus = async (orderStatus: OrderStatusEnumType, orderId: string) => {
-  if (!orderStatus || orderId) return;
   return await db.update(ordersTable).set({ status: orderStatus }).where(eq(ordersTable.id, orderId!));
 };
 
