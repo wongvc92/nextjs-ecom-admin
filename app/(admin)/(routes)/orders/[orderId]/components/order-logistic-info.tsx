@@ -21,6 +21,7 @@ export const getShipmentByShippingOrderNumber = async (shippingOrderNumber: stri
     });
     const data = await res.json();
     const shipment: ShipmentResponse = data.shipment;
+
     return shipment;
   } catch (error) {
     return null;

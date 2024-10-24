@@ -1,5 +1,5 @@
 DO $$ BEGIN
- CREATE TYPE "public"."status" AS ENUM('cancelled', 'pending', 'to_ship', 'shipped', 'completed');
+ CREATE TYPE "public"."status" AS ENUM('cancelled', 'pending', 'paid', 'to_ship', 'shipped', 'completed');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

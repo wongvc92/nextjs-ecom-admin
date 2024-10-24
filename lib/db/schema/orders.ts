@@ -4,7 +4,7 @@ import { Shipping, shippings } from "./shippings";
 import { OrderItem, orderItems } from "./orderItems";
 import { orderStatusHistories } from "./orderStatusHistories";
 
-export const orderStatusEnum = pgEnum("status", ["cancelled", "pending", "to_ship", "shipped", "completed"]);
+export const orderStatusEnum = pgEnum("status", ["cancelled", "pending", "paid", "to_ship", "shipped", "completed"]);
 
 export const orders = pgTable("order", {
   id: uuid("id").primaryKey().defaultRandom(),

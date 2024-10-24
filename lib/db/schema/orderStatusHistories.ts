@@ -2,7 +2,7 @@ import { pgEnum, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 import { orders } from "./orders";
 import { InferSelectModel, relations } from "drizzle-orm";
 
-export const orderStatusEnum = pgEnum("status", ["cancelled", "pending", "to_ship", "shipped", "completed"]);
+export const orderStatusEnum = pgEnum("status", ["cancelled", "pending", "paid", "to_ship", "shipped", "completed"]);
 
 export const orderStatusHistories = pgTable("orderStatusHistory", {
   id: uuid("id").primaryKey().defaultRandom(),

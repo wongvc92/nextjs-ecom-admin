@@ -1,5 +1,5 @@
 {
-  "id": "fd406220-76a9-4202-83fd-1f9c3b91c110",
+  "id": "3cf5a89b-b7ab-4adc-a707-d09dea889ad0",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1565,6 +1565,7 @@
       "values": [
         "cancelled",
         "pending",
+        "paid",
         "to_ship",
         "shipped",
         "completed"

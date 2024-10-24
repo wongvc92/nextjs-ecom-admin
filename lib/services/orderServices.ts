@@ -69,6 +69,7 @@ export const processOrder = async (session: Stripe.Checkout.Session, eventType: 
   }
   if (eventType === "completed") {
     await updateOrderStatus("to_ship", session.metadata?.orderId!);
+    await createOrderStatusHistory("paid", session.metadata?.orderId!);
     await createOrderStatusHistory("to_ship", session.metadata?.orderId!);
     await updateStock(orderDetails);
     await createShippingAddress(session);
