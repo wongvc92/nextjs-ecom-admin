@@ -196,7 +196,8 @@ export const createShipment = async (orderId: string, service_id: number): Promi
         error: paymentRes.error,
       };
     }
-
+    revalidatePath(`/orders/${orderId}`);
+    revalidateTag("orders");
     return {
       success: "Succesfully create shipment",
     };
