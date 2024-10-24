@@ -8,10 +8,12 @@ export const getOrders = async (searchParams: TOrdersQuery): Promise<{ ordersDat
     const parseResult = orderQuerySchema.safeParse(searchParams);
 
     if (!parseResult.success) {
+      console.log("parseResult", parseResult.error.flatten());
       throw new Error("Invalid search parameters");
     }
 
     const { productName, dateFrom, dateTo, id, page, perPage, status } = parseResult.data;
+
     const whereCondition = [];
 
     if (id) {

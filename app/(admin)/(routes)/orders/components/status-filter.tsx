@@ -8,7 +8,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 const status = [
   { name: "cancelled", url: "cancelled" },
   { name: "pending", url: "pending" },
-  { name: "toShip", url: "toShip" },
+  { name: "to_ship", url: "to_ship" },
   { name: "shipped", url: "shipped" },
   { name: "completed", url: "completed" },
 ];
@@ -52,7 +52,7 @@ const StatusFilter = () => {
               handleSetUrl(ischecked, item.url);
             }}
           >
-            {item.name}
+            {item.name.split("_").join(" ")}
           </DropdownMenuCheckboxItem>
         ))}
       </DropdownMenuContent>

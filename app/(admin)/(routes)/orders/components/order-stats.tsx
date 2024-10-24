@@ -31,7 +31,7 @@ const OrderStats = async () => {
       id: 4,
       label: "To Ship",
       count: toShipOrdersCount,
-      url: "/orders?page=1&perPage=5&status=toShip",
+      url: "/orders?page=1&perPage=5&status=to_ship",
     },
     {
       id: 5,

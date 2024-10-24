@@ -70,15 +70,15 @@ export const columns: ColumnDef<Order>[] = [
       const status = row.getValue("status") as string;
       return (
         <span
-          className={cn("px-2 py-1 rounded-full text-xs font-semibold text-center", {
+          className={cn("px-2 py-1 rounded-full text-xs font-semibold text-center capitalize", {
             "bg-red-100 text-red-700": status === "cancelled",
             "bg-orange-100 text-orange-700": status === "pending",
-            "bg-yellow-100 text-yellow-700": status === "toShip",
+            "bg-yellow-100 text-yellow-700": status === "to_ship",
             "bg-green-100 text-green-700": status === "shipped",
             "bg-blue-100 text-blue-700": status === "completed",
           })}
         >
-          {status}
+          {status.split("_").join(" ")}
         </span>
       );
     },
