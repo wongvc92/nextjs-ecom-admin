@@ -189,7 +189,7 @@ export const createShipment = async (orderId: string, service_id: number): Promi
     const data = await res.json();
     const shipment: ShipmentResponse = data.shipment;
 
-    await updateShippingOrderNumber(data.order_number, orderId);
+    await updateShippingOrderNumber(shipment.order_number, orderId);
     const paymentRes = await makePayment(shipment.order_number, orderData.id);
     if (paymentRes?.error) {
       return {
