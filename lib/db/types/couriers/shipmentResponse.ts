@@ -57,7 +57,7 @@ export interface Tracking {
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
-  latest_checkpoint: string | null;
+  latest_checkpoint: Checkpoint;
   checkpoints: Checkpoint[];
 }
 

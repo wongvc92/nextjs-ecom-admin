@@ -31,6 +31,8 @@ export const getShipmentByShippingOrderNumber = async (shippingOrderNumber: stri
 const OrderLogisticInfo = async ({ order }: OrderLogisticInfoProps) => {
   const shipmentData = await getShipmentByShippingOrderNumber(order.shippingOrderNumber as string);
 
+  console.log("shipmentData", shipmentData);
+
   return (
     <div className="flex">
       <div className="flex flex-col space-y-2">
@@ -41,7 +43,7 @@ const OrderLogisticInfo = async ({ order }: OrderLogisticInfoProps) => {
         {!shipmentData && order.status === "to_ship" && <p className="pl-6 text-sm text-muted-foreground">Seller is preparing to ship your order</p>}
         {shipmentData && (
           <div className="pl-6">
-            <div className="text-sm my-2">
+            <div className="text-xs space-y-2">
               <p className="flex items-center gap-2">
                 Tracking no: <span className="text-muted-foreground font-light">{shipmentData.tracking?.tracking_number || ""}</span>
               </p>
@@ -51,23 +53,36 @@ const OrderLogisticInfo = async ({ order }: OrderLogisticInfoProps) => {
             </div>
             <div className="bg-muted p-4 dark:border rounded-md shadow-sm my-2">
               <ul>
-                {shipmentData?.tracking?.checkpoints?.map((checkpoint, i) => (
-                  <li key={checkpoint.time} className="relative flex gap-6 pb-5 items-baseline">
-                    <div className="before:absolute before:left-[16px]  before:h-full before:w-[1px] before:bg-muted-foreground">
-                      <div className="bg-muted relative rounded-full p-1 text-center ">
-                        <Circle
-                          className={`z-10 ${i === 0 ? "text-lime-100" : "text-muted-foreground"}`}
-                          fill={`${i === 0 ? "green" : "text-muted-foreground"}`}
-                        />
+                {!shipmentData?.tracking?.checkpoints ? (
+                  <div className="flex flex-col space-y-1 w-full self-start py-1">
+                    <p className="text-xs font-medium text-emerald-500 ">{shipmentData?.tracking?.latest_checkpoint.location}</p>
+                    <p className="text-xs font-medium text-emerald-500 capitalize">
+                      {shipmentData?.tracking?.latest_checkpoint.status.split("_").join(" ")}
+                    </p>
+                    <p className="text-xs font-medium text-emerald-500 text-muted-foreground">{shipmentData?.tracking?.latest_checkpoint.content}</p>
+                    <span className="text-[12px] text-muted-foreground">
+                      {format(shipmentData?.tracking?.latest_checkpoint.time, "dd/MM/yy MM:HH")}
+                    </span>
+                  </div>
+                ) : (
+                  shipmentData?.tracking?.checkpoints?.map((checkpoint, i) => (
+                    <li key={checkpoint.time} className="relative flex gap-6 pb-5 items-baseline">
+                      <div className="before:absolute before:left-[16px]  before:h-full before:w-[1px] before:bg-muted-foreground">
+                        <div className="bg-muted relative rounded-full p-1 text-center ">
+                          <Circle
+                            className={`z-10 ${i === 0 ? "text-lime-100" : "text-muted-foreground"}`}
+                            fill={`${i === 0 ? "green" : "text-muted-foreground"}`}
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex flex-col space-y-1 w-full self-start py-1">
-                      <p className={`"text-xs font-medium ${i === 0 ? "text-emerald-500" : "text-muted-foreground"}"`}>{checkpoint.location}</p>
-                      <p className={`"text-xs font-medium ${i === 0 ? "text-emerald-500" : "text-muted-foreground"}"`}>{checkpoint.status}</p>
-                      <span className="text-[12px] text-muted-foreground">{format(checkpoint.time, "DD/MM/YY MM:HH")}</span>
-                    </div>
-                  </li>
-                ))}
+                      <div className="flex flex-col space-y-1 w-full self-start py-1">
+                        <p className={`"text-xs font-medium ${i === 0 ? "text-emerald-500" : "text-muted-foreground"}"`}>{checkpoint.location}</p>
+                        <p className={`"text-xs font-medium ${i === 0 ? "text-emerald-500" : "text-muted-foreground"}"`}>{checkpoint.status}</p>
+                        <span className="text-[12px] text-muted-foreground">{format(checkpoint.time, "DD/MM/YY MM:HH")}</span>
+                      </div>
+                    </li>
+                  ))
+                )}
               </ul>
             </div>
           </div>
