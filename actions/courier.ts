@@ -116,15 +116,15 @@ export const createShipment = async (orderId: string, service_id: number): Promi
   };
 
   const receiver: Address = {
-    name: orderShippingData?.name!,
+    name: orderShippingData?.name || "",
     dialing_country_code: "MY",
     phone: parseInt(orderShippingData?.phone as string),
-    email: orderShippingData?.email!,
-    address_1: orderShippingData?.address!,
+    email: orderShippingData?.email || "",
+    address_1: orderShippingData?.address || "",
     address_2: orderShippingData?.address2 || "",
     postcode: parseInt(orderShippingData?.postalCode as string),
-    province: orderShippingData?.state!,
-    city: orderShippingData?.city!,
+    province: orderShippingData?.state || "",
+    city: orderShippingData?.city || "",
     country: "MY",
   };
 
@@ -186,10 +186,11 @@ export const createShipment = async (orderId: string, service_id: number): Promi
       console.log("Failed create shipment: ", `${res.status} - ${res.statusText}`, errorResponse);
       return { error: "Failed create shipment" };
     }
-    const data: ShipmentResponse = await res.json();
-    console.log("shipment create", data);
+    const data = await res.json();
+    const shipment: ShipmentResponse = data.shipment;
+
     await updateShippingOrderNumber(data.order_number, orderId);
-    const paymentRes = await makePayment(data.order_number, orderData.id);
+    const paymentRes = await makePayment(shipment.order_number, orderData.id);
     if (paymentRes?.error) {
       return {
         error: paymentRes.error,

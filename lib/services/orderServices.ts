@@ -16,6 +16,8 @@ export const updateTrackingNumberByOrderId = async (tracking: string, orderId: s
 };
 
 export const updateShippingOrderNumber = async (shippingOrderNumber: string, orderId: string) => {
+  console.log("shippingOrderNumber", shippingOrderNumber);
+  console.log("orderId", orderId);
   return await db.update(ordersTable).set({ shippingOrderNumber }).where(eq(ordersTable.id, orderId!));
 };
 

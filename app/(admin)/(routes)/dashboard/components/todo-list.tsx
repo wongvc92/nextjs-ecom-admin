@@ -19,7 +19,7 @@ const TodoList = async () => {
       id: 2,
       label: "To-Process shipment",
       count: toShipCount ?? 0,
-      url: "/orders?page=1&perPage=5&status=toShip",
+      url: "/orders?page=1&perPage=5&status=to_ship",
     },
     {
       id: 3,
