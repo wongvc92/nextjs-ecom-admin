@@ -5,8 +5,6 @@ import { getOrdersByCustomerId } from "@/lib/db/queries/store/orders";
 export async function GET(req: NextRequest) {
   const userId = req.headers.get("X-User-ID");
 
-  console.log(userId);
-
   if (!userId) {
     return NextResponse.json({ error: "Please login to retrive order" }, { status: 400 });
   }

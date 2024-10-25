@@ -3,6 +3,9 @@ import { NewUserInviteTemplate } from "@/components/mail/new-user-invite-templat
 import { ResetPasswordTemplate } from "@/components/mail/reset-password-template";
 import { TwoFactorTokenTemplate } from "@/components/mail/two-factor-token-template";
 import { Resend } from "resend";
+import { Checkpoint } from "../db/types/couriers/trackingCheckpointUpdate";
+import { getShippingAddressByOrderId } from "../db/queries/admin/shippings";
+import { TrackingEmailTemplate } from "@/components/mail/tracking-email-template";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 const baseURL = process.env.NEXT_PUBLIC_APP_URL!;
@@ -128,5 +131,37 @@ export const sendNewUserInviteEmail = async (email: string) => {
     };
   } catch (error) {
     return { error: "Failed send New User Invite Email" };
+  }
+};
+
+export const sendTrackingUpdateEmail = async (latestCheckpoint: Checkpoint | null, orderId: string) => {
+  if (!baseURL) {
+    console.log("Please provide base url");
+    return { error: "Something went wrong" };
+  }
+
+  if (!RESEND_VERIFIED_DOMAIN) {
+    console.log("Please provide resend domain");
+    return { error: "Something went wrong" };
+  }
+  const shipping = await getShippingAddressByOrderId(orderId);
+
+  if (!shipping?.email) return;
+  try {
+    const { data, error } = await resend.emails.send({
+      from: `email@${RESEND_VERIFIED_DOMAIN}`,
+      to: shipping.email,
+      subject: "Welcome onboard",
+      react: TrackingEmailTemplate({ latestCheckpoint }),
+    });
+    if (error) {
+      console.log("Failed send tracking update :", error);
+      return { error: "Failed send tracking update" };
+    }
+    return {
+      success: "Email send",
+    };
+  } catch (error) {
+    return { error: "Failed send tracking update" };
   }
 };

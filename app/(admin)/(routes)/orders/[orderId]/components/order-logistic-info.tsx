@@ -18,6 +18,7 @@ export const getShipmentByShippingOrderNumber = async (shippingOrderNumber: stri
       headers: {
         "Tracking-Api-Key": apiKey,
       },
+      cache: "no-cache",
     });
     const data = await res.json();
     const shipment: ShipmentResponse = data.shipment;
@@ -30,7 +31,6 @@ export const getShipmentByShippingOrderNumber = async (shippingOrderNumber: stri
 
 const OrderLogisticInfo = async ({ order }: OrderLogisticInfoProps) => {
   const shipmentData = await getShipmentByShippingOrderNumber(order.shippingOrderNumber as string);
-
   console.log("shipmentData", shipmentData);
 
   return (

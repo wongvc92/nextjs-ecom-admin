@@ -1,5 +1,6 @@
 import { CheckpointStatus, Tracking } from "@/lib/db/types/couriers/trackingCheckpointUpdate";
 import { EventOptions } from "@/lib/db/types/couriers/webhook";
+import { sendTrackingUpdateEmail } from "@/lib/services/emailServices";
 import { createOrderStatusHistory } from "@/lib/services/orderHistoryStatusServices";
 import { updateOrderStatus } from "@/lib/services/orderServices";
 import { NextRequest, NextResponse } from "next/server";
@@ -18,7 +19,7 @@ export const POST = async (req: NextRequest) => {
     if (event === EventOptions.TrackingCheckpointUpdate) {
       const tracking: Tracking = body.tracking;
       if (!tracking) return;
-      if (tracking.latest_checkpoint && tracking.latest_checkpoint.status === CheckpointStatus.Delivered) {
+      if (tracking.latest_checkpoint) {
         if (!tracking.order_id) {
           console.log("Failed update order status and create order status history, missing tracking order id");
           return NextResponse.json(
@@ -26,8 +27,19 @@ export const POST = async (req: NextRequest) => {
             { status: 400 }
           );
         }
-        await updateOrderStatus("completed", tracking.order_id);
-        await createOrderStatusHistory("completed", tracking.order_id);
+        if (tracking.latest_checkpoint.status === CheckpointStatus.InTransit) {
+          await sendTrackingUpdateEmail(tracking.latest_checkpoint, tracking.order_id);
+        }
+
+        if (tracking.latest_checkpoint.status === CheckpointStatus.OutForDelivery) {
+          await sendTrackingUpdateEmail(tracking.latest_checkpoint, tracking.order_id);
+        }
+
+        if (tracking.latest_checkpoint.status === CheckpointStatus.Delivered) {
+          await updateOrderStatus("completed", tracking.order_id);
+          await createOrderStatusHistory("completed", tracking.order_id);
+          await sendTrackingUpdateEmail(tracking.latest_checkpoint, tracking.order_id);
+        }
       }
     }
 
