@@ -48,6 +48,7 @@ export const POST = async (req: NextRequest) => {
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
+    console.log("Internal Server Error", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 };
