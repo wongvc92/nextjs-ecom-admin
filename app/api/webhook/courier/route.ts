@@ -15,9 +15,12 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json({ error: "Incorrect secret key" }, { status: 400 });
     }
     const event: EventOptions = body.event;
+    console.log("event", event);
 
     if (event === EventOptions.TrackingCheckpointUpdate) {
+      console.log("EventOptions.TrackingCheckpointUpdate", EventOptions.TrackingCheckpointUpdate);
       const tracking: Tracking = body.tracking;
+      console.log("tracking", tracking);
       if (!tracking) return;
       if (tracking.latest_checkpoint) {
         if (!tracking.order_id) {
