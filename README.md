@@ -3,16 +3,16 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 stacks used
 
 - nextjs
-- authjs
-- shadcn ui
-- react-easy-crop
-- resend
-- stripe
-- zod
-- drizzle-orm
-- dnd-kit/core
-- aws s3 bucket
-- react hook form
+- authjs - authentication
+- shadcn ui - styling
+- react-easy-crop - crop image
+- resend - email service
+- stripe - payment service
+- zod - server side validation
+- drizzle-orm - query data
+- dnd-kit/core - drag and drop image
+- aws s3 bucket - file storage
+- react hook form - client side validation
 
 Features
 
