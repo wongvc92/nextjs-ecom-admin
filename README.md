@@ -39,7 +39,7 @@ Features
    - resize, crop and rotate products image.
    - drap and drop image to reorder the image sequence.
    - display totals, featured, archived and out of stock product box. click on the box will also show filtered respectively on the products table.
-   - support filter by name name, created data, featured, archived and category. filtered products will be reflected on the products table.
+   - support filter by name, created data, featured, archived and category. filtered products will be reflected on the products table.
    - support variation and nested variation product.
 
 6. Orders
@@ -54,7 +54,7 @@ Features
 8. Shippings
    - support CRUD of sender info.
    - using 3rd party api provider tracking.my.
-   - suppport webhook.
+   - support webhook.
    - customer will be notified via sms or whatsapp on the parcel shipment status.
   
 9. Users
