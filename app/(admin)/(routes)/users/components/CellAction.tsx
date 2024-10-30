@@ -17,7 +17,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [isOpen, setIsOpen] = useState(false);
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
-    toast.success("Order ID copied to clipboard.");
+    toast.success("User ID copied to clipboard.");
   };
 
   const onClose = () => {
