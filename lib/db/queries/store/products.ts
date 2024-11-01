@@ -133,3 +133,18 @@ export const getFeaturedProducts = unstable_cache(
   ["products"],
   { tags: ["products"] }
 );
+
+export const getproductsCount = unstable_cache(
+  async () => {
+    try {
+      const [productResult] = await db.select({ count: count() }).from(productsTable);
+
+      const productCount = productResult.count;
+      return productCount;
+    } catch (error) {
+      return null;
+    }
+  },
+  ["products"],
+  { tags: ["products"] }
+);

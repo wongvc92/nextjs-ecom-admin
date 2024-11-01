@@ -1,13 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { products } from "@/lib/db/schema/products";
-import { count } from "drizzle-orm";
+import { getproductsCount } from "@/lib/db/queries/store/products";
 
 export async function GET(request: NextRequest) {
   try {
-    const [productResult] = await db.select({ count: count() }).from(products);
-
-    const productCount = productResult.count;
+    const productCount = await getproductsCount();
 
     return NextResponse.json({ productCount }, { status: 200 });
   } catch (error) {
