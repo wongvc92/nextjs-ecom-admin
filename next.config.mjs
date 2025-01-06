@@ -10,7 +10,7 @@ const nextConfig = {
 
       {
         protocol: "https",
-        hostname: "nextjs-dashboard-website.s3.ap-southeast-1.amazonaws.com",
+        hostname: "nextjs-ecom-admin.s3.ap-southeast-1.amazonaws.com",
       },
       {
         protocol: "https",
