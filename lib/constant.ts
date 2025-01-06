@@ -1,4 +1,4 @@
-export const allowedImageDomains = [process.env.ALLOWED_IMAGE_DOMAIN!];
+export const allowedImageDomains = ["nextjs-ecom-admin.s3.ap-southeast-1.amazonaws.com"];
 
 export const allowedFileTypes = ["image/jpeg", "image/png", "image/heic", "image/heif"];
 
